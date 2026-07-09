@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>home</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="pane">
+    <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
+
+    <div class="content">
+      <h2>welcome</h2>
+      <p>thank you for visiting and i welcome you with open arms into my little digital scrapbook. grab a drink, take a look around using the nav on the left, and stay a while.</p>
+    </div>
+
+    <div class="counter-wrap">
+      <div class="counter" id="counter">000217</div>
+      <span class="counter-label">^^^ you are visitor number ^^^</span>
+    </div>
+
+    <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
+  </div>
+
+  <script>
+    let count = 217;
+    setInterval(() => {
+      count += Math.floor(Math.random() * 2);
+      document.getElementById('counter').textContent = String(count).padStart(6, '0');
+    }, 4000);
+  </script>
+</body>
+</html>
