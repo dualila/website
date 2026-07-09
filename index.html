@@ -5,12 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>lily wakefield presents ... lilywakefield.com.au</title>
   <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
-  <link rel="stylesheet" href="styles.css">
   <style>
-    html, body { height: 100%; }
-    body { display: flex; flex-direction: column; }
+    * { box-sizing: border-box; }
 
-    /* ---- top banner (marquee + hero) ---- */
+    body {
+      margin: 0;
+      background-color: #0a0033;
+      background-image:
+        radial-gradient(#ffffff 1px, transparent 1px),
+        radial-gradient(#ffffff 1px, transparent 1px);
+      background-size: 60px 60px;
+      background-position: 0 0, 30px 30px;
+      color: #f5f5f5;
+      font-family: "Comic Sans MS", "Comic Sans", cursive;
+      cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><text y="18" font-size="18">✨</text></svg>') 12 12, auto;
+    }
+
+    /* ---- marquee ticker ---- */
     .ticker {
       background: #000;
       border-top: 3px dashed #ff00ff;
@@ -18,7 +29,6 @@
       overflow: hidden;
       white-space: nowrap;
       padding: 6px 0;
-      flex-shrink: 0;
     }
     .ticker span {
       display: inline-block;
@@ -36,15 +46,25 @@
       0%   { transform: translateX(0); }
       100% { transform: translateX(-100%); }
     }
+
+    /* ---- page frame ---- */
+    .frame {
+      max-width: 820px;
+      margin: 20px auto;
+      border: 6px ridge #ff00ff;
+      background: rgba(10, 0, 51, 0.85);
+      padding: 20px;
+      box-shadow: 0 0 25px #ff00ff, 0 0 45px #00ffff inset;
+    }
+
+    /* ---- hero title ---- */
     .hero {
       text-align: center;
-      padding: 10px 0;
-      border-bottom: 3px ridge #ff00ff;
-      flex-shrink: 0;
+      padding: 10px 0 0 0;
     }
     .hero h1 {
-      font-family: "courier new", "Arial Black", sans-serif;
-      font-size: 40px;
+      font-family: "Courier New", "Arial Black", sans-serif;
+      font-size: 54px;
       letter-spacing: 2px;
       margin: 0;
       background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
@@ -52,32 +72,212 @@
       background-clip: text;
       color: transparent;
       text-shadow: 3px 3px 0 rgba(0,0,0,0.4);
+      animation: wiggle 3s ease-in-out infinite;
+    }
+    @keyframes wiggle {
+      0%, 100% { transform: rotate(-1deg) scale(1); }
+      50% { transform: rotate(1deg) scale(1.02); }
     }
     .hero .subtitle {
-      font-size: 14px;
+      font-size: 16px;
       color: #00ffff;
       text-shadow: 0 0 6px #00ffff;
     }
-
-    /* ---- frame area: nav pane (left) + content pane (right) ---- */
-    .frame-area {
-      flex: 1;
-      display: grid;
-      grid-template-columns: 160px 1fr;
-      min-height: 0; /* lets iframes fill remaining height correctly */
+    .blink {
+      animation: blink-anim 1s steps(2, start) infinite;
+      color: #ffff00;
+      font-weight: bold;
     }
-    iframe {
+    @keyframes blink-anim {
+      to { visibility: hidden; }
+    }
+
+    /* ---- glitter divider ---- */
+    .divider {
+      text-align: center;
+      font-size: 20px;
+      letter-spacing: 12px;
+      margin: 18px 0;
+      color: #ffd700;
+      text-shadow: 0 0 8px #ffd700;
+    }
+
+    /* ---- content sections ---- */
+    .content h2 {
+      background-color: red;
+      background-image: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
+      color: #fff;
+      padding: 6px 10px;
+      border: 2px solid #fff;
+      font-size: 20px;
+      text-shadow: 2px 2px 0 #000;
+    }
+    .content p, .content li {
+      font-size: 15px;
+      line-height: 1.5;
+    }
+    .content {
+      background: repeating-linear-gradient(
+        45deg, #1a0060, #1a0060 10px, #20007a 10px, #20007a 20px
+      );
+      border: 2px dashed #00ffff;
+      padding: 14px;
+      margin-bottom: 20px;
+    }
+
+    /* ---- badge row ---- */
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin: 16px 0;
+    }
+    .badge {
+      background: #000;
+      border: 2px solid #ffff00;
+      color: #ffff00;
+      font-family: "Courier New", monospace;
+      font-size: 11px;
+      font-weight: bold;
+      padding: 8px 10px;
+      text-align: center;
+      width: 130px;
+      animation: badge-glow 2s ease-in-out infinite alternate;
+    }
+    @keyframes badge-glow {
+      from { box-shadow: 0 0 4px #ffff00; }
+      to   { box-shadow: 0 0 14px #ffff00; }
+    }
+
+    /* ---- visitor counter ---- */
+    .counter-wrap {
+      text-align: center;
+      margin: 20px 0;
+    }
+    .counter {
+      display: inline-block;
+      background: #000;
+      border: 2px solid #ff0000;
+      padding: 6px 10px;
+      font-family: "Courier New", monospace;
+      letter-spacing: 4px;
+      font-size: 22px;
+      color: #ff3333;
+      text-shadow: 0 0 8px #ff0000;
+    }
+    .counter-label {
+      display: block;
+      font-size: 11px;
+      color: #ccc;
+      margin-top: 4px;
+    }
+
+    /* ---- guestbook ---- */
+    .guestbook textarea {
       width: 100%;
-      height: 100%;
-      border: none;
+      min-height: 70px;
+      background: #000;
+      color: #0f0;
+      border: 2px inset #00ff00;
+      font-family: "Courier New", monospace;
+      padding: 8px;
+      resize: vertical;
     }
-    #navFrame {
-      border-right: 4px ridge #ff00ff;
+    .guestbook input[type="text"] {
+      width: 100%;
+      background: #000;
+      color: #0f0;
+      border: 2px inset #00ff00;
+      font-family: "Courier New", monospace;
+      padding: 6px;
+      margin-bottom: 8px;
+    }
+    .guestbook button {
+      margin-top: 8px;
+      background: linear-gradient(to bottom, #ff00ff, #9900cc);
+      color: #fff;
+      border: 2px outset #ff00ff;
+      font-family: "Comic Sans MS", cursive;
+      font-weight: bold;
+      padding: 8px 16px;
+      cursor: pointer;
+    }
+    .guestbook button:hover {
+      filter: brightness(1.2);
+    }
+    .guestbook-entries {
+      background: #000;
+      border: 2px inset #00ff00;
+      padding: 8px;
+      margin-top: 10px;
+      font-family: "Courier New", monospace;
+      font-size: 13px;
+      color: #0f0;
+      max-height: 120px;
+      overflow-y: auto;
     }
 
-    @media (max-width: 600px) {
-      .frame-area { grid-template-columns: 110px 1fr; }
-      .hero h1 { font-size: 28px; }
+    footer {
+      text-align: center;
+      font-size: 11px;
+      color: #888;
+      margin-top: 20px;
+      font-family: "Courier New", monospace;
+    }
+    footer img { vertical-align: middle; margin: 0 4px; }
+
+    /* ---- webring ---- */
+    .webring {
+      background: #000;
+      border: 3px double #00ffff;
+      margin: 20px 0;
+      padding: 10px 14px;
+      text-align: center;
+      font-family: "Courier New", monospace;
+    }
+    .webring .wr-title {
+      color: #ffff00;
+      font-size: 13px;
+      font-weight: bold;
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+      text-shadow: 0 0 6px #ffff00;
+    }
+    .webring .wr-links {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .webring a {
+      color: #00ffff;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: bold;
+      border: 2px outset #00ffff;
+      padding: 4px 10px;
+      background: #001a33;
+    }
+    .webring a:hover {
+      background: #00ffff;
+      color: #000;
+    }
+    .webring .wr-sep { color: #666; }
+
+    /* ---- sparkle cursor trail ---- */
+    .sparkle-trail {
+      position: fixed;
+      top: 0; left: 0;
+      pointer-events: none;
+      font-size: 16px;
+      z-index: 9999;
+      animation: sparkle-fade 2400ms ease-out forwards;
+    }
+    @keyframes sparkle-fade {
+      0%   { opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+      100% { opacity: 0; transform: translate(-50%, -50%) scale(0.4) rotate(90deg) translateY(-14px); }
     }
   </style>
 </head>
@@ -85,15 +285,77 @@
 
   <div class="ticker"><span>✦ thank you for visiting and i welcome you with open arms ✦</span></div>
 
-  <div class="hero">
-    <h1>✧ lily wakefield ✧</h1>
-    <div class="subtitle">under construction</div>
+  <div class="frame">
+
+    <div class="hero">
+      <h1>✧ lily wakefield ✧</h1>
+      <div class="subtitle">lilywakefield.com.au</div>
+      <p class="blink">☆ under construction ☆</p>
+    </div>
+
+    <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
+
+    <div class="counter-wrap">
+      <div class="counter" id="counter">000217</div>
+      <span class="counter-label">^^^ you are visitor number ^^^</span>
+    </div>
+
+    <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
+
+    <div class="content guestbook">
+      <h2>sign my guestbook!</h2>
+      <input type="text" placeholder="your name" id="gbName">
+      <textarea placeholder="leave me a message..." id="gbMsg"></textarea>
+      <button onclick="addEntry()">✎ sign it!</button>
+      <div class="guestbook-entries" id="gbEntries">
+        &gt; Queen Elizabeth the 2nd: love the site!! wish i'd been around for the publishing <br>
+      </div>
+    </div>
+
+    <footer>
+    ★ ° ☆ ° ★ ° ☆ ° ★ 2026 lily wakefield ★ ° ☆ ° ★ ° ☆ ° ★<br>
+      <img src="/images/favicon.ico" alt="site icon" width="24" height="24">
+      best experienced with the sound on
+    </footer>
+
   </div>
 
-  <div class="frame-area">
-    <iframe id="navFrame" name="navFrame" src="nav.html" title="site navigation"></iframe>
-    <iframe id="mainFrame" name="mainFrame" src="home.html" title="page content"></iframe>
-  </div>
+  <script>
+    // ticking visitor counter for fun and for real this time
+    let count = 217;
+    setInterval(() => {
+      count += Math.floor(Math.random() * 2);
+      document.getElementById('counter').textContent = String(count).padStart(6, '0');
+    }, 4000);
+
+    function addEntry() {
+      const name = document.getElementById('gbName').value.trim() || 'anonymous';
+      const msg = document.getElementById('gbMsg').value.trim();
+      if (!msg) return;
+      const entries = document.getElementById('gbEntries');
+      entries.innerHTML += `<br>&gt; ${name}: ${msg}`;
+      document.getElementById('gbMsg').value = '';
+      entries.scrollTop = entries.scrollHeight;
+    }
+
+    // sparkle cursor trail
+    const sparkleChars = ['✦', '✧', '☆', '★', '✨', '*'];
+    let lastSparkle = 0;
+    document.addEventListener('mousemove', (e) => {
+      const now = Date.now();
+      if (now - lastSparkle < 60) return; // throttle so it doesn't flood the DOM
+      lastSparkle = now;
+
+      const el = document.createElement('span');
+      el.className = 'sparkle-trail';
+      el.textContent = sparkleChars[Math.floor(Math.random() * sparkleChars.length)];
+      el.style.left = e.clientX + 'px';
+      el.style.top = e.clientY + 'px';
+      el.style.color = `hsl(${Math.floor(Math.random() * 360)}, 100%, 70%)`;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 2400);
+    });
+  </script>
 
 </body>
 </html>
