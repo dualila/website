@@ -356,5 +356,84 @@
     });
   </script>
 
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getFirestore, collection, addDoc, query, orderBy, limit, onSnapshot, serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+ 
+    // Guestbook's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyA25PaWUE39RuX-huMHoziQVUPy_pNFXUE",
+    authDomain: "dot-com-44502.firebaseapp.com",
+    projectId: "dot-com-44502",
+    storageBucket: "dot-com-44502.firebasestorage.app",
+    messagingSenderId: "124684406308",
+    appId: "1:124684406308:web:146706a03bb4bd451552b1",
+    measurementId: "G-HPF4E6G5YW"
+  };
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+ 
+    const entriesEl = document.getElementById('gbEntries');
+    const nameEl = document.getElementById('gbName');
+    const msgEl = document.getElementById('gbMsg');
+    const submitBtn = document.getElementById('gbSubmit');
+ 
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+ 
+    try {
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+      const gbRef = collection(db, "guestbook");
+      const gbQuery = query(gbRef, orderBy("createdAt", "desc"), limit(100));
+ 
+      onSnapshot(gbQuery, (snapshot) => {
+        if (snapshot.empty) {
+          entriesEl.innerHTML = '&gt; no entries yet... be the first!';
+          return;
+        }
+        const rows = [];
+        snapshot.forEach((doc) => {
+          const d = doc.data();
+          rows.push(`&gt; ${escapeHtml(d.name || 'anonymous loser')}: ${escapeHtml(d.message || '')}`);
+        });
+        entriesEl.innerHTML = rows.join('<br>');
+      }, (err) => {
+        console.error(err);
+        entriesEl.textContent = 'guestbook is offline right now, sorry! :(';
+      });
+ 
+      submitBtn.addEventListener('click', async () => {
+        const name = nameEl.value.trim().slice(0, 40) || 'anonymous loser';
+        const message = msgEl.value.trim().slice(0, 300);
+        if (!message) return;
+ 
+        submitBtn.disabled = true;
+        try {
+          await addDoc(gbRef, {
+            name,
+            message,
+            createdAt: serverTimestamp()
+          });
+          msgEl.value = '';
+        } catch (err) {
+          console.error(err);
+          alert('couldn\'t sign the guestbook, try again in a sec!');
+        } finally {
+          submitBtn.disabled = false;
+        }
+      });
+    } catch (err) {
+      console.error('Firebase not configured yet:', err);
+      entriesEl.textContent = 'guestbook needs to be connected to a database — see setup instructions in the page source!';
+    }
+  </script>
+
 </body>
 </html>
