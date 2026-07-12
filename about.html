@@ -10,9 +10,21 @@
     .bio-container { display: flex; gap: 30px; flex-wrap: wrap; margin-top: 20px; }
     .avatar-column { flex: 1; min-width: 200px; text-align: center; }
     .bio-column { flex: 2; min-width: 300px; line-height: 1.6; }
-    .avatar-placeholder { border: 3px double #00ffff; padding: 10px; width: 150px; height: 150px; margin: 0 auto; display: flex; align-items: center; justify-content: center; }
-    .skills-list { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
-    .tag { border: 1px solid #ff00ff; padding: 4px 8px; font-size: 12px; color: #ff00ff; }
+    
+    /* Box container constraints */
+    .avatar-placeholder { border: 3px double #00ffff; padding: 10px; width: 150px; height: 150px; margin: 0 auto; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .avatar-placeholder img { max-width: 100%; max-height: 100%; object-fit: cover; }
+    
+    /* Section Typings */
+    .section-title { font-size: 14px; color: #ffff00; text-shadow: 0 0 3px #ffff00; margin: 15px 0 5px 0; text-transform: uppercase; font-weight: bold; }
+    
+    /* Professional Skills Checklist */
+    .skills-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 6px; margin-bottom: 15px; font-family: "Courier New", monospace; font-size: 13px; }
+    .skill-item { color: #00ffff; text-shadow: 0 0 2px #00ffff; }
+    
+    /* Cute Interests Tags */
+    .interests-list { display: flex; gap: 8px; flex-wrap: wrap; }
+    .interest-tag { border: 1px dashed #ff00ff; padding: 3px 8px; font-size: 12px; color: #ff00ff; background: rgba(255, 0, 255, 0.03); }
   </style>
 </head>
 <body>
@@ -25,7 +37,7 @@
     <div class="frame">
 
       <div class="hero">
-        <h1>✧ about ✧</h1>
+        <h1>✧ about lily ✧</h1>
       </div>
 
       <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
@@ -43,25 +55,36 @@
 
           <!-- Right Column -->
           <div class="bio-column">
-              <p> the picture is no longer accurate as I now try to avoid having red hair.</p>
-            <div class="skills-list">
-              <span class="tag">Dua Lipa</span>
-              <span class="tag">cheese</span>
-              <span class="tag">university educated</span>
-              <span class="tag">Essendon Football Club</span>
+            <p>The picture is no longer accurate as I now try to avoid having red hair.</p>
+            
+            <!-- Skills System -->
+            <div class="section-title"> skills</div>
+            <div class="skills-grid">
+              <div class="skill-item">☑ communication</div>
+              <div class="skill-item">☑ data &amp; research</div>
+              <div class="skill-item">☑ policy and legislation analysis</div>
+              <div class="skill-item">☑ web design clearly</div>
+            </div>
+
+            <!-- Interests System -->
+            <div class="section-title">Interests</div>
+            <div class="interests-list">
+              <span class="interest-tag">Dua Lipa</span>
+              <span class="interest-tag">hard and soft cheeses</span>
+              <span class="interest-tag">fine arts</span>
+              <span class="interest-tag">Essendon Football Club</span>
             </div>
           </div>
         </div>
 
         <br>
-        <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
       </div>
 
       <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
 
       <footer>
         ★ ° ☆ ° ★ ° ☆ ° ★ 2026 lily wakefield ★ ° ☆ ° ★ ° ☆ ° ★<br>
-        <img src="/images/favicon.ico" alt="site icon" width="24" height="24">
+        <img src="/images/favicon.ico" alt="site icon" width="24" height="24" style="margin-top: 8px;">
       </footer>
 
     </div>
