@@ -12,7 +12,7 @@
   <div class="ticker"><span>✦ thank you for visiting and i welcome you with open arms ✦</span></div>
 
   <div class="layout">
-    <div id="sidebar"></div>
+    <div class="sidebar" id="sidebar"></div>
 
     <div class="frame">
 
@@ -43,29 +43,24 @@
           <div class="widget-value" id="weatherValue">loading...</div>
         </div>
 
-      <div class="widget-box">
-        <div class="widget-label">coming soon</div>
-        <div class="widget-value small" id="vibeText">click to come soon</div>
-        <button class="vibe-btn" onclick="triggerVibeCheck()">click</button>
+        <div class="widget-box">
+          <div class="widget-label">coming soon</div>
+          <div class="widget-value small" id="vibeText">click to come soon</div>
+          <button class="vibe-btn" onclick="triggerVibeCheck()">click</button>
+        </div>
       </div>
-
-      </div>
-    
 
       <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
 
       <footer>
-      ★ ° ☆ ° ★ ° ☆ ° ★ 2026 lily wakefield ★ ° ☆ ° ★ ° ☆ ° ★<br>
+        ★ ° ☆ ° ★ ° ☆ ° ★ 2026 lily wakefield ★ ° ☆ ° ★ ° ☆ ° ★<br>
         <img src="/images/favicon.ico" alt="site icon" width="24" height="24">
         best experienced with an open heart
       </footer>
 
-    </div>
-  </div>
-
-  <script src="js/nav.js"></script>
-<script src="js/effects.js"></script>
-<script src="js/home.js"></script>
+    </div> </div> <script src="js/nav.js"></script>
+  <script src="js/effects.js"></script>
+  <script src="js/home.js"></script>
 
   <script>
     const STATUS_MESSAGES = [
@@ -85,7 +80,7 @@
         statusEl.innerHTML = current.slice(0, charIndex) + '<span class="cursor">&nbsp;</span>';
         if (charIndex === current.length) {
           typing = false;
-          setTimeout(typeStatus, 1800); // pause before deleting
+          setTimeout(typeStatus, 1800);
           return;
         }
       } else {
@@ -108,7 +103,6 @@
       getFirestore, doc, setDoc, increment, onSnapshot
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    // Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyA25PaWUE39RuX-huMHoziQVUPy_pNFXUE",
       authDomain: "dot-com-44502.firebaseapp.com",
@@ -119,23 +113,19 @@
       measurementId: "G-HPF4E6G5YW"
     };
 
-    // Initialize Firebase once
     const app = initializeApp(firebaseConfig);
     const analytics = getAnalytics(app);
     const db = getFirestore(app);
 
     const counterEl = document.getElementById('counter');
 
-    // --- visitor counter: bump on every page load, display live ---
     try {
       const counterRef = doc(db, "counters", "visitors");
 
-      // increment first (creates the doc with count:1 if it doesn't exist yet)
       setDoc(counterRef, { count: increment(1) }, { merge: true }).catch((err) => {
         console.error('counter increment failed:', err);
       });
 
-      // then listen live so the number updates in real time, even across tabs
       onSnapshot(counterRef, (snap) => {
         const count = snap.exists() ? (snap.data().count || 0) : 0;
         counterEl.textContent = String(count).padStart(6, '0');
