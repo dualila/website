@@ -12,6 +12,7 @@ const NAV_TREE = [
       { label: "cool links", href: "coollinks.html"}
     ]
   },
+  {label: "coming soon", href: "comingsoon.html"}
 ];
 
 function currentFile() {
