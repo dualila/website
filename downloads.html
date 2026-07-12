@@ -30,22 +30,26 @@
           HOW TO ADD A NEW DOWNLOAD:
           1. Copy one <a class="download-card"> block below.
           2. Set href to the PDF's file path (e.g. "downloads/study-planner.pdf").
+             target="_blank" makes it open in a new tab instead of downloading straight away.
           3. Replace the placeholder SVG with <img src="thumbs/your-preview.png" alt="..."> if you
              make a real preview image (e.g. a screenshot of the PDF's first page, saved as a .png).
+             Don't forget the closing </div> right after the image!
           4. Update the title and meta text (file type / page count / whatever's useful).
         -->
         <div class="downloads-grid">
 
-          <a class="download-card" href="downloads/Trees for the North.pdf" download>
+          <a class="download-card" href="downloads/Trees for the North.pdf" target="_blank" rel="noopener noreferrer">
             <div class="download-thumb">
-              <img src="downloads/Trees for the North.png">
+              <img src="downloads/Trees for the North.png" alt="Trees for the North cover page">
+            </div>
             <div class="download-title">Trees for the North</div>
-            <div class="download-meta">Tree canopy coverage and benefits for the electoral district of Preston </div>
+            <div class="download-meta">Report 2024 · Tree canopy coverage and benefits for the electoral district of Preston </div>
           </a>
 
-          <a class="download-card" href="downloads/Changing Perceptions.pdf" download>
+          <a class="download-card" href="downloads/Changing Perceptions.pdf" target="_blank" rel="noopener noreferrer">
             <div class="download-thumb">
-              <img src="downloads/Changing Perceptions.png">
+              <img src="downloads/Changing Perceptions.png" alt="Connecting Neighbours and Changing Perceptions cover page">
+            </div>
             <div class="download-title">Connecting Neighbours and Changing Perceptions</div>
             <div class="download-meta">Policy Proposal 2025 · Indonesia - Australia </div>
           </a>
