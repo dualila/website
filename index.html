@@ -147,49 +147,25 @@
       margin-top: 4px;
     }
 
-    /* ---- guestbook ---- */
-    .guestbook textarea {
-      width: 100%;
-      min-height: 70px;
-      background: #000;
-      color: #0f0;
-      border: 2px inset #00ff00;
-      font-family: "Courier New", monospace;
-      padding: 8px;
-      resize: vertical;
+    /* ---- nav button ---- */
+    .nav-wrap {
+      text-align: center;
+      margin: 20px 0;
     }
-    .guestbook input[type="text"] {
-      width: 100%;
-      background: #000;
-      color: #0f0;
-      border: 2px inset #00ff00;
-      font-family: "Courier New", monospace;
-      padding: 6px;
-      margin-bottom: 8px;
-    }
-    .guestbook button {
-      margin-top: 8px;
+    .nav-button {
+      display: inline-block;
       background: linear-gradient(to bottom, #ff00ff, #9900cc);
       color: #fff;
       border: 2px outset #ff00ff;
       font-family: "Comic Sans MS", cursive;
       font-weight: bold;
-      padding: 8px 16px;
+      font-size: 15px;
+      padding: 10px 20px;
+      text-decoration: none;
       cursor: pointer;
     }
-    .guestbook button:hover {
+    .nav-button:hover {
       filter: brightness(1.2);
-    }
-    .guestbook-entries {
-      background: #000;
-      border: 2px inset #00ff00;
-      padding: 8px;
-      margin-top: 10px;
-      font-family: "Courier New", monospace;
-      font-size: 13px;
-      color: #0f0;
-      max-height: 120px;
-      overflow-y: auto;
     }
 
     footer {
@@ -237,12 +213,8 @@
 
     <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
 
-    <div class="content guestbook">
-      <h2>sign my guestbook!</h2>
-      <input type="text" placeholder="your name" id="gbName" maxlength="40">
-      <textarea placeholder="leave me a message..." id="gbMsg" maxlength="300"></textarea>
-      <button id="gbSubmit">✎ sign it!</button>
-      <div class="guestbook-entries" id="gbEntries">loading entries...</div>
+    <div class="nav-wrap">
+      <a class="nav-button" href="chatroom.html">✎ visit the chatroom ✎</a>
     </div>
 
     <footer>
@@ -277,11 +249,10 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
     import {
-      getFirestore, collection, addDoc, query, orderBy, limit, onSnapshot, serverTimestamp,
-      doc, setDoc, increment
+      getFirestore, doc, setDoc, increment, onSnapshot
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    // Guestbook's Firebase configuration
+    // Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyA25PaWUE39RuX-huMHoziQVUPy_pNFXUE",
       authDomain: "dot-com-44502.firebaseapp.com",
@@ -297,10 +268,6 @@
     const analytics = getAnalytics(app);
     const db = getFirestore(app);
 
-    const entriesEl = document.getElementById('gbEntries');
-    const nameEl = document.getElementById('gbName');
-    const msgEl = document.getElementById('gbMsg');
-    const submitBtn = document.getElementById('gbSubmit');
     const counterEl = document.getElementById('counter');
 
     // --- visitor counter: bump on every page load, display live ---
@@ -321,75 +288,6 @@
       });
     } catch (err) {
       console.error('Firebase counter error:', err);
-    }
-
-    function escapeHtml(str) {
-      const div = document.createElement('div');
-      div.textContent = str;
-      return div.innerHTML;
-    }
-
-    function formatTimestamp(ts) {
-      if (!ts || !ts.toDate) return 'just now';
-      const date = ts.toDate();
-      const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
-
-      let relative;
-      if (seconds < 5) relative = 'just now';
-      else if (seconds < 60) relative = `${seconds}s ago`;
-      else if (seconds < 3600) relative = `${Math.floor(seconds / 60)}m ago`;
-      else if (seconds < 86400) relative = `${Math.floor(seconds / 3600)}h ago`;
-      else if (seconds < 604800) relative = `${Math.floor(seconds / 86400)}d ago`;
-      else relative = date.toLocaleDateString();
-
-      const full = date.toLocaleString();
-      return `${relative} (${full})`;
-    }
-
-    try {
-      const gbRef = collection(db, "guestbook");
-      const gbQuery = query(gbRef, orderBy("createdAt", "desc"), limit(100));
-
-      onSnapshot(gbQuery, (snapshot) => {
-        if (snapshot.empty) {
-          entriesEl.innerHTML = '&gt; no entries yet... be the first!';
-          return;
-        }
-        const rows = [];
-        snapshot.forEach((doc) => {
-          const d = doc.data();
-          const when = formatTimestamp(d.createdAt);
-          rows.push(`&gt; ${escapeHtml(d.name || 'anonymous loser')} <span style="color:#0a0">[${when}]</span>: ${escapeHtml(d.message || '')}`);
-        });
-        entriesEl.innerHTML = rows.join('<br>');
-      }, (err) => {
-        console.error(err);
-        entriesEl.textContent = 'guestbook is offline right now, sorry! :(';
-      });
-
-      submitBtn.addEventListener('click', async () => {
-        const name = nameEl.value.trim().slice(0, 40) || 'anonymous loser';
-        const message = msgEl.value.trim().slice(0, 300);
-        if (!message) return;
-
-        submitBtn.disabled = true;
-        try {
-          await addDoc(gbRef, {
-            name,
-            message,
-            createdAt: serverTimestamp()
-          });
-          msgEl.value = '';
-        } catch (err) {
-          console.error(err);
-          alert('couldn\'t sign the guestbook, try again in a sec!');
-        } finally {
-          submitBtn.disabled = false;
-        }
-      });
-    } catch (err) {
-      console.error('Firebase guestbook error:', err);
-      entriesEl.textContent = 'guestbook needs to be connected to a database — see setup instructions in the page source!';
     }
   </script>
   
