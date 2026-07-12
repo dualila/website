@@ -54,7 +54,7 @@ fetchWeather();
 // vibe check button?
 const VIBE_FORTUNES = [
   "✧ coming soon ✧",
-  "★ Error ★",
+  "★ soon ★",
 ];
 
 function triggerVibeCheck() {
