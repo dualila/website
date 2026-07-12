@@ -283,7 +283,17 @@ body {
   max-height: 120px;
   overflow-y: auto;
 }
-
+.guestbook-entries::-webkit-scrollbar {
+  width: 10px;
+}
+.guestbook-entries::-webkit-scrollbar-track {
+  background: #000;
+  border-left: 1px dashed #00ff00;
+}
+.guestbook-entries::-webkit-scrollbar-thumb {
+  background: #00ff00;
+  border: 2px solid #000;
+}
 /* ---- link list (cool links page) ---- */
 .link-list {
   list-style: none;
