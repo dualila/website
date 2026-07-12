@@ -36,7 +36,8 @@ body::before {
    LAYOUT CONTAINERS
    ========================================== */
 .layout {
-  max-width: 1060px;
+  width: min(96vw, 1340px);
+  max-width: 1340px;
   margin: 0 auto;
   display: flex;
   align-items: flex-start;
@@ -64,11 +65,16 @@ body::before {
   .sidebar { position: static; flex: 1 1 auto; width: 100%; }
 }
 
+@media (min-width: 1500px) {
+  .hero h1 { font-size: 62px; }
+  .content p, .content li { font-size: 17px; }
+}
+
 /* ==========================================
    SIDEBAR & DIRECTORY TREE
    ========================================== */
 .sidebar {
-  flex: 0 0 230px;
+  flex: 0 0 250px;
   background: #000;
   border: 3px ridge #00ffff;
   padding: 12px 10px;
@@ -209,7 +215,7 @@ body::before {
   font-size: 20px;
   text-shadow: 2px 2px 0px #ff00ff, -1px -1px 0px #00ffff;
 }
-.content p, .content li { font-size: 15px; line-height: 1.5; }
+.content p, .content li { font-size: 16px; line-height: 1.55; }
 
 .update-box {
   display: inline-block;
@@ -822,6 +828,7 @@ footer img { vertical-align: middle; margin: 0 4px; }
   color:#ff00ff;
   background:rgba(255,0,255,.03);
 }
+
 .radio-console {
   background:#000;
   border:3px ridge #00ffff;
