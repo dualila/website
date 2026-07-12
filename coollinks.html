@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>lily wakefield presents ... lilywakefield.com.au</title>
+  <title>cool links !!!</title>
   <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
   <style>
     * { box-sizing: border-box; }
@@ -124,29 +124,6 @@
       margin-bottom: 20px;
     }
 
-    /* ---- visitor counter ---- */
-    .counter-wrap {
-      text-align: center;
-      margin: 20px 0;
-    }
-    .counter {
-      display: inline-block;
-      background: #000;
-      border: 2px solid #ff0000;
-      padding: 6px 10px;
-      font-family: "Courier New", monospace;
-      letter-spacing: 4px;
-      font-size: 22px;
-      color: #ff3333;
-      text-shadow: 0 0 8px #ff0000;
-    }
-    .counter-label {
-      display: block;
-      font-size: 11px;
-      color: #ccc;
-      margin-top: 4px;
-    }
-
     /* ---- nav button ---- */
     .nav-wrap {
       text-align: center;
@@ -199,26 +176,21 @@
   <div class="frame">
 
     <div class="hero">
-      <h1>✧ lily wakefield ✧</h1>
-      <div class="subtitle">dot com dot au</div>
-      <p class="blink">☆ 🚧 UNDER CONSTRUCTION 🚧 ☆</p>
-    </div>
-
-    <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
-
-    <div class="counter-wrap">
-      <div class="counter" id="counter">000217</div>
-      <span class="counter-label">^^^ you are visitor number ^^^</span>
+      <h1>✧ coolest links ✧</h1>
+      <div class="subtitle">on the line</div>
     </div>
 
     <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
 
     <div class="nav-wrap">
-      <a class="nav-button" href="chatroom.html">✎ visit the chatroom ✎</a> 
-      <a class="nav-button" href="coollinks.html">✎ click some links ✎</a>
+      <a class="nav-button" href="index.html">✎ back to the homepage ✎</a>
     </div>
 
-     <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
+    <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
+
+
+
+    <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
 
     <footer>
     ★ ° ☆ ° ★ ° ☆ ° ★ 2026 lily wakefield ★ ° ☆ ° ★ ° ☆ ° ★<br>
@@ -248,50 +220,6 @@
     });
   </script>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
-    import {
-      getFirestore, doc, setDoc, increment, onSnapshot
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-    // Firebase configuration
-    const firebaseConfig = {
-      apiKey: "AIzaSyA25PaWUE39RuX-huMHoziQVUPy_pNFXUE",
-      authDomain: "dot-com-44502.firebaseapp.com",
-      projectId: "dot-com-44502",
-      storageBucket: "dot-com-44502.firebasestorage.app",
-      messagingSenderId: "124684406308",
-      appId: "1:124684406308:web:146706a03bb4bd451552b1",
-      measurementId: "G-HPF4E6G5YW"
-    };
-
-    // Initialize Firebase once
-    const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
-    const db = getFirestore(app);
-
-    const counterEl = document.getElementById('counter');
-
-    // --- visitor counter: bump on every page load, display live ---
-    try {
-      const counterRef = doc(db, "counters", "visitors");
-
-      // increment first (creates the doc with count:1 if it doesn't exist yet)
-      setDoc(counterRef, { count: increment(1) }, { merge: true }).catch((err) => {
-        console.error('counter increment failed:', err);
-      });
-
-      // then listen live so the number updates in real time, even across tabs
-      onSnapshot(counterRef, (snap) => {
-        const count = snap.exists() ? (snap.data().count || 0) : 0;
-        counterEl.textContent = String(count).padStart(6, '0');
-      }, (err) => {
-        console.error('counter listener failed:', err);
-      });
-    } catch (err) {
-      console.error('Firebase counter error:', err);
-    }
   </script>
   
 </body>
