@@ -570,7 +570,7 @@ footer img { vertical-align: middle; margin: 0 4px; }
 }
 .drawer-title {
   width: 100%;
-  background-color: #0a0033;
+  background-color: #14c2047d;
   background-image:
     radial-gradient(#ffffff 1px, transparent 1px),
     radial-gradient(#ffffff 1px, transparent 1px);
@@ -590,8 +590,9 @@ footer img { vertical-align: middle; margin: 0 4px; }
   border-bottom-style: dashed;
 }
 .drawer-title::before {
-  content: "★";
+  content: "★ ° ☆ ° ★ ° ☆ ° ★";
   margin-right: 8px;
+  color: #550dd1;
 }
 .drawer-title span {
   font-size: 1.2rem;
@@ -613,4 +614,26 @@ footer img { vertical-align: middle; margin: 0 4px; }
 
 .drawer.open .drawer-content {
   display: block;
+}
+/* ---- Cabinet Date Timestamp Header ---- */
+.update-box {
+  font-family: "Courier New", monospace;
+  font-size: 13px;
+  color: #ff00ff;
+  text-shadow: 0 0 15px #00ff15;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+/* Make elements with class="blink" completely flash on and off */
+.blink {
+  animation: retro-blink 0.8s steps(2, start) infinite;
+}
+
+@keyframes retro-blink {
+  to { visibility: hidden; }
+}
+
+/* Give headers an underlying retro matrix drop shadow */
+.content h2 {
+  text-shadow: 2px 2px 0px #ff00ff, -1px -1px 0px #00ffff;
 }
