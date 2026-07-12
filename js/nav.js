@@ -96,35 +96,3 @@ function buildSidebar() {
 
 document.addEventListener("DOMContentLoaded", buildSidebar);
 
-document.getElementById("last-updated").textContent =
-    new Date(document.lastModified).toLocaleDateString("en-AU", {
-        day: "numeric",
-        month: "long",
-        year: "numeric"
-    });
-
-
-async function getWeather() {
-    const response = await fetch(
-        "https://api.open-meteo.com/v1/forecast?latitude=-37.8136&longitude=144.9631&current=temperature_2m,weather_code"
-    );
-
-    const data = await response.json();
-
-    const temp = Math.round(data.current.temperature_2m);
-    const code = data.current.weather_code;
-
-    const weatherIcons = {
-        0: "☀️ clear",
-        1: "🌤 mostly clear",
-        2: "⛅ partly cloudy",
-        3: "☁️ cloudy",
-        61: "🌧 rain",
-        80: "🌦 showers"
-    };
-
-    document.getElementById("weather").textContent =
-        `${weatherIcons[code] || "🌡"} ${temp}°C`;
-}
-
-getWeather();
