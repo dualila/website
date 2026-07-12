@@ -281,8 +281,7 @@ body::before {
   background-size: 16px 16px;
   background-position: 0 0, 8px 8px;
   
-  border: 2px dashed #ff00ff;
-  border-radius: 8px; 
+  border: 2px dashed #ff00ff; 
   padding: 14px;
   text-align: center;
   text-decoration: none;
@@ -568,7 +567,6 @@ footer img { vertical-align: middle; margin: 0 4px; }
   background-position: 0 0, 8px 8px;
   
   border: 2px dashed #ff00ff;
-  border-radius: 8px;
   padding: 12px 16px;
   margin-top: 10px;
   display: flex;
