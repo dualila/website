@@ -28,9 +28,10 @@ function buildSidebar() {
   if (!mount) return;
 
   const here = currentFile();
-  const isOnShrinePage = NAV_TREE
-    .find((item) => item.label === "Shrines")
-    .children.some((c) => c.href === here);
+  const branchWithChildren = NAV_TREE.find((item) => item.children);
+  const isOnShrinePage = branchWithChildren
+    ? branchWithChildren.children.some((c) => c.href === here)
+    : false;
 
   const nav = document.createElement("nav");
   nav.className = "sidebar";
