@@ -7,7 +7,7 @@ async function loadTopAlbums() {
 `https://ws.audioscrobbler.com/2.0/?method=user.gettopalbums` +
 `&user=${LASTFM_ALBUM_USER}` +
 `&api_key=${LASTFM_ALBUM_KEY}` +
-`&period=overall` +
+`&period=12month` +
 `&limit=5` +
 `&format=json`;
 
