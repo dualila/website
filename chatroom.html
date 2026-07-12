@@ -12,7 +12,7 @@
   <div class="ticker"><span>✦ thank you for visiting and i welcome you with open arms ✦</span></div>
 
   <div class="layout">
-    <div id="sidebar"></div>
+    <div class="sidebar" id="sidebar"></div>
 
     <div class="frame">
 
@@ -33,7 +33,7 @@
       <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
 
       <footer>
-      ★ ° ☆ ° ★ ° ☆ ° ★ 2026 lily wakefield ★ ° ☆ ° ★ ° ☆ ° ★<br>
+        ★ ° ☆ ° ★ ° ☆ ° ★ 2026 lily wakefield ★ ° ☆ ° ★ ° ☆ ° ★<br>
         <img src="/images/favicon.ico" alt="site icon" width="24" height="24">
         best experienced with an open heart
       </footer>
@@ -44,12 +44,11 @@
   <script src="js/nav.js"></script>
 
   <script>
-    // sparkle cursor trail
     const sparkleChars = ['✦', '✧', '☆', '★', '✨', '*'];
     let lastSparkle = 0;
     document.addEventListener('mousemove', (e) => {
       const now = Date.now();
-      if (now - lastSparkle < 60) return; // throttle so it doesn't flood the DOM
+      if (now - lastSparkle < 60) return;
       lastSparkle = now;
 
       const el = document.createElement('span');
@@ -70,7 +69,6 @@
       getFirestore, collection, addDoc, query, orderBy, limit, onSnapshot, serverTimestamp
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    // Chatroom's Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyA25PaWUE39RuX-huMHoziQVUPy_pNFXUE",
       authDomain: "dot-com-44502.firebaseapp.com",
@@ -81,7 +79,6 @@
       measurementId: "G-HPF4E6G5YW"
     };
 
-    // Initialize Firebase once
     const app = initializeApp(firebaseConfig);
     const analytics = getAnalytics(app);
     const db = getFirestore(app);
@@ -110,8 +107,7 @@
       else if (seconds < 604800) relative = `${Math.floor(seconds / 86400)}d ago`;
       else relative = date.toLocaleDateString();
 
-      const full = date.toLocaleString();
-      return `${relative} (${full})`;
+      return `${relative} (${date.toLocaleString()})`;
     }
 
     try {
@@ -135,7 +131,8 @@
         entriesEl.textContent = 'chatroom is offline right now, sorry! :(';
       });
 
-      submitBtn.addEventListener('click', async () => {
+      // Submit Message Logic
+      const handleSubmission = async () => {
         const name = nameEl.value.trim().slice(0, 40) || 'anonymous loser';
         const message = msgEl.value.trim().slice(0, 300);
         if (!message) return;
@@ -154,10 +151,21 @@
         } finally {
           submitBtn.disabled = false;
         }
+      };
+
+      submitBtn.addEventListener('click', handleSubmission);
+
+      // ADDED: Press Enter to rapidly send messages via desktop keyboard
+      msgEl.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          handleSubmission();
+        }
       });
+
     } catch (err) {
       console.error('Firebase guestbook error:', err);
-      entriesEl.textContent = 'chatroom needs to be connected to a database — see setup instructions in the page source!';
+      entriesEl.textContent = 'chatroom disconnected from standard tracking.';
     }
   </script>
 
