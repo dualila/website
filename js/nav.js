@@ -37,7 +37,7 @@ function buildSidebar() {
 
   const title = document.createElement("p");
   title.className = "sidebar-title";
-  title.textContent = "★ click something ★";
+  title.textContent = "★ click something ??? ★";
   nav.appendChild(title);
 
   const topList = document.createElement("ul");
