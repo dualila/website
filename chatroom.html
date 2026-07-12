@@ -42,25 +42,7 @@
   </div>
 
   <script src="js/nav.js"></script>
-
-  <script>
-    const sparkleChars = ['✦', '✧', '☆', '★', '✨', '*'];
-    let lastSparkle = 0;
-    document.addEventListener('mousemove', (e) => {
-      const now = Date.now();
-      if (now - lastSparkle < 60) return;
-      lastSparkle = now;
-
-      const el = document.createElement('span');
-      el.className = 'sparkle-trail';
-      el.textContent = sparkleChars[Math.floor(Math.random() * sparkleChars.length)];
-      el.style.left = e.clientX + 'px';
-      el.style.top = e.clientY + 'px';
-      el.style.color = `hsl(${Math.floor(Math.random() * 360)}, 100%, 70%)`;
-      document.body.appendChild(el);
-      setTimeout(() => el.remove(), 2400);
-    });
-  </script>
+  <script src="js/effects.js"></script>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";

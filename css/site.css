@@ -230,6 +230,22 @@ body::before {
 /* ==========================================
    ABOUT PAGE CONTENT & AVATAR
    ========================================== */
+.bio-container { display: flex; gap: 30px; flex-wrap: wrap; margin-top: 20px; }
+.avatar-column { flex: 1; min-width: 200px; text-align: center; }
+.bio-column { flex: 2; min-width: 300px; line-height: 1.6; }
+
+.avatar-placeholder {
+  border: 3px double #00ffff;
+  padding: 10px;
+  width: 150px;
+  height: 150px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: 0 0 10px #00ffff inset;
+}
 .avatar-placeholder img {
   max-width: 100%;
   max-height: 100%;
@@ -237,6 +253,33 @@ body::before {
   border: 1px solid #ff00ff;
 }
 .avatar-placeholder img:hover { animation: picture-wiggle .4s; }
+
+/* Skills, styled as small widget tiles to match .widget-box / .contact-box elsewhere */
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 8px;
+  margin-bottom: 15px;
+}
+.skill-item {
+  padding: 6px 8px;
+  font-family: "Courier New", monospace;
+  font-size: 13px;
+  color: #00ffff;
+  text-shadow: 0 0 2px #00ffff;
+  transition: transform 0.15s ease;
+}
+.skill-item:hover { transform: rotate(-1deg) scale(1.03); }
+
+/* Interest tags */
+.interests-list { display: flex; gap: 8px; flex-wrap: wrap; }
+.interest-tag {
+  border: 1px dashed #ff00ff;
+  padding: 3px 8px;
+  font-size: 12px;
+  color: #ff00ff;
+  background: rgba(255, 0, 255, 0.03);
+}
 
 @keyframes picture-wiggle {
   0% { transform: rotate(0); }
@@ -246,15 +289,20 @@ body::before {
   100% { transform: rotate(0); }
 }
 
-.section-title {
+.section-title,
+.content h2.section-title {
   font-family: "Courier New", monospace;
   font-size: 14px;
   font-weight: bold;
   text-transform: uppercase;
   color: #ffff00;
+  background: none;
+  background-image: none;
   text-shadow: 0 0 3px #ffff00;
+  border: none;
   margin-top: 22px;
   margin-bottom: 10px;
+  padding: 0;
   letter-spacing: 2px;
 }
 
@@ -665,57 +713,6 @@ footer img { vertical-align: middle; margin: 0 4px; }
   color:#ff00ff;
   font-size:11px;
   font-weight:bold;
-}
-.rotation-box {
-  background:#000;
-  border:3px ridge #00ffff;
-  padding:12px;
-  font-family:"Courier New", monospace;
-  box-shadow:
-    0 0 12px #00ffff inset,
-    0 0 10px #ff00ff;
-}
-
-.rotation-header {
-  color:#ff00ff;
-  border-bottom:1px dashed #ff00ff;
-  padding-bottom:8px;
-  margin-bottom:10px;
-  font-weight:bold;
-}
-
-.album-card {
-  display:flex;
-  gap:12px;
-  align-items:center;
-  padding:10px 0;
-  border-bottom:1px dotted #444;
-}
-
-.album-card:last-child {
-  border-bottom:none;
-}
-
-.album-card img {
-  width:70px;
-  height:70px;
-  object-fit:cover;
-  border:2px solid #ffff00;
-}
-
-.album-name {
-  color:#ffff00;
-  text-shadow:0 0 5px #ffff00;
-  font-weight:bold;
-}
-
-.album-artist {
-  color:#00ffff;
-}
-
-.album-count {
-  color:#0f0;
-  font-size:11px;
 }
 .rotation-box {
   background:#000;
