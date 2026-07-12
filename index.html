@@ -314,6 +314,23 @@
       return div.innerHTML;
     }
 
+    function formatTimestamp(ts) {
+      if (!ts || !ts.toDate) return 'just now';
+      const date = ts.toDate();
+      const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
+
+      let relative;
+      if (seconds < 5) relative = 'just now';
+      else if (seconds < 60) relative = `${seconds}s ago`;
+      else if (seconds < 3600) relative = `${Math.floor(seconds / 60)}m ago`;
+      else if (seconds < 86400) relative = `${Math.floor(seconds / 3600)}h ago`;
+      else if (seconds < 604800) relative = `${Math.floor(seconds / 86400)}d ago`;
+      else relative = date.toLocaleDateString();
+
+      const full = date.toLocaleString();
+      return `${relative} (${full})`;
+    }
+
     try {
       const gbRef = collection(db, "guestbook");
       const gbQuery = query(gbRef, orderBy("createdAt", "desc"), limit(100));
@@ -326,7 +343,8 @@
         const rows = [];
         snapshot.forEach((doc) => {
           const d = doc.data();
-          rows.push(`&gt; ${escapeHtml(d.name || 'anonymous loser')}: ${escapeHtml(d.message || '')}`);
+          const when = formatTimestamp(d.createdAt);
+          rows.push(`&gt; ${escapeHtml(d.name || 'anonymous loser')} <span style="color:#0a0">[${when}]</span>: ${escapeHtml(d.message || '')}`);
         });
         entriesEl.innerHTML = rows.join('<br>');
       }, (err) => {
