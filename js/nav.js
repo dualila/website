@@ -3,18 +3,15 @@
 
 const NAV_TREE = [
   { label: "home", href: "index.html" },
-  { label: "About Me", href: "about.html" },
   { label: "chatroom", href: "chatroom.html" },
   {
     label: "stuff",
     children: [
-      { label: "melbourne", href: "shrine-melbourne.html" },
-      { label: "trees", href: "trees.html" },
+      { label: "about me", href: "about.html" },
+      { label: "downloads", href: "downloads.html" },
+      { label: "cool links", href: "coollinks.html"}
     ]
   },
-  { label: "cool links", href: "coollinks.html" },
-  { label: "Photos", href: "photos.html" },
-  { label: "Downloads", href: "downloads.html" },
 ];
 
 function currentFile() {
