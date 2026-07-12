@@ -21,3 +21,18 @@
     setTimeout(() => el.remove(), 2400);
   });
 })();
+for(let i=0;i<40;i++){
+
+const star=document.createElement("div");
+
+star.className="star";
+
+star.style.left=Math.random()*100+"vw";
+
+star.style.animationDuration=8+Math.random()*15+"s";
+
+star.style.animationDelay=-Math.random()*20+"s";
+
+document.body.appendChild(star);
+
+}
