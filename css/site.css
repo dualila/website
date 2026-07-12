@@ -122,17 +122,6 @@ body {
   box-shadow: 0 0 25px #ff00ff, 0 0 45px #00ffff inset;
 }
 
-.frame::before {
-  content: " ";
-  display: block;
-  position: absolute;
-  top: 0; left: 0; bottom: 0; right: 0;
-  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
-              linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-  z-index: 2;
-  background-size: 100% 4px, 6px 100%;
-  pointer-events: none; /* Allows users to click through the overlay */
-}
 
 @media (max-width: 720px) {
   .layout {
@@ -284,6 +273,11 @@ body {
 }
 .guestbook button:hover {
   filter: brightness(1.2);
+}
+.guestbook button:active, .nav-button:active {
+  border-style: inset;
+  background: linear-gradient(to bottom, #9900cc, #ff00ff);
+  padding: 9px 15px 7px 17px; /* Shifts text slightly down & right on click! */
 }
 .guestbook-entries {
   background: #000;
