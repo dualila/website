@@ -124,6 +124,32 @@
       margin-bottom: 20px;
     }
 
+    /* ---- link list ---- */
+    .link-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .link-list li {
+      margin: 10px 0;
+    }
+    .link-list li::before {
+      content: "☆ ";
+    }
+    .link-list a {
+      color: #00ffff;
+      text-decoration: none;
+      font-family: "Courier New", monospace;
+      font-size: 16px;
+      text-shadow: 0 0 6px #00ffff;
+      border-bottom: 1px dashed #00ffff;
+    }
+    .link-list a:hover {
+      color: #ffff00;
+      text-shadow: 0 0 8px #ffff00;
+      border-bottom-color: #ffff00;
+    }
+
     /* ---- nav button ---- */
     .nav-wrap {
       text-align: center;
@@ -188,7 +214,13 @@
 
     <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
 
-
+    <div class="content">
+      <h2>sites worth a click</h2>
+      <ul class="link-list">
+        <li><a href="https://indodic.com" target="_blank" rel="noopener noreferrer">indodic.com</a></li>
+        <li><a href="https://danielboek.com.au" target="_blank" rel="noopener noreferrer">danielboek.com.au</a></li>
+      </ul>
+    </div>
 
     <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
 
@@ -218,8 +250,6 @@
       document.body.appendChild(el);
       setTimeout(() => el.remove(), 2400);
     });
-  </script>
-
   </script>
   
 </body>
