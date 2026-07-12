@@ -254,13 +254,6 @@
   </div>
 
   <script>
-    // ticking visitor counter for fun and for real this time
-    let count = 217;
-    setInterval(() => {
-      count += Math.floor(Math.random() * 2);
-      document.getElementById('counter').textContent = String(count).padStart(6, '0');
-    }, 4000);
-
     // sparkle cursor trail
     const sparkleChars = ['✦', '✧', '☆', '★', '✨', '*'];
     let lastSparkle = 0;
@@ -284,7 +277,8 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
     import {
-      getFirestore, collection, addDoc, query, orderBy, limit, onSnapshot, serverTimestamp
+      getFirestore, collection, addDoc, query, orderBy, limit, onSnapshot, serverTimestamp,
+      doc, setDoc, increment
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     // Guestbook's Firebase configuration
@@ -307,6 +301,27 @@
     const nameEl = document.getElementById('gbName');
     const msgEl = document.getElementById('gbMsg');
     const submitBtn = document.getElementById('gbSubmit');
+    const counterEl = document.getElementById('counter');
+
+    // --- visitor counter: bump on every page load, display live ---
+    try {
+      const counterRef = doc(db, "counters", "visitors");
+
+      // increment first (creates the doc with count:1 if it doesn't exist yet)
+      setDoc(counterRef, { count: increment(1) }, { merge: true }).catch((err) => {
+        console.error('counter increment failed:', err);
+      });
+
+      // then listen live so the number updates in real time, even across tabs
+      onSnapshot(counterRef, (snap) => {
+        const count = snap.exists() ? (snap.data().count || 0) : 0;
+        counterEl.textContent = String(count).padStart(6, '0');
+      }, (err) => {
+        console.error('counter listener failed:', err);
+      });
+    } catch (err) {
+      console.error('Firebase counter error:', err);
+    }
 
     function escapeHtml(str) {
       const div = document.createElement('div');
