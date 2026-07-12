@@ -12,7 +12,7 @@
   <div class="ticker"><span>✦ thank you for visiting and i welcome you with open arms ✦</span></div>
 
   <div class="layout">
-    <div id="sidebar"></div>
+    <div class="sidebar" id="sidebar"></div>
 
     <div class="frame">
 
@@ -24,37 +24,96 @@
       <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
 
       <div class="content">
-        <h2>downloads!</h2>
+        <h2>downloads now free online now!</h2>
+        <div class="update-box">
+  ✦ last updated: july 2026
+</div>
 
         <!--
           HOW TO ADD A NEW DOWNLOAD:
-          1. Copy one <a class="download-card"> block below.
+          1. Copy one <a class="download-card"> block below (keep it inside a .downloads-grid).
           2. Set href to the PDF's file path (e.g. "downloads/study-planner.pdf").
              target="_blank" makes it open in a new tab instead of downloading straight away.
-          3. Replace the placeholder SVG with <img src="thumbs/your-preview.png" alt="..."> if you
-             make a real preview image (e.g. a screenshot of the PDF's first page, saved as a .png).
-             Don't forget the closing </div> right after the image!
-          4. Update the title and meta text (file type / page count / whatever's useful).
+          3. Put a real preview image inside .download-thumb: <img src="downloads/your-preview.png" alt="...">
+             (a screenshot of the PDF's first page works great — that's what the two below use).
+             If you don't have one yet, use a <div class="download-thumb icon-only"> with an SVG icon instead —
+             don't reuse the plain .download-thumb placeholder look for permanent icon cards, it reads as unfinished.
+          4. Update the title and meta text (file type / size / whatever's useful).
+          5. Use <span class="meta-tag">[ Size: x MB · Type: PDF ]</span> for quick-glance info —
+             don't use inline style="color:..."; the .meta-tag class already handles the glow.
         -->
-        <div class="downloads-grid">
+        <div class="cabinet">
 
-          <a class="download-card" href="downloads/Trees for the North.pdf" target="_blank" rel="noopener noreferrer">
-            <div class="download-thumb">
-              <img src="downloads/Trees for the North.png" alt="Trees for the North cover page">
-            </div>
-            <div class="download-title">Trees for the North · Parliamentary Report 2024</div>
-            <div class="download-meta">Tree canopy coverage and benefits for the electoral district of Preston; Prepared on behalf of Nathan Lambert MP</div>
-          </a>
+  <div class="drawer">
+    <button class="drawer-title">
+      documents
+      <span>+</span>
+    </button>
 
-          <a class="download-card" href="downloads/Changing Perceptions.pdf" target="_blank" rel="noopener noreferrer">
-            <div class="download-thumb">
-              <img src="downloads/Changing Perceptions.png" alt="Connecting Neighbours and Changing Perceptions cover page">
-            </div>
-            <div class="download-title">Connecting Neighbours and Changing Perceptions</div>
-            <div class="download-meta">Policy Proposal 2025 · Strengthening bilateral ties between Indonesia and Australia through education and exchange </div>
-          </a>
+    <div class="drawer-content">
+      <div class="downloads-grid">
 
-        </div>
+        <a class="download-card" href="downloads/Trees for the North.pdf" target="_blank">
+          <div class="download-thumb">
+            <img src="downloads/Trees for the North.png" alt="Trees for the North report preview">
+          </div>
+          <div class="download-title">
+            Trees for the North
+          </div>
+          <div class="download-meta">
+            Parliamentary Internship Report · 2024 · Tree canopy coverage and benefits for the electoral district of Preston; Prepared on behalf of Nathan Lambert MP<br>
+            <span class="meta-tag">[ Size: 5.7 MB · Type: PDF ]</span>
+          </div>
+        </a>
+
+        <a class="download-card" href="downloads/Changing Perceptions.pdf" target="_blank">
+          <div class="download-thumb">
+            <img src="downloads/Changing Perceptions.png" alt="Changing Perceptions policy proposal preview">
+          </div>
+          <div class="download-title">
+            🇮🇩 Connecting Neighbours and Changing Perceptions
+          </div>
+          <div class="download-meta">
+            Proposal · 2025 · Strengthening bilateral ties between Indonesia and Australia through education and exchange<br>
+            <span class="meta-tag">[ Size: 0.2 MB · Type: PDF ]</span>
+          </div>
+        </a>
+
+      </div>
+    </div>
+  </div>
+
+
+
+  <div class="drawer">
+
+    <button class="drawer-title">
+      download this website
+      <span>+</span>
+    </button>
+
+    <div class="drawer-content">
+      <div class="downloads-grid">
+
+        <a class="download-card" href="https://github.com/dualila/website" target="_blank">
+          <div class="download-thumb icon-only" style="color:#00ffff;">
+            <img src="downloads/mariahgit.jpg" alt="Mariah Carey">
+          </div>
+          <div class="download-title">
+            💾 website source code
+          </div>
+          <div class="download-meta">
+            my github profile
+          </div>
+        </a>
+
+      </div>
+    </div>
+
+  </div>
+
+
+</div>
 
 
       </div>
@@ -72,6 +131,7 @@
 
   <script src="js/nav.js"></script>
   <script src="js/effects.js"></script>
+  <script src="js/downloads.js"></script>
 
 </body>
 </html>

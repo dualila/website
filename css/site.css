@@ -205,6 +205,16 @@ body {
   font-size: 20px;
   text-shadow: 2px 2px 0 #000;
 }
+.update-box {
+  display: inline-block;
+  margin: 8px 0 14px 0;
+  padding: 4px 10px;
+  font-family: "Courier New", monospace;
+  font-size: 12px;
+  color: #0f0;
+  border: 1px dashed #0f0;
+  background: rgba(0, 255, 0, 0.05);
+}
 .content p, .content li {
   font-size: 15px;
   line-height: 1.5;
@@ -374,6 +384,15 @@ body {
   height: 46%;
   opacity: 0.85;
 }
+.download-thumb.icon-only {
+  background: #00d9c0;
+  border: 2px solid #000;
+}
+.download-thumb.icon-only svg {
+  width: 46%;
+  height: 46%;
+  opacity: 0.85;
+}
 .download-title {
   font-size: 13px;
   font-weight: bold;
@@ -385,6 +404,12 @@ body {
   font-family: "Courier New", monospace;
   font-size: 11px;
   color: #0f0;
+}
+.download-meta .meta-tag {
+  display: inline-block;
+  margin-top: 3px;
+  color: #ff00ff;
+  text-shadow: 0 0 4px #ff00ff;
 }
 
 /* ---- homepage widgets row ---- */
@@ -516,4 +541,76 @@ footer img { vertical-align: middle; margin: 0 4px; }
     opacity: 0;
     transform: translate(var(--travel-x), var(--travel-y));
   }
+}
+/* DIGITAL FILING CABINET */
+
+.cabinet {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+
+.drawer {
+  border: 3px solid #000;
+  box-shadow: 4px 4px 0 #000;
+  background: #ff3ea5;
+  transform: rotate(-1deg);
+}
+.cabinet .drawer:nth-child(3n+2) {
+  background: #ff8c00;
+  transform: rotate(0.8deg);
+}
+.cabinet .drawer:nth-child(3n) {
+  background: #00d9c0;
+  transform: rotate(-0.6deg);
+}
+.drawer.open {
+  box-shadow: 2px 2px 0 #000;
+}
+.drawer-title {
+  width: 100%;
+  background-color: #0a0033;
+  background-image:
+    radial-gradient(#ffffff 1px, transparent 1px),
+    radial-gradient(#ffffff 1px, transparent 1px);
+  border: none;
+  border-bottom: 3px solid #000;
+  padding: 12px 15px;
+  font-family: Georgia, 'Times New Roman', Times, serif, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+  font-size: 1.15rem;
+  letter-spacing: 0.5px;
+  color: #e9f3f3;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.drawer.open .drawer-title {
+  border-bottom-style: dashed;
+}
+.drawer-title::before {
+  content: "★";
+  margin-right: 8px;
+}
+.drawer-title span {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+
+.drawer-title:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+
+.drawer-content {
+  display: none;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+
+.drawer.open .drawer-content {
+  display: block;
 }
