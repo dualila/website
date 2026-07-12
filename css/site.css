@@ -455,3 +455,10 @@ footer img { vertical-align: middle; margin: 0 4px; }
     transform: translate(var(--travel-x), var(--travel-y));
   }
 }
+.site-info,
+.weather {
+    border: 1px dashed currentColor;
+    padding: 8px;
+    width: fit-content;
+    font-family: monospace;
+}
