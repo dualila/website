@@ -314,6 +314,61 @@ body {
   font-size: 13px;
   color: #cccccc;
   font-family: "Comic Sans MS", "Comic Sans", serif;
+  font-style: italic;
+}
+
+/* ---- downloads grid ---- */
+.downloads-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 16px;
+  margin-top: 10px;
+}
+.download-card {
+  background: #000;
+  border: 2px inset #00ffff;
+  padding: 10px;
+  text-align: center;
+  text-decoration: none;
+  color: #f5f5f5;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.download-card:hover {
+  transform: scale(1.04) rotate(-1deg);
+  box-shadow: 0 0 14px #ff00ff;
+}
+.download-thumb {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  background: linear-gradient(160deg, #2a0080, #4b00b3);
+  border: 2px dashed #ffd700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+.download-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.download-thumb svg {
+  width: 46%;
+  height: 46%;
+  opacity: 0.85;
+}
+.download-title {
+  font-size: 13px;
+  font-weight: bold;
+  color: #ffff00;
+  text-shadow: 0 0 4px #ffff00;
+  margin: 4px 0 2px 0;
+}
+.download-meta {
+  font-family: "Courier New", monospace;
+  font-size: 11px;
+  color: #0f0;
 }
 
 /* ---- nav button (page-to-page CTA buttons) ---- */
@@ -358,4 +413,46 @@ footer img { vertical-align: middle; margin: 0 4px; }
 @keyframes sparkle-fade {
   0%   { opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(0deg); }
   100% { opacity: 0; transform: translate(-50%, -50%) scale(0.4) rotate(90deg) translateY(-14px); }
+}
+
+/* ---- shooting star ---- */
+.shooting-star {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 6px 2px #fff, 0 0 14px 4px #ffee88;
+  pointer-events: none;
+  z-index: 9998;
+  animation: shooting-star-travel 1.4s linear forwards;
+}
+.shooting-star::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 140px;
+  height: 2px;
+  background: linear-gradient(to left, rgba(255,255,255,0.9), transparent);
+  transform: translate(-100%, -50%) rotate(-24deg);
+  transform-origin: right center;
+}
+@keyframes shooting-star-travel {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+  8% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--travel-x), var(--travel-y));
+  }
 }

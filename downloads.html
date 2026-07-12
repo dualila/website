@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>coming soon</title>
+  <title>downloads !!!</title>
   <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
   <link rel="stylesheet" href="css/site.css">
 </head>
@@ -17,9 +17,33 @@
     <div class="frame">
 
       <div class="hero">
-        <h1>✧ COMING SOON ✧</h1>
-        <p class="blink">☆ 🚧 UNDER CONSTRUCTION 🚧 ☆</p>
-        <div class="status-line" id="statusLine"></div>
+        <h1>✧ downloads ✧</h1>
+        <div class="subtitle">no viruses probably</div>
+      </div>
+
+      <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
+
+      <div class="content">
+        <h2>downloads!</h2>
+
+        <!--
+          HOW TO ADD A NEW DOWNLOAD:
+          1. Copy one <a class="download-card"> block below.
+          2. Set href to the PDF's file path (e.g. "downloads/study-planner.pdf").
+          3. Replace the placeholder SVG with <img src="thumbs/your-preview.png" alt="..."> if you
+             make a real preview image (e.g. a screenshot of the PDF's first page, saved as a .png).
+          4. Update the title and meta text (file type / page count / whatever's useful).
+        -->
+        <div class="downloads-grid">
+
+          <a class="download-card" href="downloads/Changing Perceptions.pdf" download>
+            <div class="download-thumb">
+              <img src="downloads/Changing Perceptions.png">
+            <div class="download-title">Connecting Neighbours and Changing Perceptions</div>
+            <div class="download-meta">Policy Proposal 2025 · Indonesia - Australia </div>
+          </a>
+
+        </div>
       </div>
 
       <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
@@ -34,61 +58,7 @@
   </div>
 
   <script src="js/nav.js"></script>
-
-  <script>
-    // sparkle cursor trail
-    const sparkleChars = ['✦', '✧', '☆', '★', '✨', '*'];
-    let lastSparkle = 0;
-    document.addEventListener('mousemove', (e) => {
-      const now = Date.now();
-      if (now - lastSparkle < 60) return; // throttle so it doesn't flood the DOM
-      lastSparkle = now;
-
-      const el = document.createElement('span');
-      el.className = 'sparkle-trail';
-      el.textContent = sparkleChars[Math.floor(Math.random() * sparkleChars.length)];
-      el.style.left = e.clientX + 'px';
-      el.style.top = e.clientY + 'px';
-      el.style.color = `hsl(${Math.floor(Math.random() * 360)}, 100%, 70%)`;
-      document.body.appendChild(el);
-      setTimeout(() => el.remove(), 2400);
-    });
-
-    // edit STATUS_MESSAGES to change what it says
-    const STATUS_MESSAGES = [
-      '404',
-      '420',
-      "67",
-      'coming soon'
-    ];
-    const statusEl = document.getElementById('statusLine');
-    let msgIndex = 0;
-    let charIndex = 0;
-    let typing = true;
-
-    function typeStatus() {
-      const current = STATUS_MESSAGES[msgIndex];
-      if (typing) {
-        charIndex++;
-        statusEl.innerHTML = current.slice(0, charIndex) + '<span class="cursor">&nbsp;</span>';
-        if (charIndex === current.length) {
-          typing = false;
-          setTimeout(typeStatus, 1800); // pause before deleting
-          return;
-        }
-      } else {
-        charIndex--;
-        statusEl.innerHTML = current.slice(0, charIndex) + '<span class="cursor">&nbsp;</span>';
-        if (charIndex === 0) {
-          typing = true;
-          msgIndex = (msgIndex + 1) % STATUS_MESSAGES.length;
-        }
-      }
-      setTimeout(typeStatus, typing ? 55 : 30);
-    }
-    typeStatus();
-  </script>
-
+  <script src="js/effects.js"></script>
 
 </body>
 </html>
