@@ -5,8 +5,8 @@ const LASTFM_GENRE_KEY = "320c29920c2820467b0ac8daae64cb76";
 // then grabs each artist's top tags and weights them by how much you've
 // played that artist. tags that aren't really genres get filtered out below.
 const ARTIST_LIMIT = 12;
-const TAGS_PER_ARTIST = 3;
-const GENRES_TO_SHOW = 8;
+const TAGS_PER_ARTIST = 5;
+const GENRES_TO_SHOW = 20;
 
 // last.fm tags are crowd-sourced and messy — strip out the non-genre noise
 const TAG_BLOCKLIST = new Set([
