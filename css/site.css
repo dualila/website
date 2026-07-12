@@ -765,6 +765,63 @@ footer img { vertical-align: middle; margin: 0 4px; }
   color:#0f0;
   font-size:11px;
 }
+.genre-box {
+  background:#000;
+  border:3px ridge #0f0;
+  padding:12px;
+  font-family:"Courier New", monospace;
+  box-shadow:
+    0 0 12px #0f0,
+    inset 0 0 15px rgba(255,255,0,.15);
+  max-width:650px;
+  margin:20px auto;
+}
+
+.genre-header {
+  color:#ffff00;
+  border-bottom:1px dashed #0f0;
+  padding-bottom:8px;
+  margin-bottom:12px;
+  font-weight:bold;
+}
+
+.genres-grid {
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+
+.genre-tag {
+  display:inline-block;
+  padding:5px 10px;
+  font-size:12px;
+  border-radius:2px;
+  text-transform:lowercase;
+  transition:transform .15s ease;
+}
+
+.genre-tag:hover {
+  transform:rotate(-2deg) scale(1.08);
+}
+
+.genre-tag-hot {
+  border:1px solid #0f0;
+  color:#0f0;
+  text-shadow:0 0 6px #0f0;
+  background:rgba(0,255,0,.08);
+}
+
+.genre-tag-warm {
+  border:1px dashed #00ffff;
+  color:#00ffff;
+  background:rgba(0,255,255,.05);
+}
+
+.genre-tag-cool {
+  border:1px dotted #ff00ff;
+  color:#ff00ff;
+  background:rgba(255,0,255,.03);
+}
 .radio-console {
   background:#000;
   border:3px ridge #00ffff;
