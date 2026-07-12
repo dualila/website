@@ -324,8 +324,6 @@ body::before {
 
 .drawer-title {
   width: 100%;
-  background-color: #14c2047d;
-  background-image: radial-gradient(#ffffff 1px, transparent 1px), radial-gradient(#ffffff 1px, transparent 1px);
   border: none;
   border-bottom: 3px solid #000;
   padding: 12px 15px;
@@ -337,11 +335,19 @@ body::before {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  
+
+  background-color: #14c2047d;
+  background-image: 
+    radial-gradient(rgba(44, 68, 200, 0.496) 1px, transparent 1px), 
+    radial-gradient(rgba(30, 4, 4, 0.905) 1px, transparent 1px);
+  background-size: 16px 16px;
+  background-position: 0 0, 8px 8px;
 }
 .drawer.open .drawer-title { border-bottom-style: dashed; }
 .drawer-title::before { content: "★ ° ☆ ° ★ ° ☆ ° ★"; margin-right: 8px; color: #550dd1; }
 .drawer-title span { font-size: 1.2rem; flex-shrink: 0; }
-.drawer-title:hover { background: rgba(255, 255, 255, 0.35); }
+.drawer-title:hover { background-color: rgba(255, 255, 255, 0.35); }
 .drawer-content { display: none; padding: 10px; background: rgba(255, 255, 255, 0.15); }
 .drawer.open .drawer-content { display: block; }
 
