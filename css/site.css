@@ -262,6 +262,58 @@ body::before {
 .interest-tag:hover { transform: rotate(-2deg) scale(1.05); }
 
 /* ==========================================
+   CONTACT SECTION
+   ========================================== */
+.contact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.contact-box {
+  flex: 1;
+  min-width: 180px;
+  background-color: #05001a;
+  background-image:
+    radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px),
+    radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px);
+  background-size: 16px 16px;
+  background-position: 0 0, 8px 8px;
+  
+  border: 2px dashed #ff00ff;
+  border-radius: 8px; 
+  padding: 14px;
+  text-align: center;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 0 8px rgba(255, 0, 255, 0.2);
+  transition: all 0.2s ease-in-out;
+}
+
+.contact-icon {
+  font-size: 20px;
+  color: #ff00ff;
+  text-shadow: 0 0 4px #ff00ff;
+}
+
+.contact-label {
+  font-family: "Courier New", monospace;
+  font-size: 14px;
+  font-weight: bold;
+  color: #ffff00;
+  text-shadow: 0 0 3px #ffff00;
+}
+
+.contact-detail {
+  font-size: 12px;
+  color: #cccccc;
+}
+
+/* ==========================================
    DIGITAL FILING CABINET
    ========================================== */
 .cabinet { display: flex; flex-direction: column; gap: 15px; }
