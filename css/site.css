@@ -314,6 +314,7 @@ body {
   font-size: 13px;
   color: #cccccc;
   font-family: "Comic Sans MS", "Comic Sans", serif;
+  font-style: italic;
 }
 
 /* ---- downloads grid ---- */
@@ -368,6 +369,51 @@ body {
   font-family: "Courier New", monospace;
   font-size: 11px;
   color: #0f0;
+}
+
+/* ---- homepage widgets row ---- */
+.widgets-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 14px;
+  margin: 20px 0;
+}
+.widget-box {
+  background: #000;
+  border: 2px solid #00ffff;
+  box-shadow: 0 0 10px #00ffff inset;
+  padding: 10px;
+  text-align: center;
+  font-family: "Courier New", monospace;
+}
+.widget-label {
+  font-size: 10px;
+  color: #ccc;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.widget-value {
+  font-size: 15px;
+  color: #0f0;
+  text-shadow: 0 0 5px #0f0;
+}
+.widget-value.small {
+  font-size: 12px;
+}
+.vibe-btn {
+  margin-top: 8px;
+  background: linear-gradient(to bottom, #ff00ff, #9900cc);
+  color: #fff;
+  border: 2px outset #ff00ff;
+  font-family: "Comic Sans MS", cursive;
+  font-weight: bold;
+  font-size: 12px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+.vibe-btn:hover {
+  filter: brightness(1.2);
 }
 
 /* ---- nav button (page-to-page CTA buttons) ---- */
@@ -454,11 +500,4 @@ footer img { vertical-align: middle; margin: 0 4px; }
     opacity: 0;
     transform: translate(var(--travel-x), var(--travel-y));
   }
-}
-.site-info,
-.weather {
-    border: 1px dashed currentColor;
-    padding: 8px;
-    width: fit-content;
-    font-family: monospace;
 }

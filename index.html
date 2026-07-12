@@ -30,12 +30,24 @@
         <span class="counter-label">^^^ you are visitor number ^^^</span>
       </div>
 
-      <div class="site-info">
-        <p>🌱 last updated: <span id="last-updated"></span></p>
-      </div>
-      <div class="weather">
-    <p>🌦 Melbourne weather:</p>
-    <p id="weather">loading...</p>
+      <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
+
+      <div class="widgets-row">
+        <div class="widget-box">
+          <div class="widget-label">last updated</div>
+          <div class="widget-value small" id="lastUpdated">loading...</div>
+        </div>
+
+        <div class="widget-box">
+          <div class="widget-label">melbourne weather</div>
+          <div class="widget-value" id="weatherValue">loading...</div>
+        </div>
+
+        <div class="widget-box">
+          <div class="widget-label">coming soon</div>
+          <div class="widget-value small" id="vibeText">click to come soon</div>
+          <button class="vibe-btn" id="vibeBtn">🔮</button>
+        </div>
       </div>
 
       <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
@@ -43,35 +55,18 @@
       <footer>
       ★ ° ☆ ° ★ ° ☆ ° ★ 2026 lily wakefield ★ ° ☆ ° ★ ° ☆ ° ★<br>
         <img src="/images/favicon.ico" alt="site icon" width="24" height="24">
-        best experienced with an open heart
+        best experienced with the sound on and an open heart
       </footer>
 
     </div>
   </div>
 
   <script src="js/nav.js"></script>
+  <script src="js/effects.js"></script>
 
   <script>
-    // sparkle cursor trail
-    const sparkleChars = ['✦', '✧', '☆', '★', '✨', '*'];
-    let lastSparkle = 0;
-    document.addEventListener('mousemove', (e) => {
-      const now = Date.now();
-      if (now - lastSparkle < 60) return; // throttle so it doesn't flood the DOM
-      lastSparkle = now;
-
-      const el = document.createElement('span');
-      el.className = 'sparkle-trail';
-      el.textContent = sparkleChars[Math.floor(Math.random() * sparkleChars.length)];
-      el.style.left = e.clientX + 'px';
-      el.style.top = e.clientY + 'px';
-      el.style.color = `hsl(${Math.floor(Math.random() * 360)}, 100%, 70%)`;
-      document.body.appendChild(el);
-      setTimeout(() => el.remove(), 2400);
-    });
-
-    // edit STATUS_MESSAGES to change what it says
     const STATUS_MESSAGES = [
+      'eating crackers',
       'now playing: 24k MAGIC - BRUNO MARS',
       "if you're seeing this email me",
       'make sure to visit the chatroom'
