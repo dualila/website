@@ -122,7 +122,6 @@ body {
   box-shadow: 0 0 25px #ff00ff, 0 0 45px #00ffff inset;
 }
 
-
 @media (max-width: 720px) {
   .layout {
     flex-direction: column;
@@ -160,14 +159,6 @@ body {
   color: #00ffff;
   text-shadow: 0 0 6px #00ffff;
 }
-.blink {
-  animation: blink-anim 1s steps(2, start) infinite;
-  color: #ffff00;
-  font-weight: bold;
-}
-@keyframes blink-anim {
-  to { visibility: hidden; }
-}
 
 /* ---- status line (terminal-style rotating text under hero) ---- */
 .status-line {
@@ -196,29 +187,6 @@ body {
 }
 
 /* ---- content sections ---- */
-.content h2 {
-  background-color: red;
-  background-image: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
-  color: #fff;
-  padding: 6px 10px;
-  border: 2px solid #fff;
-  font-size: 20px;
-  text-shadow: 2px 2px 0 #000;
-}
-.update-box {
-  display: inline-block;
-  margin: 8px 0 14px 0;
-  padding: 4px 10px;
-  font-family: "Courier New", monospace;
-  font-size: 12px;
-  color: #0f0;
-  border: 1px dashed #0f0;
-  background: rgba(0, 255, 0, 0.05);
-}
-.content p, .content li {
-  font-size: 15px;
-  line-height: 1.5;
-}
 .content {
   background: repeating-linear-gradient(
     45deg, #1a0060, #1a0060 10px, #20007a 10px, #20007a 20px
@@ -226,6 +194,44 @@ body {
   border: 2px dashed #00ffff;
   padding: 14px;
   margin-bottom: 20px;
+}
+.content h2 {
+  background-color: red;
+  background-image: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
+  color: #fff;
+  padding: 6px 10px;
+  border: 2px solid #fff;
+  font-size: 20px;
+  text-shadow: 2px 2px 0px #ff00ff, -1px -1px 0px #00ffff;
+}
+.content p, .content li {
+  font-size: 15px;
+  line-height: 1.5;
+}
+.update-box {
+  display: inline-block;
+  margin: 8px 0 12px 0;
+  padding: 4px 10px;
+  font-family: "Courier New", monospace;
+  font-size: 13px;
+  color: #0f0;
+  border: 1px dashed #0f0;
+  background: rgba(0, 255, 0, 0.05);
+  text-transform: uppercase;
+  text-shadow: 0 0 15px #00ff15;
+}
+
+/* ---- blink functionality ---- */
+.blink {
+  animation: retro-blink 0.8s steps(2, start) infinite;
+  color: #ffff00;
+  font-weight: bold;
+}
+@keyframes retro-blink {
+  to { visibility: hidden; }
+}
+@keyframes blink-anim {
+  to { visibility: hidden; }
 }
 
 /* ---- visitor counter ---- */
@@ -287,7 +293,7 @@ body {
 .guestbook button:active, .nav-button:active {
   border-style: inset;
   background: linear-gradient(to bottom, #9900cc, #ff00ff);
-  padding: 9px 15px 7px 17px; /* Shifts text slightly down & right on click! */
+  padding: 9px 15px 7px 17px;
 }
 .guestbook-entries {
   background: #000;
@@ -311,6 +317,7 @@ body {
   background: #00ff00;
   border: 2px solid #000;
 }
+
 /* ---- link list (cool links page) ---- */
 .link-list {
   list-style: none;
@@ -340,7 +347,7 @@ body {
   margin: 4px 0 0 20px;
   font-size: 13px;
   color: #cccccc;
-  font-family:serif;
+  font-family: serif;
 }
 
 /* ---- downloads grid ---- */
@@ -457,7 +464,7 @@ body {
   filter: brightness(1.2);
 }
 
-/* ---- nav button (page-to-page CTA buttons) ---- */
+/* ---- nav button ---- */
 .nav-wrap {
   text-align: center;
   margin: 20px 0;
@@ -527,30 +534,18 @@ footer img { vertical-align: middle; margin: 0 4px; }
   transform-origin: right center;
 }
 @keyframes shooting-star-travel {
-  0% {
-    opacity: 0;
-    transform: translate(0, 0);
-  }
-  8% {
-    opacity: 1;
-  }
-  85% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    transform: translate(var(--travel-x), var(--travel-y));
-  }
+  0% { opacity: 0; transform: translate(0, 0); }
+  8% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--travel-x), var(--travel-y)); }
 }
-/* DIGITAL FILING CABINET */
 
+/* ---- digital filing cabinet ---- */
 .cabinet {
   display: flex;
   flex-direction: column;
   gap: 15px;
 }
-
-
 .drawer {
   border: 3px solid #000;
   box-shadow: 4px 4px 0 #000;
@@ -598,46 +593,19 @@ footer img { vertical-align: middle; margin: 0 4px; }
   font-size: 1.2rem;
   flex-shrink: 0;
 }
-
-
 .drawer-title:hover {
   background: rgba(255, 255, 255, 0.35);
 }
-
-
 .drawer-content {
   display: none;
   padding: 10px;
   background: rgba(255, 255, 255, 0.15);
 }
-
-
 .drawer.open .drawer-content {
   display: block;
 }
-/* ---- Cabinet Date Timestamp Header ---- */
-.update-box {
-  font-family: "Courier New", monospace;
-  font-size: 13px;
-  color: #ff00ff;
-  text-shadow: 0 0 15px #00ff15;
-  margin-bottom: 12px;
-  text-transform: uppercase;
-}
-/* Make elements with class="blink" completely flash on and off */
-.blink {
-  animation: retro-blink 0.8s steps(2, start) infinite;
-}
 
-@keyframes retro-blink {
-  to { visibility: hidden; }
-}
-
-/* Give headers an underlying retro matrix drop shadow */
-.content h2 {
-  text-shadow: 2px 2px 0px #ff00ff, -1px -1px 0px #00ffff;
-}
-/* ---- 88x31 Button Area ---- */
+/* ---- 88x31 button area ---- */
 .badge-grid {
   display: flex;
   flex-wrap: wrap;
@@ -645,24 +613,71 @@ footer img { vertical-align: middle; margin: 0 4px; }
   gap: 6px;
   margin: 15px 0;
 }
-
 .badge-grid img {
   width: 88px;
   height: 31px;
   border: 1px solid #ff00ff;
-  image-rendering: pixelated; /* Keeps pixel art sharp on modern screens */
+  image-rendering: pixelated;
   box-shadow: 1px 1px 0px #00ffff;
   transition: transform 0.1s ease;
 }
-
 .badge-grid a:hover img {
   transform: scale(1.05);
   border-color: #ffff00;
   box-shadow: 0px 0px 5px #ffff00;
 }
+
+/* ---- avatar on about page ---- */
 .avatar-placeholder img {
   max-width: 100%;
   max-height: 100%;
-  object-fit: cover; /* Crops cleanly into a square without distortion */
+  object-fit: cover;
   border: 1px solid #ff00ff;
+}
+.avatar-placeholder img:hover{
+    animation: wiggle .4s;
+}
+
+@keyframes wiggle {
+  0% { transform: rotate(0); }
+  25% { transform: rotate(-4deg); }
+  50% { transform: rotate(4deg); }
+  75% { transform: rotate(-2deg); }
+  100% { transform: rotate(0); }
+}
+
+/* ---- about section titles & interest tags ---- */
+.section-title {
+    font-family: "Courier New", monospace;
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #ffff00;
+    text-shadow: 0 0 3px #ffff00;
+    margin-top: 22px;
+    margin-bottom: 10px;
+    letter-spacing: 2px;
+}
+.interest-tag {
+    display: inline-block;
+    transition: transform .15s ease;
+}
+.interest-tag:hover {
+    transform: rotate(-2deg) scale(1.05);
+}
+
+/* ---- floating ambient background stars ---- */
+.star {
+    position: fixed;
+    width: 3px;
+    height: 3px;
+    background: #fff;
+    border-radius: 50%;
+    animation: floatStar linear infinite;
+    pointer-events: none;
+    opacity: .6;
+}
+@keyframes floatStar {
+    from { transform: translateY(100vh); }
+    to { transform: translateY(-10vh); }
 }
