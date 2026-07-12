@@ -50,3 +50,47 @@ async function fetchWeather() {
 
 // Run on load
 fetchWeather();
+
+// vibe check button?
+const VIBE_FORTUNES = [
+  "✧ coming soon ✧",
+  "★ Error ★",
+];
+
+function triggerVibeCheck() {
+  const vibeTextEl = document.getElementById('vibeText');
+  if (!vibeTextEl) return;
+
+  // 1. Pick a random fortune
+  const randomIndex = Math.floor(Math.random() * VIBE_FORTUNES.length);
+  vibeTextEl.innerHTML = `<span class="blink">${VIBE_FORTUNES[randomIndex]}</span>`;
+
+  // 2. Burst multiple shooting stars using your existing CSS classes
+  for (let i = 0; i < 5; i++) {
+    setTimeout(() => {
+      createBurstStar();
+    }, i * 150); // slight stagger for chaotic retro energy
+  }
+}
+
+function createBurstStar() {
+  const star = document.createElement('div');
+  star.classList.add('shooting-star');
+  
+  // Start from random edges
+  star.style.top = Math.random() * 40 + 'vh';
+  star.style.left = Math.random() * 40 + 'vw';
+  
+  // Set custom CSS variables for the travel direction defined in your stylesheet
+  const travelX = (50 + Math.random() * 50) + 'vw';
+  const travelY = (50 + Math.random() * 50) + 'vh';
+  star.style.setProperty('--travel-x', travelX);
+  star.style.setProperty('--travel-y', travelY);
+  
+  document.body.appendChild(star);
+  
+  // Clean up element after animation completes
+  setTimeout(() => {
+    star.remove();
+  }, 1400);
+}
