@@ -313,6 +313,7 @@ body::before {
   color: #cccccc;
 }
 
+
 /* ==========================================
    DIGITAL FILING CABINET
    ========================================== */
@@ -555,3 +556,40 @@ footer {
   font-family: "Courier New", monospace;
 }
 footer img { vertical-align: middle; margin: 0 4px; }
+/* ==========================================
+   EXACT AGE WIDGET
+   ========================================== */
+.age-widget {
+  background-color: #05001a;
+  background-image:
+    radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px),
+    radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px);
+  background-size: 16px 16px;
+  background-position: 0 0, 8px 8px;
+  
+  border: 2px dashed #ff00ff;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.age-label {
+  font-family: "Courier New", monospace;
+  font-size: 12px;
+  font-weight: bold;
+  color: #00ffff;
+  text-shadow: 0 0 4px #00ffff;
+  letter-spacing: 1px;
+}
+
+.age-value {
+  font-family: "Courier New", monospace;
+  font-size: 18px;
+  font-weight: bold;
+  color: #0f0;
+  text-shadow: 0 0 6px #0f0;
+}
