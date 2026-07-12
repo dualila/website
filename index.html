@@ -62,12 +62,12 @@
       setTimeout(() => el.remove(), 2400);
     });
 
-    // random messages idk
+    // terminal-style rotating status line — edit STATUS_MESSAGES to change what it says
     const STATUS_MESSAGES = [
-      'eating crackers',
-      'now playing: 24k MAGIC - BRUNO MARS',
-      'if you are seeing this email me',
-      'make sure to visit the chatroom'
+      'status: currently obsessed with hair colour theory',
+      'now playing: whatever is stuck in my head today',
+      'mood: rice terraces + reference lists',
+      'currently: fixing the internet one guestbook at a time'
     ];
     const statusEl = document.getElementById('statusLine');
     let msgIndex = 0;
@@ -122,7 +122,7 @@
 
     const counterEl = document.getElementById('counter');
 
-    // --- visitor counter: bumps on every page load, display live pls if code works ---
+    // --- visitor counter: bump on every page load, display live ---
     try {
       const counterRef = doc(db, "counters", "visitors");
 
