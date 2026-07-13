@@ -219,15 +219,16 @@ body::before {
 
 .update-box {
   display: inline-block;
+  background-color: rgb(13, 255, 0);
+  background-image: linear-gradient(to left, red, orange, yellow, green, blue, indigo, violet);
   margin: 8px 0 12px 0;
   padding: 4px 10px;
   font-family: "Courier New", monospace;
   font-size: 13px;
-  color: #0f0;
-  border: 1px dashed #0f0;
-  background: rgba(0, 255, 0, 0.05);
+  color: rgb(0, 0, 0);
+  border: 1px dashed rgb(255, 255, 255);
   text-transform: uppercase;
-  text-shadow: 0 0 15px #00ff15;
+  text-shadow: 0 0 15px #ffffff;
 }
 
 .blink { animation: retro-blink 0.8s steps(2, start) infinite; }
