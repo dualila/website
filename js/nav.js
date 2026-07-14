@@ -18,7 +18,7 @@ const NAV_TREE = [
         children: [
           // the archive — clicking the arrow reveals these
           {label: "now", href:"/now/now.html" },
-          { label: "14 july 2026", href: "/now/14.07.2026.html" },
+          { label: "july 2026", href: "/now/14.07.2026.html" },
         ]
       },
     ]
