@@ -399,6 +399,7 @@ body::before {
 .cabinet { display: flex; flex-direction: column; gap: 15px; }
 .drawer { border: 3px solid #000; box-shadow: 4px 4px 0 #000; background: #ff3ea5; transform: rotate(-1deg); transition: transform 0.15s ease; }
 .cabinet .drawer:nth-child(3n+2) { background: #ff8c00; transform: rotate(0.8deg); }
+.cabinet .drawer:nth-child(3n+4) { background: #4a7de3; transform: rotate(-0.6deg); }
 .cabinet .drawer:nth-child(3n) { background: #00d9c0; transform: rotate(-0.6deg); }
 .drawer.open { box-shadow: 2px 2px 0 #000; }
 
@@ -927,3 +928,20 @@ footer img { vertical-align: middle; margin: 0 4px; }
       margin-top: 18px;
       border:3px dotted #ff00ff;
     }
+ /* ==========================================
+   DRIFTING DOTS inside radio page boxes
+   ========================================== */
+.radio-console, .lastfm-box, .rotation-box, .genre-box, bio-container {
+  background-color: #000;
+  background-image:
+    radial-gradient(rgba(255, 255, 255, 0.3) 1px, transparent 1px),
+    radial-gradient(rgba(255, 255, 255, 0.3) 1px, transparent 1px);
+  background-size: 16px 16px;
+  background-position: 0 0, 8px 8px;
+  animation: boxDotsDrift 5s linear infinite;
+}
+
+@keyframes boxDotsDrift {
+  from { background-position: 0 0, 8px 8px; }
+  to   { background-position: 16px 16px, 24px 24px; }
+}
