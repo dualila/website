@@ -65,11 +65,11 @@ function triggerVibeCheck() {
   const randomIndex = Math.floor(Math.random() * VIBE_FORTUNES.length);
   vibeTextEl.innerHTML = `<span class="blink">${VIBE_FORTUNES[randomIndex]}</span>`;
 
-  // 2. Burst multiple shooting stars using your existing CSS classes
+
   for (let i = 0; i < 5; i++) {
     setTimeout(() => {
       createBurstStar();
-    }, i * 150); // slight stagger for chaotic retro energy
+    }, i * 150); // slight stagger
   }
 }
 

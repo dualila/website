@@ -3,7 +3,7 @@
 // copy-pasting the same script into every HTML file.
 
 (function sparkleTrail() {
-  const sparkleChars = ['✦', '✧', '☆', '★', '✨','lilywakefield.com.au', '*'];
+  const sparkleChars = ['✦', '✧', '☆', '★', '✨','✦', '✧', '☆', '★', '✨','✦', '✧', '☆', 'lily', 'lily','lilywakefield.com.au', '*'];
   let lastSparkle = 0;
 
   document.addEventListener('mousemove', (e) => {
