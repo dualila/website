@@ -1,15 +1,38 @@
-// Last updated
 const lastUpdated = document.getElementById("lastUpdated");
 
-const updated = new Date("2026-07-15");
+// Fetch the latest commit from the GitHub repository
+fetch("https://api.github.com/repos/dualila/website/commits/main")
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+  })
+  .then(data => {
+    // Extract the date string from the latest commit
+    const commitDateString = data.commit.committer.date; 
+    const updated = new Date(commitDateString);
 
-lastUpdated.textContent = updated.toLocaleDateString("en-AU", {
-  day: "numeric",
-  month: "long",
-  year: "numeric"
-});
+    // Format both date and time (e.g., "15 July 2026, 10:45 pm")
+    const formattedDate = updated.toLocaleDateString("en-AU", {
+      day: "numeric",
+      month: "long",
+      year: "numeric"
+    });
 
+    const formattedTime = updated.toLocaleTimeString("en-AU", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true
+    }).toLowerCase(); //
 
+    // Update the DOM with a line break between date and time
+    lastUpdated.innerHTML = `${formattedDate}<br>${formattedTime}`;
+  })
+  .catch(error => {
+    console.error("Failed to fetch last updated date:", error);
+    lastUpdated.textContent = "Unavailable";
+  });
 // Melbourne weather
 async function fetchWeather() {
   const weatherValEl = document.getElementById('weatherValue');
