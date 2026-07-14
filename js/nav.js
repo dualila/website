@@ -13,7 +13,7 @@ const NAV_TREE = [
       { label: "cool links", href: "/coollinks.html" },
       { label: "radio", href: "/radio.html" },
             {
-        label: "now",
+        label: "now  ",
         href: "/now/now.html", // clicking "now" goes to the current now page
         children: [
           // the archive — clicking the arrow reveals these
@@ -24,7 +24,8 @@ const NAV_TREE = [
     ]
   },
   {
-    label: "coming soon",
+    label: "coming soon", 
+    href: "/comingsoon.html",
     children: [
       { label: "coming soon", href: "/comingsoon.html" },
     ]

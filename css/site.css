@@ -915,9 +915,15 @@ footer img { vertical-align: middle; margin: 0 4px; }
     .now-page .now-list li::before { content: "✧ "; color: #ff00ff; }
  
     .now-page .now-footnote {
+      display: inline-block;
+      background-color: rgb(13, 255, 0);
+      background-image: repeating-linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet),radial-gradient(#ffffff 80px, transparent 80px);;
+      margin: 8px 0 12px 0;
+      padding: 4px 10px;
       font-family: "Courier New", monospace;
       font-size: 12px;
       color: #0f0;
       text-align: center;
       margin-top: 18px;
+      border:3px dotted #ff00ff;
     }
