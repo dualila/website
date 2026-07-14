@@ -1,7 +1,7 @@
 // Last updated
 const lastUpdated = document.getElementById("lastUpdated");
 
-const updated = new Date("2026-07-12");
+const updated = new Date("2026-07-14");
 
 lastUpdated.textContent = updated.toLocaleDateString("en-AU", {
   day: "numeric",
