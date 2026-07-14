@@ -24,7 +24,7 @@ const NAV_TREE = [
     ]
   },
   {
-    label: "coming soon", 
+    label: "coming soon ", 
     href: "/comingsoon.html",
     children: [
       { label: "coming soon", href: "/comingsoon.html" },
