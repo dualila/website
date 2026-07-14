@@ -3,55 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>what lily is doing NOW</title>
+  <title>coming soon</title>
   <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
   <link rel="stylesheet" href="css/site.css">
-  <style>
-    /* scoped to the now page only */
-    .now-page .now-intro {
-      font-size: 14px;
-      color: #cccccc;
-      font-style: italic;
-    }
-
-    .now-page .now-section {
-      background-color: #05001a;
-      background-image:
-        radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px),
-        radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px);
-      background-size: 16px 16px;
-      background-position: 0 0, 8px 8px;
-      border: 2px dashed #00ffff;
-      padding: 12px 16px;
-      margin-bottom: 16px;
-    }
-
-    .now-page .now-section:nth-child(even) { border-color: #ff00ff; }
-
-    .now-page .now-heading {
-      font-family: "Courier New", monospace;
-      font-size: 14px;
-      font-weight: bold;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      color: #ffff00;
-      text-shadow: 0 0 3px #ffff00;
-      margin: 0 0 8px 0;
-    }
-
-    .now-page .now-list { list-style: none; margin: 0; padding: 0; }
-    .now-page .now-list li { margin: 6px 0; font-size: 15px; line-height: 1.5; }
-    .now-page .now-list li::before { content: "✧ "; color: #ff00ff; }
-
-    .now-page .now-footnote {
-      font-family: "Courier New", monospace;
-      font-size: 12px;
-      color: #0f0;
-      text-align: center;
-      margin-top: 18px;
-    }
-    .now-page .now-footnote a { color: #00ffff; text-shadow: 0 0 6px #00ffff; }
-  </style>
 </head>
 <body>
 
@@ -63,64 +17,15 @@
     <div class="frame">
 
       <div class="hero">
-        <h1>✧ NOW ✧</h1>
-        <div class="subtitle">what i'm focused on at this point in my life</div>
-      </div>
-
-      <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
-
-      <div class="content now-page">
-
-        <div class="update-box">✦ last updated: july 2026 · from melbourne, australia</div>
-
-        <p class="now-intro">this is a <a href="https://nownownow.com/about" target="_blank" rel="noopener noreferrer" style="color:#00ffff;">now page</a> — the stuff i'd tell a friend i hadn't seen in a year. not social media, just the big picture.</p>
-
-        <!-- EDIT ME: swap these placeholder sections for whatever is actually true right now.
-             add/remove sections freely, they alternate cyan/magenta borders automatically -->
-
-        <div class="now-section">
-          <div class="now-heading">☆ studying</div>
-          <ul class="now-list">
-            <li>finishing my law degree (evidence law and legal ethics era)</li>
-            <li>clocking up my pro bono hours</li>
-          </ul>
-        </div>
-
-        <div class="now-section">
-          <div class="now-heading">☆ building</div>
-          <ul class="now-list">
-            <li>this website !!! you're soaking in it</li>
-            <li>a minecraft server for the queer society</li>
-          </ul>
-        </div>
-
-        <div class="now-section">
-          <div class="now-heading">☆ obsessing over</div>
-          <ul class="now-list">
-            <li>hair colour chemistry (ask me about toners)</li>
-            <li>cheese (hard AND soft, i don't discriminate)</li>
-            <li>whatever the bombers are doing to my blood pressure this season</li>
-          </ul>
-        </div>
-
-        <div class="now-section">
-          <div class="now-heading">☆ thinking about</div>
-          <ul class="now-list">
-            <li>urban tree canopy and who gets shade in this city</li>
-            <li>planning future travels</li>
-          </ul>
-        </div>
-
-        <p class="now-footnote">
-          inspired by <a href="https://nownownow.com" target="_blank" rel="noopener noreferrer">nownownow.com</a> — go make your own
-        </p>
-
+        <h1>✧ COMING SOON ✧</h1>
+        <p class="blink">☆ 🚧 UNDER CONSTRUCTION 🚧 ☆</p>
+        <div class="status-line" id="statusLine"></div>
       </div>
 
       <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
 
       <footer>
-        ★ ° ☆ ° ★ ° ☆ ° ★ 2026 lily wakefield ★ ° ☆ ° ★ ° ☆ ° ★<br>
+      ★ ° ☆ ° ★ ° ☆ ° ★ 2026 lily wakefield ★ ° ☆ ° ★ ° ☆ ° ★<br>
         <img src="/images/favicon.ico" alt="site icon" width="24" height="24">
         best experienced with an open heart
       </footer>
@@ -130,6 +35,43 @@
 
   <script src="js/nav.js"></script>
   <script src="js/effects.js"></script>
+
+  <script>
+    // edit STATUS_MESSAGES to change what it says
+    const STATUS_MESSAGES = [
+      '404',
+      '420',
+      "67",
+      'coming soon'
+    ];
+    const statusEl = document.getElementById('statusLine');
+    let msgIndex = 0;
+    let charIndex = 0;
+    let typing = true;
+
+    function typeStatus() {
+      const current = STATUS_MESSAGES[msgIndex];
+      if (typing) {
+        charIndex++;
+        statusEl.innerHTML = current.slice(0, charIndex) + '<span class="cursor">&nbsp;</span>';
+        if (charIndex === current.length) {
+          typing = false;
+          setTimeout(typeStatus, 1800); // pause before deleting
+          return;
+        }
+      } else {
+        charIndex--;
+        statusEl.innerHTML = current.slice(0, charIndex) + '<span class="cursor">&nbsp;</span>';
+        if (charIndex === 0) {
+          typing = true;
+          msgIndex = (msgIndex + 1) % STATUS_MESSAGES.length;
+        }
+      }
+      setTimeout(typeStatus, typing ? 55 : 30);
+    }
+    typeStatus();
+  </script>
+
 
 </body>
 </html>
