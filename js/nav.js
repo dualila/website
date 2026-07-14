@@ -9,7 +9,10 @@ const NAV_TREE = [
     label: "stuff",
     children: [
       { label: "about me", href: "/about.html" },
-      {
+      { label: "downloads", href: "/downloads.html" },
+      { label: "cool links", href: "/coollinks.html" },
+      { label: "radio", href: "/radio.html" },
+            {
         label: "now",
         href: "/now/now.html", // clicking "now" goes to the current now page
         children: [
@@ -18,9 +21,6 @@ const NAV_TREE = [
           { label: "17 july 2026", href: "/now/17.07.2026.html" },
         ]
       },
-      { label: "downloads", href: "/downloads.html" },
-      { label: "cool links", href: "/coollinks.html" },
-      { label: "radio", href: "/radio.html" },
     ]
   },
   {
