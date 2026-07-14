@@ -417,7 +417,7 @@ body::before {
   align-items: center;
   
 
-  background-color: #14c2047d;
+  background-color: #cd08a559;
   background-image: 
     radial-gradient(rgba(44, 68, 200, 0.496) 1px, transparent 1px), 
     radial-gradient(rgba(30, 4, 4, 0.905) 1px, transparent 1px);
@@ -425,7 +425,7 @@ body::before {
   background-position: 0 0, 8px 8px;
 }
 .drawer.open .drawer-title { border-bottom-style: dashed; }
-.drawer-title::before { content: "★ ° ☆ ° ★ ° ☆ ° ★"; margin-right: 8px; color: #550dd1; }
+.drawer-title::before { content: "★ ° ☆ ° ★ ° ☆ ° ★"; margin-right: 8px; color: #9dd10d; }
 .drawer-title span { font-size: 1.2rem; flex-shrink: 0; }
 .drawer-title:hover { background-color: rgba(255, 255, 255, 0.35); }
 .drawer-content { display: none; padding: 10px; background: rgba(255, 255, 255, 0.15); }
