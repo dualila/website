@@ -36,7 +36,7 @@ async function loadTopTracks() {
       month: "short",
       year: "numeric",
     });
-    noteEl.textContent = `as of ${today.toLowerCase()} · rolling 30 days`;
+    noteEl.textContent = `as of ${today.toLowerCase()}`;
   }
 
   try {
