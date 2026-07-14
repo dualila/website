@@ -900,7 +900,7 @@ footer img { vertical-align: middle; margin: 0 4px; }
     .now-page .now-section:nth-child(even) { border-color: #ff00ff; }
  
     .now-page .now-heading {
-      font-family: "Courier New", monospace;
+      font-family: "times New roman", monospace;
       font-size: 14px;
       font-weight: bold;
       text-transform: uppercase;
