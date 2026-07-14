@@ -8,7 +8,6 @@ const NAV_TREE = [
   {
     label: "stuff",
     children: [
-      { label: "about me", href: "/about.html" },
       { label: "downloads", href: "/downloads.html" },
       { label: "cool links", href: "/coollinks.html" },
       { label: "radio", href: "/radio.html" },
