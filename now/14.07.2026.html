@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>coming soon</title>
+  <title>if not now??? when???</title>
   <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
   <link rel="stylesheet" href="../css/site.css">
 </head>
@@ -17,15 +17,57 @@
     <div class="frame">
 
       <div class="hero">
-        <h1>✧ COMING SOON ✧</h1>
-        <p class="blink">☆ 🚧 UNDER CONSTRUCTION 🚧 ☆</p>
+        <h1>✧ what i am doing now ✧</h1>
+        <p class="blink">☆ when where what why how ☆</p>
         <div class="status-line" id="statusLine"></div>
       </div>
 
       <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
 
+      <div class="content now-page">
+
+        <div class="update-box">✦ last updated: july 2026 · from melbourne, australia</div>
+
+        <main>
+          <article class="blog-post">
+            <p class="entry-label">focusing on:</p>
+            <p class="entry-date"><time datetime="2026-07-15T01:14">01.14am &middot; july 15, 2026</time></p>
+            <p>
+              recently a client at work (who happened to run silent discos for a living, but that's irrelevant) told me a recent death in his family had given him the feeling that all he needed to do for the rest of his life was meet all the fun people in the world.
+            </p>
+            <p>
+              a few days later i had a conversation on the 11 tram with a man who introduced himself to me as 'Gunnan'. it was raining heavily that afternoon and i had forgotten my umbrella. Gunnan asked me to hold his open bottle of Chambord while we both peered out the drivers window. among other topics we shared, i told him i wished i hadn't forgotten my umbrella. Gunnan told me about the bigger picture the universe from his point of view, and asked me to look closer at the wipers as they slid across the window pane.
+            </p>
+            <blockquote>
+              <p>"they push away the rain.</p>
+              <p>you're just a human.</p>
+              <p>humans can't do that."</p>
+            </blockquote>
+            <p>
+              so right now i am focusing on spending more time outside, talking to people and spending less time inside coding this website.
+            </p>
+            <section class="top-tracks-box">
+              <div class="top-tracks-header">
+                ★ top tracks this month ★
+              </div>
+              <div class="top-tracks-note" id="top-tracks-note"></div>
+              <div id="top-tracks">
+                loading monthly rotation...
+              </div>
+            </section>
+          </article>
+        </main>
+
+        <p class="now-footnote">
+          inspired by <a href="https://nownownow.com" target="_blank" rel="noopener noreferrer">nownownow.com</a>
+        </p>
+
+      </div>
+
+      <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
+
       <footer>
-      ★ ° ☆ ° ★ ° ☆ ° ★ 2026 lily wakefield ★ ° ☆ ° ★ ° ☆ ° ★<br>
+        ★ ° ☆ ° ★ ° ☆ ° ★ 2026 lily wakefield ★ ° ☆ ° ★ ° ☆ ° ★<br>
         <img src="/images/favicon.ico" alt="site icon" width="24" height="24">
         best experienced with an open heart
       </footer>
@@ -35,14 +77,15 @@
 
   <script src="../js/nav.js"></script>
   <script src="../js/effects.js"></script>
+  <script src="../js/top-tracks.js"></script>
 
   <script>
     // edit STATUS_MESSAGES to change what it says
     const STATUS_MESSAGES = [
-      '404',
-      '420',
+      'probably listening to dua lipa',
+      'actually maybe i should ask what are YOU doing now?',
+      "and how are you? it's been a while",
       "67",
-      'coming soon'
     ];
     const statusEl = document.getElementById('statusLine');
     let msgIndex = 0;
@@ -71,7 +114,6 @@
     }
     typeStatus();
   </script>
-
 
 </body>
 </html>
