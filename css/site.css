@@ -1118,3 +1118,21 @@ a.track-name:hover {
   font-size: 0.8rem;
   white-space: nowrap;
 }
+.now-page .track-art {
+  width: 45px;
+  height: 45px;
+  object-fit: cover;
+  border: 1px solid var(--hot-pink, #ff2fb0);
+  flex-shrink: 0;
+}
+
+/* fallback when a track has no album art */
+.now-page .track-art-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: var(--cyan, #4ce0ff);
+  background: rgba(0, 255, 255, 0.06);
+  border-style: dashed;
+}
