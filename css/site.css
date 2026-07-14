@@ -1025,8 +1025,7 @@ footer img { vertical-align: middle; margin: 0 4px; }
 }
 
 /* ==========================================
-   NOW PAGE — TOP TRACKS THIS MONTH
-   (single consolidated block)
+   NOW PAGE — TOP TRACKS THIS MONTh
    ========================================== */
 .now-page .top-tracks-box {
   border: 2px solid var(--hot-pink, #ff2fb0);
