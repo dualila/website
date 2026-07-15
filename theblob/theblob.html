@@ -338,7 +338,7 @@
     <div class="actions" id="actionsRow">
       <button class="blob-btn" id="feedBtn">feed</button>
       <button class="blob-btn" id="playBtn">play</button>
-      <button class="blob-btn" id="comfortBtn">comfort</button>
+      <button class="blob-btn" id="comfortBtn">pet</button>
     </div>
     <div class="cooldown-note" id="cooldownNote"></div>
 
@@ -654,7 +654,7 @@ async function performAction(boost, verb, emoji) {
 
 feedBtn.addEventListener("click", () => performAction(FEED_BOOST, "fed"));
 playBtn.addEventListener("click", () => performAction(PLAY_BOOST, "played with"));
-comfortBtn.addEventListener("click", () => performAction(COMFORT_BOOST, "comforted"));
+comfortBtn.addEventListener("click", () => performAction(COMFORT_BOOST, "petted"));
 
 hatchBtn.addEventListener("click", async () => {
   const ref = getPetRef();
