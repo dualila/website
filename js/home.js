@@ -13,7 +13,6 @@ fetch("https://api.github.com/repos/dualila/website/commits/main")
     const commitDateString = data.commit.committer.date; 
     const updated = new Date(commitDateString);
 
-    // Format both date and time (e.g., "15 July 2026, 10:45 pm")
     const formattedDate = updated.toLocaleDateString("en-AU", {
       day: "numeric",
       month: "long",
