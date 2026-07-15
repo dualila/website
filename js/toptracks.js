@@ -1,8 +1,31 @@
 const LASTFM_TOP_USER = "lily-wkfld";
 const LASTFM_TOP_KEY = "320c29920c2820467b0ac8daae64cb76";
 
-// last.fm's default "no image" placeholder — treat it as no art
 const LASTFM_PLACEHOLDER = "2a96cbd8b46e442fc41c2b86b821562f";
+
+const TARGET_MONTH = window.NOW_PAGE_MONTH || "2026-07";
+// ─────────────────────────────────────────────────────────────
+
+// Turn "2026-06" into { from, to } unix timestamps (UTC month bounds)
+function monthToRange(yyyyMm) {
+  const [year, month] = yyyyMm.split("-").map(Number);
+  const from = Math.floor(Date.UTC(year, month - 1, 1) / 1000);
+  const to = Math.floor(Date.UTC(year, month, 1) / 1000); // exclusive end
+  return { from, to };
+}
+
+function formatMonthLabel(yyyyMm) {
+  const [year, month] = yyyyMm.split("-").map(Number);
+  const d = new Date(Date.UTC(year, month - 1, 1));
+  return d.toLocaleDateString("en-AU", { month: "long", year: "numeric" });
+}
+
+// Is TARGET_MONTH 
+function isCurrentMonth(yyyyMm) {
+  const now = new Date();
+  const current = `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, "0")}`;
+  return yyyyMm === current;
+}
 
 async function fetchTrackArt(artist, track) {
   try {
@@ -24,29 +47,103 @@ async function fetchTrackArt(artist, track) {
   }
 }
 
+// getWeeklyTrackChart
+async function getWeeksInMonth(from, to) {
+  const url = `https://ws.audioscrobbler.com/2.0/?method=user.getweeklychartlist&user=${LASTFM_TOP_USER}&api_key=${LASTFM_TOP_KEY}&format=json`;
+  const res = await fetch(url);
+  const data = await res.json();
+  const weeks = data?.weeklychartlist?.chart || [];
+  return weeks.filter((w) => {
+    const wFrom = Number(w.from);
+    const wTo = Number(w.to);
+    // overlap test: week starts before month ends AND week ends after month starts
+    return wFrom < to && wTo > from;
+  });
+}
+
+// For the CURRENT month: 
+async function fetchCurrentMonthTopTracks(limit = 3) {
+  const url = `https://ws.audioscrobbler.com/2.0/?method=user.gettoptracks&user=${LASTFM_TOP_USER}&period=1month&limit=${limit}&api_key=${LASTFM_TOP_KEY}&format=json`;
+  const res = await fetch(url);
+  const data = await res.json();
+  const tracks = data?.toptracks?.track;
+  if (!tracks) return [];
+  const list = Array.isArray(tracks) ? tracks : [tracks];
+  return list.map((t) => ({
+    name: t.name,
+    artist: { name: t.artist?.name || t.artist?.["#text"] || t.artist },
+    url: t.url,
+    playcount: Number(t.playcount) || 0,
+  }));
+}
+
+async function fetchMonthlyTopTracks(yyyyMm, limit = 3) {
+  const { from, to } = monthToRange(yyyyMm);
+  const weeks = await getWeeksInMonth(from, to);
+
+  if (weeks.length === 0) return [];
+
+  // Pull each overlapping week's track chart and merge playcounts by track
+  const weekResults = await Promise.all(
+    weeks.map(async (w) => {
+      const url = `https://ws.audioscrobbler.com/2.0/?method=user.getweeklytrackchart&user=${LASTFM_TOP_USER}&from=${w.from}&to=${w.to}&api_key=${LASTFM_TOP_KEY}&format=json`;
+      const res = await fetch(url);
+      const data = await res.json();
+      return data?.weeklytrackchart?.track || [];
+    })
+  );
+
+  const tally = new Map(); // key: "artist||track" -> { artist, name, url, playcount }
+  for (const weekTracks of weekResults) {
+    const list = Array.isArray(weekTracks)
+      ? weekTracks
+      : weekTracks
+      ? [weekTracks]
+      : [];
+
+    for (const t of list) {
+      const artistName = t.artist?.["#text"] || t.artist?.name || t.artist;
+      if (!artistName || !t.name) continue; // skip malformed entries defensively
+      const key = `${artistName}||${t.name}`;
+      const playcount = Number(t.playcount) || 0;
+      if (tally.has(key)) {
+        tally.get(key).playcount += playcount;
+      } else {
+        tally.set(key, {
+          name: t.name,
+          artist: { name: artistName },
+          url: t.url,
+          playcount,
+        });
+      }
+    }
+  }
+
+  return [...tally.values()]
+    .sort((a, b) => b.playcount - a.playcount)
+    .slice(0, limit);
+}
+
 async function loadTopTracks() {
   const el = document.getElementById("top-tracks");
   if (!el) return;
 
-  // "as of" note under the header, so "this month" isn't ambiguous
+  // "as of" note under the header 
   const noteEl = document.getElementById("top-tracks-note");
+  const currentMonth = isCurrentMonth(TARGET_MONTH);
   if (noteEl) {
-    const today = new Date().toLocaleDateString("en-AU", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-    });
-    noteEl.textContent = `as of ${today.toLowerCase()}`;
+    noteEl.textContent = currentMonth
+      ? `${formatMonthLabel(TARGET_MONTH).toLowerCase()} so far`
+      : formatMonthLabel(TARGET_MONTH).toLowerCase();
   }
 
   try {
-    const url = `https://ws.audioscrobbler.com/2.0/?method=user.gettoptracks&user=${LASTFM_TOP_USER}&period=1month&limit=3&api_key=${LASTFM_TOP_KEY}&format=json`;
-    const res = await fetch(url);
-    const data = await res.json();
-    const tracks = data?.toptracks?.track;
+    const tracks = currentMonth
+      ? await fetchCurrentMonthTopTracks(3)
+      : await fetchMonthlyTopTracks(TARGET_MONTH, 3);
 
     if (!tracks || tracks.length === 0) {
-      el.innerHTML = `<p>no scrobbles this month yet...</p>`;
+      el.innerHTML = `<p>no scrobbles that month...</p>`;
       return;
     }
 
