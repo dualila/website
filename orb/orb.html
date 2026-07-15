@@ -3,46 +3,42 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>the blob :: a shared pet</title>
+<link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+<title>the orb</title>
+<link rel="stylesheet" href="../css/site.css">
 <style>
-  .blob-page {
-    --background: #b6c8f9;
-    --ink: #3a3436;
-    --lilac: #b8a1d9;
-    --lilac-dark: #9679c4;
-    --happy: #ff8fa3;
-    --hungry: #d4a24c;
-    --neglected: #8b8f94;
-    --dead: #c9c5c0;
-    --line: #e8ded4;
 
-    font-family: monospace;
-    background: var(--background);
+  
+  .blob-page {
+    --hot-pink: #ff00ff;
+    --cyan: #00ffff;
+    --gold: #ffd700;
+    --lime: #a6ff00;
+    --hungry: #ffb347;
+    --neglected: #8b8f94;
+    --dead: #666666;
+    --ink: #f5f5f5;
+
+    font-family: "Courier New", monospace;
     color: var(--ink);
-    min-height: 100vh;
+    min-height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 40px 16px 64px;
+    padding: 20px 8px 32px;
     box-sizing: border-box;
   }
 
   .blob-page *, .blob-page *::before, .blob-page *::after {
     box-sizing: border-box;
-  }
 
-  .blob-page h1 {
-    font-family: 'times new roman', sans-serif;
-    font-weight: 800;
-    font-size: clamp(1.8rem, 5vw, 2.6rem);
-    margin: 0 0 4px;
-    letter-spacing: -0.01em;
   }
-
+  
   .blob-page .subtitle {
-    font-size: 0.8rem;
-    color: var(--ink);
-    opacity: 0.55;
+    font-family: "times new roman", "Comic Sans", cursive;
+    font-size: 0.85rem;
+    color: var(--cyan);
+    text-shadow: 0 0 6px var(--cyan);
     margin-bottom: 32px;
     text-align: center;
     max-width: 360px;
@@ -64,7 +60,7 @@
     bottom: 6%;
     width: 60%;
     height: 22px;
-    background: radial-gradient(ellipse, rgba(58,52,54,0.18) 0%, transparent 70%);
+    background: radial-gradient(ellipse, rgba(0,0,0,0.4) 0%, transparent 70%);
     border-radius: 50%;
     z-index: 0;
   }
@@ -72,15 +68,16 @@
   .blob-svg {
     position: relative;
     z-index: 1;
-    width: 100%;
-    height: 100%;
+    width: 82%;
+    height: 82%;
     animation: breathe 3.4s ease-in-out infinite;
     transform-origin: 50% 60%;
+    filter: drop-shadow(0 0 10px rgba(255, 0, 255, 0.5));
   }
 
   .blob-svg.mood-happy { animation-name: breathe-happy; animation-duration: 2.2s; }
   .blob-svg.mood-neglected { animation-name: breathe-tired; animation-duration: 4.6s; }
-  .blob-svg.mood-dead { animation: none; opacity: 0.75; }
+  .blob-svg.mood-dead { animation: none; opacity: 0.6; filter: grayscale(0.6); }
 
   @keyframes breathe {
     0%, 100% { transform: scale(1, 1) translateY(0); }
@@ -101,18 +98,21 @@
   }
 
   .blob-status {
-    font-family: 'times new roman', sans-serif;
-    font-weight: 700;
+    font-family: "times new roman", "Comic Sans", cursive;
+    font-weight: bold;
     font-size: 1.1rem;
-    margin: 6px 0 2px;
+    color: var(--gold);
+    text-shadow: 0 0 6px rgba(255, 217, 74, 0.6);
+    margin: 16px 0 2px;
     text-align: center;
   }
 
   .blob-meta {
     font-size: 0.72rem;
-    opacity: 0.5;
+    color: #ccc;
     margin-bottom: 24px;
     text-align: center;
+    letter-spacing: 0.5px;
   }
 
   .stat-row {
@@ -134,14 +134,16 @@
     font-size: 0.68rem;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    opacity: 0.6;
+    color: var(--cyan);
+    text-shadow: 0 0 3px var(--cyan);
     flex-shrink: 0;
   }
 
   .stat-track {
     flex: 1;
     height: 10px;
-    background: var(--line);
+    background: #000;
+    border: 1px solid #333;
     border-radius: 6px;
     overflow: hidden;
   }
@@ -152,9 +154,9 @@
     transition: width 0.6s ease, background 0.6s ease;
   }
 
-  .stat-fill.hunger { background: var(--hungry); }
-  .stat-fill.happiness { background: var(--happy); }
-  .stat-fill.energy { background: var(--lilac-dark); }
+  .stat-fill.hunger { background: var(--hungry); box-shadow: 0 0 6px var(--hungry); }
+  .stat-fill.happiness { background: var(--hot-pink); box-shadow: 0 0 6px var(--hot-pink); }
+  .stat-fill.pets { background: var(--lime); box-shadow: 0 0 6px var(--lime); }
 
   .actions {
     display: flex;
@@ -165,60 +167,72 @@
   }
 
   .blob-btn {
-    font-family: 'times new roman', monospace;
-    font-weight: 700;
+    font-family: "Comic Sans MS", cursive;
+    font-weight: bold;
     font-size: 0.78rem;
-    background: white;
-    border: 2px solid var(--ink);
-    color: var(--ink);
+    background: linear-gradient(to bottom, var(--hot-pink), #9900cc);
+    border: 2px outset var(--hot-pink);
+    color: #fff;
     padding: 10px 18px;
-    border-radius: 10px;
+    border-radius: 4px;
     cursor: pointer;
-    transition: transform 0.15s ease, background 0.15s ease;
-    box-shadow: 3px 3px 0 var(--ink);
+    transition: filter 0.15s ease;
   }
 
   .blob-btn:hover:not(:disabled) {
-    background: var(--lilac);
-    transform: translate(-1px, -1px);
-    box-shadow: 4px 4px 0 var(--ink);
+    filter: brightness(1.2);
+    animation: blobJelly 0.4s;
+  }
+
+  @keyframes blobJelly {
+    0% { transform: scale(1); }
+    25% { transform: scale(1.08,.95); }
+    50% { transform: scale(.96,1.05); }
+    75% { transform: scale(1.04,.97); }
+    100% { transform: scale(1); }
   }
 
   .blob-btn:active:not(:disabled) {
-    transform: translate(2px, 2px);
-    box-shadow: 1px 1px 0 var(--ink);
+    border-style: inset;
+    background: linear-gradient(to bottom, #9900cc, var(--hot-pink));
+    padding: 11px 17px 9px 19px;
   }
 
   .blob-btn:disabled {
     opacity: 0.35;
     cursor: not-allowed;
-    box-shadow: 3px 3px 0 var(--line);
+    filter: grayscale(0.6);
   }
 
   .cooldown-note {
     font-size: 0.66rem;
-    opacity: 0.5;
+    color: #999;
     text-align: center;
     min-height: 16px;
     margin-bottom: 20px;
   }
 
   .hatch-btn {
-    background: var(--lilac);
+    background: linear-gradient(to bottom, var(--gold), #b8860b);
+    border-color: var(--gold);
+    color: #1a0033;
     margin-top: 12px;
   }
 
   .divider {
     width: min(340px, 88vw);
     border: none;
-    border-top: 1px dashed var(--line);
+    border-top: 2px dashed var(--cyan);
     margin: 8px 0 20px;
+    opacity: 0.5;
   }
 
   .log-title {
-    font-family: 'times new roman', sans-serif;
-    font-weight: 700;
+    font-family: "times new roman", cursive;
+    font-weight: bold;
     font-size: 0.9rem;
+    color: var(--gold);
+    text-shadow: 0 0 4px rgba(255, 217, 74, 0.6);
     margin-bottom: 10px;
     text-align: center;
   }
@@ -227,21 +241,23 @@
     width: min(340px, 88vw);
     max-height: 160px;
     overflow-y: auto;
-    background: white;
-    border: 1.5px solid var(--line);
-    border-radius: 10px;
+    background: #000;
+    border: 2px inset var(--lime);
+    border-radius: 2px;
     padding: 12px 14px;
     font-size: 0.72rem;
     line-height: 1.9;
+    color: #0f0;
   }
 
-  .log-box::-webkit-scrollbar { width: 6px; }
-  .log-box::-webkit-scrollbar-thumb { background: var(--line); border-radius: 3px; }
+  .log-box::-webkit-scrollbar { width: 8px; }
+  .log-box::-webkit-scrollbar-track { background: #000; border-left: 1px dashed #0f0; }
+  .log-box::-webkit-scrollbar-thumb { background: #0f0; border: 2px solid #000; }
 
-  .log-entry { opacity: 0.75; }
-  .log-entry.death { color: var(--hungry); opacity: 0.9; }
-  .log-entry.birth { color: var(--lilac-dark); opacity: 0.9; }
-  .log-empty { opacity: 0.4; font-style: italic; }
+  .log-entry { opacity: 0.85; }
+  .log-entry.death { color: var(--hungry); opacity: 0.95; }
+  .log-entry.birth { color: var(--hot-pink); text-shadow: 0 0 3px var(--hot-pink); opacity: 0.95; }
+  .log-empty { opacity: 0.5; font-style: italic; }
 
   .name-gate {
     display: flex;
@@ -252,23 +268,31 @@
     max-width: 320px;
   }
 
+  .name-gate p {
+    font-family: "times new roman", cursive;
+    color: var(--cyan);
+  }
+
   .name-gate input {
-    font-family: 'arial', ;
+    font-family: "Courier New", monospace;
     font-size: 0.85rem;
     padding: 10px 14px;
-    border: 2px solid var(--ink);
-    border-radius: 10px;
+    background: #000;
+    color: #0f0;
+    border: 2px inset var(--lime);
+    border-radius: 2px;
     width: 220px;
     outline: none;
   }
 
   .name-gate input:focus {
-    border-color: var(--lilac-dark);
+    border-color: var(--cyan);
   }
 
   .whoami {
+    font-family: "Courier New", monospace;
     font-size: 0.64rem;
-    opacity: 0.45;
+    color: #999;
     margin-top: -8px;
     margin-bottom: 20px;
   }
@@ -279,9 +303,8 @@
     text-decoration: underline;
     font-family: inherit;
     font-size: inherit;
-    color: inherit;
+    color: var(--cyan);
     cursor: pointer;
-    opacity: 0.8;
     padding: 0;
   }
 
@@ -291,68 +314,77 @@
 </style>
 </head>
 <body>
+  <div class="ticker"><span>✦ thank you for visiting and i welcome you with open arms ✦</span></div>
+<div class="layout">
+  <div class="sidebar" id="sidebar"></div>
 
-<div class="blob-page">
+  <div class="frame">
+    <div class="blob-page">
 
-  <h1>the blob</h1>
-  <p class="subtitle">feed it or it dies</p>
+       <div class="hero">
+        <h1>✧ the orb ✧</h1>
+        <p class="blink">☆ feed it pet it etc or it feels neglected and dies ☆</p>
+        <div class="status-line" id="statusLine"></div>
+      </div>
 
-  <!-- name gate, shown until a visitor identifies themselves -->
-  <div id="nameGate" class="name-gate" style="display:none;">
-    <p style="font-size:0.85rem; opacity:0.7;">who's this?</p>
-    <input id="nameInput" type="text" maxlength="20" placeholder="your name" />
-    <button class="blob-btn" id="nameSubmit">say hi</button>
+      <!-- name gate, shown until a visitor identifies themselves -->
+      <div id="nameGate" class="name-gate" style="display:none;">
+        <p>who's this?</p>
+        <input id="nameInput" type="text" maxlength="20" placeholder="your name" />
+        <button class="blob-btn" id="nameSubmit">say hi</button>
+      </div>
+
+      <!-- main pet UI, hidden until name is set and data loaded -->
+      <div id="petUI" style="display:none; flex-direction:column; align-items:center; width:100%;">
+
+        <p class="whoami">you're <strong id="whoamiName"></strong> · <button id="changeNameBtn">or not you?</button></p>
+
+        <div class="blob-stage">
+          <div class="blob-shadow"></div>
+          <svg id="blobSvg" class="blob-svg mood-neutral" viewBox="0 0 200 200">
+            <ellipse class="blob-body" id="blobBody" cx="100" cy="115" rx="72" ry="62" fill="#ff00ff"/>
+            <g id="blobFace"></g>
+          </svg>
+        </div>
+
+        <div class="blob-status" id="blobStatusText">...</div>
+        <div class="blob-meta" id="blobMetaText"></div>
+
+        <div class="stat-row" id="statRow">
+          <div class="stat">
+            <span class="stat-label">hunger</span>
+            <div class="stat-track"><div class="stat-fill hunger" id="hungerFill" style="width:0%"></div></div>
+          </div>
+          <div class="stat">
+            <span class="stat-label">happy</span>
+            <div class="stat-track"><div class="stat-fill happiness" id="happinessFill" style="width:0%"></div></div>
+          </div>
+          <div class="stat">
+            <span class="stat-label">pets</span>
+            <div class="stat-track"><div class="stat-fill pets" id="petsFill" style="width:0%"></div></div>
+          </div>
+        </div>
+
+        <div class="actions" id="actionsRow">
+          <button class="blob-btn" id="feedBtn">feed</button>
+          <button class="blob-btn" id="playBtn">play</button>
+          <button class="blob-btn" id="comfortBtn">pet</button>
+        </div>
+        <div class="cooldown-note" id="cooldownNote"></div>
+
+        <button class="blob-btn hatch-btn" id="hatchBtn" style="display:none;">hatch a new orb</button>
+
+        <hr class="divider">
+
+        <div class="log-title">who's been touching the orb ???</div>
+        <div class="log-box" id="logBox">
+          <div class="log-empty">loading...</div>
+        </div>
+
+      </div>
+
+    </div>
   </div>
-
-  <!-- main pet UI, hidden until name is set and data loaded -->
-  <div id="petUI" style="display:none; flex-direction:column; align-items:center; width:100%;">
-
-    <p class="whoami">you're <strong id="whoamiName"></strong> · <button id="changeNameBtn">not you?</button></p>
-
-    <div class="blob-stage">
-      <div class="blob-shadow"></div>
-      <svg id="blobSvg" class="blob-svg mood-neutral" viewBox="0 0 200 200">
-        <ellipse class="blob-body" id="blobBody" cx="100" cy="115" rx="72" ry="62" fill="#ff8fa3"/>
-        <g id="blobFace"></g>
-      </svg>
-    </div>
-
-    <div class="blob-status" id="blobStatusText">...</div>
-    <div class="blob-meta" id="blobMetaText"></div>
-
-    <div class="stat-row" id="statRow">
-      <div class="stat">
-        <span class="stat-label">hunger</span>
-        <div class="stat-track"><div class="stat-fill hunger" id="hungerFill" style="width:0%"></div></div>
-      </div>
-      <div class="stat">
-        <span class="stat-label">happy</span>
-        <div class="stat-track"><div class="stat-fill happiness" id="happinessFill" style="width:0%"></div></div>
-      </div>
-      <div class="stat">
-        <span class="stat-label">energy</span>
-        <div class="stat-track"><div class="stat-fill energy" id="energyFill" style="width:0%"></div></div>
-      </div>
-    </div>
-
-    <div class="actions" id="actionsRow">
-      <button class="blob-btn" id="feedBtn">feed</button>
-      <button class="blob-btn" id="playBtn">play</button>
-      <button class="blob-btn" id="comfortBtn">pet</button>
-    </div>
-    <div class="cooldown-note" id="cooldownNote"></div>
-
-    <button class="blob-btn hatch-btn" id="hatchBtn" style="display:none;">hatch a new one</button>
-
-    <hr class="divider">
-
-    <div class="log-title">who's been by</div>
-    <div class="log-box" id="logBox">
-      <div class="log-empty">loading...</div>
-    </div>
-
-  </div>
-
 </div>
 
 <script type="module">
@@ -380,9 +412,11 @@ const db = getFirestore(app);
 const PET_DOC = "pets/theblob";          // single shared doc
 const LOG_COLLECTION = "petLog";          // subcollection of events
 const DECAY_PER_HOUR = 4;                 // stat points lost per hour, per stat
-const FEED_BOOST = { hunger: 30, happiness: 5, energy: 0 };
-const PLAY_BOOST = { hunger: -4, happiness: 28, energy: -8 };
-const COMFORT_BOOST = { hunger: 0, happiness: 12, energy: 15 };
+// feed mostly fills the belly, play mostly lifts the mood, petting is what
+// actually raises the "pets" stat now — three actions, three real stats.
+const FEED_BOOST = { hunger: 30, happiness: 5, pets: 0 };
+const PLAY_BOOST = { hunger: -4, happiness: 28, pets: 0 };
+const COMFORT_BOOST = { hunger: 0, happiness: 10, pets: 25 };
 const ACTION_COOLDOWN_MS = 3 * 60 * 1000;   // 3 min between actions per visitor
 const DEATH_GRACE_MS = 60 * 60 * 1000 * 60; // stats bottomed out for 60hrs -> death
 const LOG_LIMIT = 30;
@@ -442,7 +476,7 @@ async function ensurePetExists() {
     await setDoc(ref, {
       hunger: 80,
       happiness: 80,
-      energy: 80,
+      pets: 80,
       alive: true,
       generation: 1,
       bornAt: Timestamp.now(),
@@ -457,6 +491,9 @@ function clamp(n) { return Math.max(0, Math.min(100, n)); }
 // apply real-time decay based on elapsed hours since lastUpdated
 function applyDecay(pet) {
   if (!pet.alive) return pet;
+  // fallback for docs written before the energy -> pets rename
+  const petsStart = pet.pets ?? pet.energy ?? 80;
+
   const now = Date.now();
   const last = pet.lastUpdated.toMillis ? pet.lastUpdated.toMillis() : pet.lastUpdated;
   const hoursElapsed = Math.max(0, (now - last) / (1000 * 60 * 60));
@@ -466,11 +503,11 @@ function applyDecay(pet) {
     ...pet,
     hunger: clamp(pet.hunger - loss),
     happiness: clamp(pet.happiness - loss),
-    energy: clamp(pet.energy - loss * 0.7)
+    pets: clamp(petsStart - loss * 0.7)
   };
 
   // check death: all stats at 0 and have been for DEATH_GRACE_MS
-  if (decayed.hunger <= 0 && decayed.happiness <= 0 && decayed.energy <= 0) {
+  if (decayed.hunger <= 0 && decayed.happiness <= 0 && decayed.pets <= 0) {
     // estimate how long it's been at zero using overflow of loss beyond 100
     const overflowHours = Math.max(0, hoursElapsed - (100 / DECAY_PER_HOUR));
     if (overflowHours * 60 * 60 * 1000 >= DEATH_GRACE_MS) {
@@ -517,51 +554,38 @@ function updateCooldownUI() {
 setInterval(updateCooldownUI, 15000);
 
 // ---- BLOB FACE RENDERING ----
+// deliberately janky ascii faces, slapped on with a text element like a geocities
+// midi-era site would've done it. not centered perfectly on purpose.
+const ASCII_FACES = {
+  dead: "( x_x )",
+  happy: "( ｡◕ ‿‿ ◕｡ )",
+  hungry: "( o_O) ",
+  neglected: "( >_< )",
+  neutral: "( :] )"
+};
+
 function renderFace(mood) {
   const face = document.getElementById("blobFace");
-  let eyesY = 105, mouthPath, eyeShape;
-
-  if (mood === "dead") {
-    eyeShape = `
-      <line x1="78" y1="98" x2="90" y2="110" stroke="#3a3436" stroke-width="3" stroke-linecap="round"/>
-      <line x1="90" y1="98" x2="78" y2="110" stroke="#3a3436" stroke-width="3" stroke-linecap="round"/>
-      <line x1="110" y1="98" x2="122" y2="110" stroke="#3a3436" stroke-width="3" stroke-linecap="round"/>
-      <line x1="122" y1="98" x2="110" y2="110" stroke="#3a3436" stroke-width="3" stroke-linecap="round"/>
-    `;
-    mouthPath = `<path d="M 85 138 Q 100 132 115 138" stroke="#3a3436" stroke-width="3" fill="none" stroke-linecap="round"/>`;
-  } else if (mood === "happy") {
-    eyeShape = `
-      <path d="M 78 100 Q 85 90 92 100" stroke="#3a3436" stroke-width="4" fill="none" stroke-linecap="round"/>
-      <path d="M 108 100 Q 115 90 122 100" stroke="#3a3436" stroke-width="4" fill="none" stroke-linecap="round"/>
-    `;
-    mouthPath = `<path d="M 82 130 Q 100 152 118 130" stroke="#3a3436" stroke-width="4" fill="none" stroke-linecap="round"/>`;
-  } else if (mood === "hungry") {
-    eyeShape = `
-      <circle cx="85" cy="103" r="4.5" fill="#3a3436"/>
-      <circle cx="115" cy="103" r="4.5" fill="#3a3436"/>
-    `;
-    mouthPath = `<ellipse cx="100" cy="136" rx="10" ry="7" fill="#3a3436"/>`;
-  } else if (mood === "neglected") {
-    eyeShape = `
-      <path d="M 78 103 Q 85 108 92 103" stroke="#3a3436" stroke-width="3.5" fill="none" stroke-linecap="round"/>
-      <path d="M 108 103 Q 115 108 122 103" stroke="#3a3436" stroke-width="3.5" fill="none" stroke-linecap="round"/>
-    `;
-    mouthPath = `<path d="M 85 135 Q 100 128 115 135" stroke="#3a3436" stroke-width="3.5" fill="none" stroke-linecap="round"/>`;
-  } else {
-    // neutral / content
-    eyeShape = `
-      <circle cx="85" cy="103" r="5" fill="#3a3436"/>
-      <circle cx="115" cy="103" r="5" fill="#3a3436"/>
-    `;
-    mouthPath = `<path d="M 88 133 Q 100 141 112 133" stroke="#3a3436" stroke-width="3.5" fill="none" stroke-linecap="round"/>`;
-  }
-
-  face.innerHTML = eyeShape + mouthPath;
+  const glyph = ASCII_FACES[mood] || ASCII_FACES.neutral;
+  // tiny random jitter each render so it never sits perfectly still, like it's
+  // rendered in a font nobody bothered to kern properly
+  const jitterX = (Math.random() * 4 - 2).toFixed(1);
+  const jitterRot = (Math.random() * 4 - 2).toFixed(1);
+  face.innerHTML = `
+    <text x="${100 + Number(jitterX)}" y="122"
+      text-anchor="middle"
+      font-family="'Courier New', monospace"
+      font-size="34"
+      font-weight="bold"
+      fill="#1a0033"
+      transform="rotate(${jitterRot} 100 115)"
+      style="letter-spacing:-1px;">${glyph}</text>
+  `;
 }
 
 function moodFromStats(pet) {
   if (!pet.alive) return "dead";
-  const avg = (pet.hunger + pet.happiness + pet.energy) / 3;
+  const avg = (pet.hunger + pet.happiness + pet.pets) / 3;
   if (pet.hunger < 25) return "hungry";
   if (avg < 30) return "neglected";
   if (avg > 70) return "happy";
@@ -569,11 +593,11 @@ function moodFromStats(pet) {
 }
 
 const moodColors = {
-  happy: "#ff8fa3",
-  neutral: "#e8a5b0",
-  hungry: "#d4a24c",
+  happy: "#ff00ff",
+  neutral: "#e055c9",
+  hungry: "#ffb347",
   neglected: "#8b8f94",
-  dead: "#c9c5c0"
+  dead: "#666666"
 };
 
 const moodLabels = {
@@ -607,7 +631,7 @@ function render(pet) {
 
   document.getElementById("hungerFill").style.width = pet.hunger + "%";
   document.getElementById("happinessFill").style.width = pet.happiness + "%";
-  document.getElementById("energyFill").style.width = pet.energy + "%";
+  document.getElementById("petsFill").style.width = pet.pets + "%";
 
   const actionsRow = document.getElementById("actionsRow");
   const hatchBtn = document.getElementById("hatchBtn");
@@ -632,7 +656,7 @@ const playBtn = document.getElementById("playBtn");
 const comfortBtn = document.getElementById("comfortBtn");
 const hatchBtn = document.getElementById("hatchBtn");
 
-async function performAction(boost, verb, emoji) {
+async function performAction(boost, verb) {
   if (getCooldownRemaining() > 0 || !currentPet || !currentPet.alive) return;
   setCooldownNow();
   updateCooldownUI();
@@ -644,7 +668,7 @@ async function performAction(boost, verb, emoji) {
   const updated = {
     hunger: clamp(pet.hunger + boost.hunger),
     happiness: clamp(pet.happiness + boost.happiness),
-    energy: clamp(pet.energy + boost.energy),
+    pets: clamp(pet.pets + boost.pets),
     lastUpdated: Timestamp.now()
   };
 
@@ -665,7 +689,7 @@ hatchBtn.addEventListener("click", async () => {
   await setDoc(ref, {
     hunger: 80,
     happiness: 80,
-    energy: 80,
+    pets: 80,
     alive: true,
     generation: newGen,
     bornAt: Timestamp.now(),
@@ -743,6 +767,8 @@ setInterval(() => {
   if (currentPet) render(applyDecay(currentPet));
 }, 30000);
 </script>
+<script src="../js/nav.js"></script>
+<script src="../js/effects.js"></script>
 
 </body>
 </html>

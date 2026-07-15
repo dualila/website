@@ -22,7 +22,8 @@ const NAV_TREE = [
       },
     ]
   },
-  {
+  { label: "the orb", href: "/orb/orb.html"},
+    { 
     label: "coming soon ", 
     href: "/comingsoon.html",
     children: [

@@ -62,7 +62,7 @@ async function getWeeksInMonth(from, to) {
 }
 
 // For the CURRENT month: 
-async function fetchCurrentMonthTopTracks(limit = 3) {
+async function fetchCurrentMonthTopTracks(limit = 4) {
   const url = `https://ws.audioscrobbler.com/2.0/?method=user.gettoptracks&user=${LASTFM_TOP_USER}&period=1month&limit=${limit}&api_key=${LASTFM_TOP_KEY}&format=json`;
   const res = await fetch(url);
   const data = await res.json();
@@ -77,7 +77,7 @@ async function fetchCurrentMonthTopTracks(limit = 3) {
   }));
 }
 
-async function fetchMonthlyTopTracks(yyyyMm, limit = 3) {
+async function fetchMonthlyTopTracks(yyyyMm, limit = 4) {
   const { from, to } = monthToRange(yyyyMm);
   const weeks = await getWeeksInMonth(from, to);
 
@@ -139,8 +139,8 @@ async function loadTopTracks() {
 
   try {
     const tracks = currentMonth
-      ? await fetchCurrentMonthTopTracks(3)
-      : await fetchMonthlyTopTracks(TARGET_MONTH, 3);
+      ? await fetchCurrentMonthTopTracks(4)
+      : await fetchMonthlyTopTracks(TARGET_MONTH, 4);
 
     if (!tracks || tracks.length === 0) {
       el.innerHTML = `<p>no scrobbles that month...</p>`;
