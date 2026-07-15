@@ -4,11 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>the blob :: a shared pet</title>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-
 <style>
   .blob-page {
     --background: #b6c8f9;
@@ -598,10 +593,10 @@ function render(pet) {
   const svg = document.getElementById("blobSvg");
   const body = document.getElementById("blobBody");
 
-  svg.className = `blob-svg mood-${mood === "happy" ? "happy" : mood === "neglected" || mood === "dead" ? (mood === "dead" ? "dead" : "neglected") : "neutral"}`;
+    const moodClass = mood === "happy" ? "happy" : mood === "dead" ? "dead" : mood === "neglected" ? "neglected" : "neutral";
+  svg.setAttribute("class", `blob-svg mood-${moodClass}`);
   body.setAttribute("fill", moodColors[mood]);
   renderFace(mood);
-
   document.getElementById("blobStatusText").textContent = moodLabels[mood];
 
   const bornDate = pet.bornAt.toDate ? pet.bornAt.toDate() : new Date(pet.bornAt);
