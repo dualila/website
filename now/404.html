@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 not work sorry</title>
+  <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+  <link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+
+  <div class="ticker"><span>✦ 404 404 thank you for visiting and i'm sorry it isn't working 404 404 ✦</span></div>
+
+  <div class="layout">
+    <div class="sidebar" id="sidebar"></div>
+
+    <div class="frame">
+
+      <div class="hero">
+        <h1>✧ 404 404 ✧</h1>
+        <p class="blink">☆ 🚧 not work sorry 🚧 ☆</p>
+        <div class="status-line" id="statusLine"></div>
+      </div>
+
+      <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
+
+      <footer>
+      ★ ° ☆ ° ★ ° ☆ ° ★ 2026 lily wakefield ★ ° ☆ ° ★ ° ☆ ° ★<br>
+        <img src="/images/favicon.ico" alt="site icon" width="24" height="24">
+        best experienced with an open heart
+      </footer>
+
+    </div>
+  </div>
+
+  <script src="js/nav.js"></script>
+  <script src="js/effects.js"></script>
+
+  <script>
+    // edit STATUS_MESSAGES to change what it says
+    const STATUS_MESSAGES = [
+      '404',
+      "404 404 thank you for visiting and i'm sorry it isn't working 404 404",
+      '404',
+      '404 not work sorry',
+      '404',
+      '420',
+      "67",
+    ];
+    const statusEl = document.getElementById('statusLine');
+    let msgIndex = 0;
+    let charIndex = 0;
+    let typing = true;
+
+    function typeStatus() {
+      const current = STATUS_MESSAGES[msgIndex];
+      if (typing) {
+        charIndex++;
+        statusEl.innerHTML = current.slice(0, charIndex) + '<span class="cursor">&nbsp;</span>';
+        if (charIndex === current.length) {
+          typing = false;
+          setTimeout(typeStatus, 1800); // pause before deleting
+          return;
+        }
+      } else {
+        charIndex--;
+        statusEl.innerHTML = current.slice(0, charIndex) + '<span class="cursor">&nbsp;</span>';
+        if (charIndex === 0) {
+          typing = true;
+          msgIndex = (msgIndex + 1) % STATUS_MESSAGES.length;
+        }
+      }
+      setTimeout(typeStatus, typing ? 55 : 30);
+    }
+    typeStatus();
+  </script>
+
+
+</body>
+</html>
