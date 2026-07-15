@@ -323,8 +323,10 @@
 
        <div class="hero">
         <h1>✧ the orb ✧</h1>
+        
         <p class="blink">☆ feed it pet it etc or it feels neglected and dies ☆</p>
         <div class="status-line" id="statusLine"></div>
+              <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
       </div>
 
       <!-- name gate, shown until a visitor identifies themselves -->
@@ -673,7 +675,7 @@ async function performAction(boost, verb) {
   };
 
   await updateDoc(ref, updated);
-  await logEvent("care", `${myName} ${verb} the blob`);
+  await logEvent("care", `${myName} ${verb} the orb`);
 }
 
 feedBtn.addEventListener("click", () => performAction(FEED_BOOST, "fed"));
