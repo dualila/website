@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>the blob :: a shared pet</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+  .blob-page {
+    --background: #b6c8f9;
+    --ink: #3a3436;
+    --lilac: #b8a1d9;
+    --lilac-dark: #9679c4;
+    --happy: #ff8fa3;
+    --hungry: #d4a24c;
+    --neglected: #8b8f94;
+    --dead: #c9c5c0;
+    --line: #e8ded4;
+
+    font-family: monospace;
+    background: var(--background);
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 16px 64px;
+    box-sizing: border-box;
+  }
+
+  .blob-page *, .blob-page *::before, .blob-page *::after {
+    box-sizing: border-box;
+  }
+
+  .blob-page h1 {
+    font-family: 'times new roman', sans-serif;
+    font-weight: 800;
+    font-size: clamp(1.8rem, 5vw, 2.6rem);
+    margin: 0 0 4px;
+    letter-spacing: -0.01em;
+  }
+
+  .blob-page .subtitle {
+    font-size: 0.8rem;
+    color: var(--ink);
+    opacity: 0.55;
+    margin-bottom: 32px;
+    text-align: center;
+    max-width: 360px;
+    line-height: 1.5;
+  }
+
+  .blob-stage {
+    position: relative;
+    width: min(320px, 78vw);
+    height: min(320px, 78vw);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+  }
+
+  .blob-shadow {
+    position: absolute;
+    bottom: 6%;
+    width: 60%;
+    height: 22px;
+    background: radial-gradient(ellipse, rgba(58,52,54,0.18) 0%, transparent 70%);
+    border-radius: 50%;
+    z-index: 0;
+  }
+
+  .blob-svg {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    animation: breathe 3.4s ease-in-out infinite;
+    transform-origin: 50% 60%;
+  }
+
+  .blob-svg.mood-happy { animation-name: breathe-happy; animation-duration: 2.2s; }
+  .blob-svg.mood-neglected { animation-name: breathe-tired; animation-duration: 4.6s; }
+  .blob-svg.mood-dead { animation: none; opacity: 0.75; }
+
+  @keyframes breathe {
+    0%, 100% { transform: scale(1, 1) translateY(0); }
+    50% { transform: scale(1.02, 0.97) translateY(2px); }
+  }
+  @keyframes breathe-happy {
+    0%, 100% { transform: scale(1, 1) translateY(0) rotate(0deg); }
+    25% { transform: scale(1.05, 0.94) translateY(-6px) rotate(-2deg); }
+    75% { transform: scale(0.96, 1.05) translateY(2px) rotate(2deg); }
+  }
+  @keyframes breathe-tired {
+    0%, 100% { transform: scale(1, 1) translateY(0); }
+    50% { transform: scale(1.01, 0.98) translateY(4px); }
+  }
+
+  .blob-body {
+    transition: fill 0.8s ease;
+  }
+
+  .blob-status {
+    font-family: 'times new roman', sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin: 6px 0 2px;
+    text-align: center;
+  }
+
+  .blob-meta {
+    font-size: 0.72rem;
+    opacity: 0.5;
+    margin-bottom: 24px;
+    text-align: center;
+  }
+
+  .stat-row {
+    width: min(340px, 88vw);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+
+  .stat {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .stat-label {
+    width: 64px;
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    opacity: 0.6;
+    flex-shrink: 0;
+  }
+
+  .stat-track {
+    flex: 1;
+    height: 10px;
+    background: var(--line);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .stat-fill {
+    height: 100%;
+    border-radius: 6px;
+    transition: width 0.6s ease, background 0.6s ease;
+  }
+
+  .stat-fill.hunger { background: var(--hungry); }
+  .stat-fill.happiness { background: var(--happy); }
+  .stat-fill.energy { background: var(--lilac-dark); }
+
+  .actions {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .blob-btn {
+    font-family: 'times new roman', monospace;
+    font-weight: 700;
+    font-size: 0.78rem;
+    background: white;
+    border: 2px solid var(--ink);
+    color: var(--ink);
+    padding: 10px 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.15s ease, background 0.15s ease;
+    box-shadow: 3px 3px 0 var(--ink);
+  }
+
+  .blob-btn:hover:not(:disabled) {
+    background: var(--lilac);
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0 var(--ink);
+  }
+
+  .blob-btn:active:not(:disabled) {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 var(--ink);
+  }
+
+  .blob-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    box-shadow: 3px 3px 0 var(--line);
+  }
+
+  .cooldown-note {
+    font-size: 0.66rem;
+    opacity: 0.5;
+    text-align: center;
+    min-height: 16px;
+    margin-bottom: 20px;
+  }
+
+  .hatch-btn {
+    background: var(--lilac);
+    margin-top: 12px;
+  }
+
+  .divider {
+    width: min(340px, 88vw);
+    border: none;
+    border-top: 1px dashed var(--line);
+    margin: 8px 0 20px;
+  }
+
+  .log-title {
+    font-family: 'times new roman', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+
+  .log-box {
+    width: min(340px, 88vw);
+    max-height: 160px;
+    overflow-y: auto;
+    background: white;
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 0.72rem;
+    line-height: 1.9;
+  }
+
+  .log-box::-webkit-scrollbar { width: 6px; }
+  .log-box::-webkit-scrollbar-thumb { background: var(--line); border-radius: 3px; }
+
+  .log-entry { opacity: 0.75; }
+  .log-entry.death { color: var(--hungry); opacity: 0.9; }
+  .log-entry.birth { color: var(--lilac-dark); opacity: 0.9; }
+  .log-empty { opacity: 0.4; font-style: italic; }
+
+  .name-gate {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    text-align: center;
+    max-width: 320px;
+  }
+
+  .name-gate input {
+    font-family: 'arial', ;
+    font-size: 0.85rem;
+    padding: 10px 14px;
+    border: 2px solid var(--ink);
+    border-radius: 10px;
+    width: 220px;
+    outline: none;
+  }
+
+  .name-gate input:focus {
+    border-color: var(--lilac-dark);
+  }
+
+  .whoami {
+    font-size: 0.64rem;
+    opacity: 0.45;
+    margin-top: -8px;
+    margin-bottom: 20px;
+  }
+
+  .whoami button {
+    background: none;
+    border: none;
+    text-decoration: underline;
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+    cursor: pointer;
+    opacity: 0.8;
+    padding: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .blob-svg { animation: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="blob-page">
+
+  <h1>the blob</h1>
+  <p class="subtitle">feed it or it dies</p>
+
+  <!-- name gate, shown until a visitor identifies themselves -->
+  <div id="nameGate" class="name-gate" style="display:none;">
+    <p style="font-size:0.85rem; opacity:0.7;">who's this?</p>
+    <input id="nameInput" type="text" maxlength="20" placeholder="your name" />
+    <button class="blob-btn" id="nameSubmit">say hi</button>
+  </div>
+
+  <!-- main pet UI, hidden until name is set and data loaded -->
+  <div id="petUI" style="display:none; flex-direction:column; align-items:center; width:100%;">
+
+    <p class="whoami">you're <strong id="whoamiName"></strong> · <button id="changeNameBtn">not you?</button></p>
+
+    <div class="blob-stage">
+      <div class="blob-shadow"></div>
+      <svg id="blobSvg" class="blob-svg mood-neutral" viewBox="0 0 200 200">
+        <ellipse class="blob-body" id="blobBody" cx="100" cy="115" rx="72" ry="62" fill="#ff8fa3"/>
+        <g id="blobFace"></g>
+      </svg>
+    </div>
+
+    <div class="blob-status" id="blobStatusText">...</div>
+    <div class="blob-meta" id="blobMetaText"></div>
+
+    <div class="stat-row" id="statRow">
+      <div class="stat">
+        <span class="stat-label">hunger</span>
+        <div class="stat-track"><div class="stat-fill hunger" id="hungerFill" style="width:0%"></div></div>
+      </div>
+      <div class="stat">
+        <span class="stat-label">happy</span>
+        <div class="stat-track"><div class="stat-fill happiness" id="happinessFill" style="width:0%"></div></div>
+      </div>
+      <div class="stat">
+        <span class="stat-label">energy</span>
+        <div class="stat-track"><div class="stat-fill energy" id="energyFill" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <div class="actions" id="actionsRow">
+      <button class="blob-btn" id="feedBtn">feed</button>
+      <button class="blob-btn" id="playBtn">play</button>
+      <button class="blob-btn" id="comfortBtn">comfort</button>
+    </div>
+    <div class="cooldown-note" id="cooldownNote"></div>
+
+    <button class="blob-btn hatch-btn" id="hatchBtn" style="display:none;">hatch a new one</button>
+
+    <hr class="divider">
+
+    <div class="log-title">who's been by</div>
+    <div class="log-box" id="logBox">
+      <div class="log-empty">loading...</div>
+    </div>
+
+  </div>
+
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getFirestore, doc, getDoc, setDoc, updateDoc,
+  collection, addDoc, query, orderBy, limit, onSnapshot,
+  serverTimestamp, Timestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA25PaWUE39RuX-huMHoziQVUPy_pNFXUE",
+      authDomain: "dot-com-44502.firebaseapp.com",
+      projectId: "dot-com-44502",
+      storageBucket: "dot-com-44502.firebasestorage.app",
+      messagingSenderId: "124684406308",
+      appId: "1:124684406308:web:146706a03bb4bd451552b1",
+};
+// ------------------------------------------
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// ---- CONFIG ----
+const PET_DOC = "pets/theblob";          // single shared doc
+const LOG_COLLECTION = "petLog";          // subcollection of events
+const DECAY_PER_HOUR = 4;                 // stat points lost per hour, per stat
+const FEED_BOOST = { hunger: 30, happiness: 5, energy: 0 };
+const PLAY_BOOST = { hunger: -4, happiness: 28, energy: -8 };
+const COMFORT_BOOST = { hunger: 0, happiness: 12, energy: 15 };
+const ACTION_COOLDOWN_MS = 3 * 60 * 1000;   // 3 min between actions per visitor
+const DEATH_GRACE_MS = 60 * 60 * 1000 * 60; // stats bottomed out for 60hrs -> death
+const LOG_LIMIT = 30;
+
+// ---- LOCAL IDENTITY ----
+let myName = localStorage.getItem("blobVisitorName") || "";
+
+const nameGate = document.getElementById("nameGate");
+const petUI = document.getElementById("petUI");
+const nameInput = document.getElementById("nameInput");
+
+function showNameGate() {
+  nameGate.style.display = "flex";
+  petUI.style.display = "none";
+}
+
+function showPetUI() {
+  nameGate.style.display = "none";
+  petUI.style.display = "flex";
+  document.getElementById("whoamiName").textContent = myName;
+}
+
+document.getElementById("nameSubmit").addEventListener("click", () => {
+  const val = nameInput.value.trim();
+  if (!val) return;
+  myName = val.slice(0, 20);
+  localStorage.setItem("blobVisitorName", myName);
+  showPetUI();
+});
+
+nameInput?.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") document.getElementById("nameSubmit").click();
+});
+
+document.getElementById("changeNameBtn").addEventListener("click", () => {
+  showNameGate();
+  nameInput.value = "";
+  nameInput.focus();
+});
+
+if (!myName) {
+  showNameGate();
+} else {
+  showPetUI();
+}
+
+// ---- FIRESTORE HELPERS ----
+function getPetRef() {
+  const [col, id] = PET_DOC.split("/");
+  return doc(db, col, id);
+}
+
+async function ensurePetExists() {
+  const ref = getPetRef();
+  const snap = await getDoc(ref);
+  if (!snap.exists()) {
+    await setDoc(ref, {
+      hunger: 80,
+      happiness: 80,
+      energy: 80,
+      alive: true,
+      generation: 1,
+      bornAt: Timestamp.now(),
+      lastUpdated: Timestamp.now(),
+      diedAt: null
+    });
+  }
+}
+
+function clamp(n) { return Math.max(0, Math.min(100, n)); }
+
+// apply real-time decay based on elapsed hours since lastUpdated
+function applyDecay(pet) {
+  if (!pet.alive) return pet;
+  const now = Date.now();
+  const last = pet.lastUpdated.toMillis ? pet.lastUpdated.toMillis() : pet.lastUpdated;
+  const hoursElapsed = Math.max(0, (now - last) / (1000 * 60 * 60));
+  const loss = hoursElapsed * DECAY_PER_HOUR;
+
+  const decayed = {
+    ...pet,
+    hunger: clamp(pet.hunger - loss),
+    happiness: clamp(pet.happiness - loss),
+    energy: clamp(pet.energy - loss * 0.7)
+  };
+
+  // check death: all stats at 0 and have been for DEATH_GRACE_MS
+  if (decayed.hunger <= 0 && decayed.happiness <= 0 && decayed.energy <= 0) {
+    // estimate how long it's been at zero using overflow of loss beyond 100
+    const overflowHours = Math.max(0, hoursElapsed - (100 / DECAY_PER_HOUR));
+    if (overflowHours * 60 * 60 * 1000 >= DEATH_GRACE_MS) {
+      decayed.alive = false;
+      decayed.diedAt = Timestamp.now();
+    }
+  }
+
+  return decayed;
+}
+
+async function logEvent(type, text) {
+  await addDoc(collection(db, LOG_COLLECTION), {
+    type,
+    text,
+    createdAt: serverTimestamp()
+  });
+}
+
+// ---- COOLDOWN ----
+function getCooldownRemaining() {
+  const last = parseInt(localStorage.getItem("blobLastAction") || "0", 10);
+  const remaining = ACTION_COOLDOWN_MS - (Date.now() - last);
+  return Math.max(0, remaining);
+}
+
+function setCooldownNow() {
+  localStorage.setItem("blobLastAction", Date.now().toString());
+}
+
+function updateCooldownUI() {
+  const remaining = getCooldownRemaining();
+  const btns = [feedBtn, playBtn, comfortBtn];
+  const note = document.getElementById("cooldownNote");
+  if (remaining > 0) {
+    btns.forEach(b => b.disabled = true);
+    const mins = Math.ceil(remaining / 60000);
+    note.textContent = `you can look after the blob again in ~${mins} min`;
+  } else {
+    if (currentPet && currentPet.alive) btns.forEach(b => b.disabled = false);
+    note.textContent = "";
+  }
+}
+setInterval(updateCooldownUI, 15000);
+
+// ---- BLOB FACE RENDERING ----
+function renderFace(mood) {
+  const face = document.getElementById("blobFace");
+  let eyesY = 105, mouthPath, eyeShape;
+
+  if (mood === "dead") {
+    eyeShape = `
+      <line x1="78" y1="98" x2="90" y2="110" stroke="#3a3436" stroke-width="3" stroke-linecap="round"/>
+      <line x1="90" y1="98" x2="78" y2="110" stroke="#3a3436" stroke-width="3" stroke-linecap="round"/>
+      <line x1="110" y1="98" x2="122" y2="110" stroke="#3a3436" stroke-width="3" stroke-linecap="round"/>
+      <line x1="122" y1="98" x2="110" y2="110" stroke="#3a3436" stroke-width="3" stroke-linecap="round"/>
+    `;
+    mouthPath = `<path d="M 85 138 Q 100 132 115 138" stroke="#3a3436" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+  } else if (mood === "happy") {
+    eyeShape = `
+      <path d="M 78 100 Q 85 90 92 100" stroke="#3a3436" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <path d="M 108 100 Q 115 90 122 100" stroke="#3a3436" stroke-width="4" fill="none" stroke-linecap="round"/>
+    `;
+    mouthPath = `<path d="M 82 130 Q 100 152 118 130" stroke="#3a3436" stroke-width="4" fill="none" stroke-linecap="round"/>`;
+  } else if (mood === "hungry") {
+    eyeShape = `
+      <circle cx="85" cy="103" r="4.5" fill="#3a3436"/>
+      <circle cx="115" cy="103" r="4.5" fill="#3a3436"/>
+    `;
+    mouthPath = `<ellipse cx="100" cy="136" rx="10" ry="7" fill="#3a3436"/>`;
+  } else if (mood === "neglected") {
+    eyeShape = `
+      <path d="M 78 103 Q 85 108 92 103" stroke="#3a3436" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+      <path d="M 108 103 Q 115 108 122 103" stroke="#3a3436" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    `;
+    mouthPath = `<path d="M 85 135 Q 100 128 115 135" stroke="#3a3436" stroke-width="3.5" fill="none" stroke-linecap="round"/>`;
+  } else {
+    // neutral / content
+    eyeShape = `
+      <circle cx="85" cy="103" r="5" fill="#3a3436"/>
+      <circle cx="115" cy="103" r="5" fill="#3a3436"/>
+    `;
+    mouthPath = `<path d="M 88 133 Q 100 141 112 133" stroke="#3a3436" stroke-width="3.5" fill="none" stroke-linecap="round"/>`;
+  }
+
+  face.innerHTML = eyeShape + mouthPath;
+}
+
+function moodFromStats(pet) {
+  if (!pet.alive) return "dead";
+  const avg = (pet.hunger + pet.happiness + pet.energy) / 3;
+  if (pet.hunger < 25) return "hungry";
+  if (avg < 30) return "neglected";
+  if (avg > 70) return "happy";
+  return "neutral";
+}
+
+const moodColors = {
+  happy: "#ff8fa3",
+  neutral: "#e8a5b0",
+  hungry: "#d4a24c",
+  neglected: "#8b8f94",
+  dead: "#c9c5c0"
+};
+
+const moodLabels = {
+  happy: "feeling great!",
+  neutral: "doing okay",
+  hungry: "getting hungry...",
+  neglected: "feeling forgotten :(",
+  dead: "has passed away"
+};
+
+// ---- RENDER ----
+let currentPet = null;
+
+function render(pet) {
+  currentPet = pet;
+  const mood = moodFromStats(pet);
+  const svg = document.getElementById("blobSvg");
+  const body = document.getElementById("blobBody");
+
+  svg.className = `blob-svg mood-${mood === "happy" ? "happy" : mood === "neglected" || mood === "dead" ? (mood === "dead" ? "dead" : "neglected") : "neutral"}`;
+  body.setAttribute("fill", moodColors[mood]);
+  renderFace(mood);
+
+  document.getElementById("blobStatusText").textContent = moodLabels[mood];
+
+  const bornDate = pet.bornAt.toDate ? pet.bornAt.toDate() : new Date(pet.bornAt);
+  document.getElementById("blobMetaText").textContent =
+    pet.alive
+      ? `generation ${pet.generation} · born ${bornDate.toLocaleDateString()}`
+      : `generation ${pet.generation} · lived from ${bornDate.toLocaleDateString()} until ${(pet.diedAt.toDate ? pet.diedAt.toDate() : new Date(pet.diedAt)).toLocaleDateString()}`;
+
+  document.getElementById("hungerFill").style.width = pet.hunger + "%";
+  document.getElementById("happinessFill").style.width = pet.happiness + "%";
+  document.getElementById("energyFill").style.width = pet.energy + "%";
+
+  const actionsRow = document.getElementById("actionsRow");
+  const hatchBtn = document.getElementById("hatchBtn");
+  const statRow = document.getElementById("statRow");
+
+  if (pet.alive) {
+    actionsRow.style.display = "flex";
+    statRow.style.display = "flex";
+    hatchBtn.style.display = "none";
+    updateCooldownUI();
+  } else {
+    actionsRow.style.display = "none";
+    statRow.style.display = "none";
+    hatchBtn.style.display = "inline-block";
+    document.getElementById("cooldownNote").textContent = "";
+  }
+}
+
+// ---- ACTIONS ----
+const feedBtn = document.getElementById("feedBtn");
+const playBtn = document.getElementById("playBtn");
+const comfortBtn = document.getElementById("comfortBtn");
+const hatchBtn = document.getElementById("hatchBtn");
+
+async function performAction(boost, verb, emoji) {
+  if (getCooldownRemaining() > 0 || !currentPet || !currentPet.alive) return;
+  setCooldownNow();
+  updateCooldownUI();
+
+  const ref = getPetRef();
+  const snap = await getDoc(ref);
+  const pet = applyDecay(snap.data());
+
+  const updated = {
+    hunger: clamp(pet.hunger + boost.hunger),
+    happiness: clamp(pet.happiness + boost.happiness),
+    energy: clamp(pet.energy + boost.energy),
+    lastUpdated: Timestamp.now()
+  };
+
+  await updateDoc(ref, updated);
+  await logEvent("care", `${myName} ${verb} the blob`);
+}
+
+feedBtn.addEventListener("click", () => performAction(FEED_BOOST, "fed"));
+playBtn.addEventListener("click", () => performAction(PLAY_BOOST, "played with"));
+comfortBtn.addEventListener("click", () => performAction(COMFORT_BOOST, "comforted"));
+
+hatchBtn.addEventListener("click", async () => {
+  const ref = getPetRef();
+  const snap = await getDoc(ref);
+  const pet = snap.data();
+  const newGen = (pet.generation || 1) + 1;
+
+  await setDoc(ref, {
+    hunger: 80,
+    happiness: 80,
+    energy: 80,
+    alive: true,
+    generation: newGen,
+    bornAt: Timestamp.now(),
+    lastUpdated: Timestamp.now(),
+    diedAt: null
+  });
+
+  await logEvent("birth", `${myName} hatched generation ${newGen}`);
+});
+
+// ---- LOG ----
+function renderLog(entries) {
+  const box = document.getElementById("logBox");
+  if (entries.length === 0) {
+    box.innerHTML = `<div class="log-empty">no visitors yet — be the first</div>`;
+    return;
+  }
+  box.innerHTML = entries.map(e => {
+    const cls = e.type === "death" ? "death" : e.type === "birth" ? "birth" : "";
+    const when = e.createdAt?.toDate ? timeAgo(e.createdAt.toDate()) : "just now";
+    return `<div class="log-entry ${cls}">${escapeHtml(e.text)} · ${when}</div>`;
+  }).join("");
+}
+
+function timeAgo(date) {
+  const secs = Math.floor((Date.now() - date.getTime()) / 1000);
+  if (secs < 60) return "just now";
+  if (secs < 3600) return `${Math.floor(secs / 60)}m ago`;
+  if (secs < 86400) return `${Math.floor(secs / 3600)}h ago`;
+  return `${Math.floor(secs / 86400)}d ago`;
+}
+
+function escapeHtml(str) {
+  const div = document.createElement("div");
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+// ---- INIT ----
+async function init() {
+  await ensurePetExists();
+  const ref = getPetRef();
+
+  // live updates to the pet doc
+  onSnapshot(ref, async (snap) => {
+    if (!snap.exists()) return;
+    let pet = snap.data();
+    const decayed = applyDecay(pet);
+
+    // if decay caused a death that isn't reflected in Firestore yet, persist it
+    if (decayed.alive === false && pet.alive === true) {
+      await updateDoc(ref, { alive: false, diedAt: decayed.diedAt });
+      await logEvent("death", `the blob (gen ${pet.generation}) didn't make it — nobody came by in time`);
+      return; // onSnapshot will re-fire with the update
+    }
+
+    render(decayed);
+  });
+
+  // live updates to the log
+  const logQuery = query(collection(db, LOG_COLLECTION), orderBy("createdAt", "desc"), limit(LOG_LIMIT));
+  onSnapshot(logQuery, (snap) => {
+    const entries = snap.docs.map(d => d.data());
+    renderLog(entries);
+  });
+}
+
+init().catch(err => {
+  console.error("blob init failed:", err);
+  document.getElementById("blobStatusText").textContent = "couldn't reach the blob (check firebase config)";
+});
+
+// refresh decay-only view every 30s so bars visibly drain without needing an action
+setInterval(() => {
+  if (currentPet) render(applyDecay(currentPet));
+}, 30000);
+</script>
+
+</body>
+</html>
