@@ -7,8 +7,6 @@
 <title>the orb</title>
 <link rel="stylesheet" href="../css/site.css">
 <style>
-
-  
   .blob-page {
     --hot-pink: #ff00ff;
     --cyan: #00ffff;
@@ -31,8 +29,6 @@
 
   .blob-page *, .blob-page *::before, .blob-page *::after {
     box-sizing: border-box;
-
-  }
   
   .blob-page .subtitle {
     font-family: "times new roman", "Comic Sans", cursive;
@@ -219,13 +215,6 @@
     margin-top: 12px;
   }
 
-  .divider {
-    width: min(340px, 88vw);
-    border: none;
-    border-top: 2px dashed var(--cyan);
-    margin: 8px 0 20px;
-    opacity: 0.5;
-  }
 
   .log-title {
     font-family: "times new roman", cursive;
@@ -314,7 +303,8 @@
 </style>
 </head>
 <body>
-  <div class="ticker"><span>✦ thank you for visiting and i welcome you with open arms ✦</span></div>
+    <div class="ticker"><span>✦ thank you for visiting and i ask you to feed the orb  ✦</span></div>
+
 <div class="layout">
   <div class="sidebar" id="sidebar"></div>
 
@@ -323,19 +313,17 @@
 
        <div class="hero">
         <h1>✧ the orb ✧</h1>
-        
-        <p class="blink">☆ feed it pet it etc or it feels neglected and dies ☆</p>
-        <div class="status-line" id="statusLine"></div>
+        <p class="blink">☆ feed it pat it etc or it feels neglected and dies ☆</p>
+        <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
       </div>
 
-      <!-- name gate, shown until a visitor identifies themselves -->
       <div id="nameGate" class="name-gate" style="display:none;">
         <p>who's this?</p>
-        <input id="nameInput" type="text" maxlength="20" placeholder="your name" />
+        <input id="nameInput" type="text" maxlength="20" placeholder="your name isn't Dua Lipa" />
         <button class="blob-btn" id="nameSubmit">say hi</button>
+        
       </div>
 
-      <!-- main pet UI, hidden until name is set and data loaded -->
       <div id="petUI" style="display:none; flex-direction:column; align-items:center; width:100%;">
 
         <p class="whoami">you're <strong id="whoamiName"></strong> · <button id="changeNameBtn">or not you?</button></p>
@@ -369,17 +357,18 @@
         <div class="actions" id="actionsRow">
           <button class="blob-btn" id="feedBtn">feed</button>
           <button class="blob-btn" id="playBtn">play</button>
-          <button class="blob-btn" id="comfortBtn">pet</button>
+          <button class="blob-btn" id="comfortBtn">pat</button>
         </div>
         <div class="cooldown-note" id="cooldownNote"></div>
 
-        <button class="blob-btn hatch-btn" id="hatchBtn" style="display:none;">hatch a new orb</button>
+        <button class="blob-btn hatch-btn" id="hatchBtn" style="display:none;">hatch a new orb!!!!</button>
 
-        <hr class="divider">
+        <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
 
         <div class="log-title">who's been touching the orb ???</div>
+        
         <div class="log-box" id="logBox">
-          <div class="log-empty">loading...</div>
+          <div class="log-empty">loading..!!!.</div>
         </div>
 
       </div>
@@ -404,25 +393,21 @@ const firebaseConfig = {
       messagingSenderId: "124684406308",
       appId: "1:124684406308:web:146706a03bb4bd451552b1",
 };
-// ------------------------------------------
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// ---- CONFIG ----
-const PET_DOC = "pets/theblob";          // single shared doc
-const LOG_COLLECTION = "petLog";          // subcollection of events
-const DECAY_PER_HOUR = 4;                 // stat points lost per hour, per stat
-// feed mostly fills the belly, play mostly lifts the mood, petting is what
-// actually raises the "pets" stat now — three actions, three real stats.
+const PET_DOC = "pets/theblob";
+const LOG_COLLECTION = "petLog";
+const STARTING_STAT = 80;
+const DECAY_PER_HOUR = 4;
 const FEED_BOOST = { hunger: 30, happiness: 5, pets: 0 };
 const PLAY_BOOST = { hunger: -4, happiness: 28, pets: 0 };
 const COMFORT_BOOST = { hunger: 0, happiness: 10, pets: 25 };
-const ACTION_COOLDOWN_MS = 3 * 60 * 1000;   // 3 min between actions per visitor
-const DEATH_GRACE_MS = 60 * 60 * 1000 * 60; // stats bottomed out for 60hrs -> death
+const ACTION_COOLDOWN_MS = 3 * 60 * 1000;
+const DEATH_GRACE_MS = 8 * 60 * 60 * 1000;
 const LOG_LIMIT = 30;
 
-// ---- LOCAL IDENTITY ----
 let myName = localStorage.getItem("blobVisitorName") || "";
 
 const nameGate = document.getElementById("nameGate");
@@ -464,7 +449,6 @@ if (!myName) {
   showPetUI();
 }
 
-// ---- FIRESTORE HELPERS ----
 function getPetRef() {
   const [col, id] = PET_DOC.split("/");
   return doc(db, col, id);
@@ -475,9 +459,9 @@ async function ensurePetExists() {
   const snap = await getDoc(ref);
   if (!snap.exists()) {
     await setDoc(ref, {
-      hunger: 80,
-      happiness: 80,
-      pets: 80,
+      hunger: STARTING_STAT,
+      happiness: STARTING_STAT,
+      pets: STARTING_STAT,
       alive: true,
       generation: 1,
       bornAt: Timestamp.now(),
@@ -489,10 +473,8 @@ async function ensurePetExists() {
 
 function clamp(n) { return Math.max(0, Math.min(100, n)); }
 
-// apply real-time decay based on elapsed hours since lastUpdated
 function applyDecay(pet) {
   if (!pet.alive) return pet;
-  // fallback for docs written before the energy -> pets rename
   const petsStart = pet.pets ?? pet.energy ?? 80;
 
   const now = Date.now();
@@ -504,13 +486,11 @@ function applyDecay(pet) {
     ...pet,
     hunger: clamp(pet.hunger - loss),
     happiness: clamp(pet.happiness - loss),
-    pets: clamp(petsStart - loss * 0.7)
+    pets: clamp(petsStart - loss)
   };
 
-  // check death: all stats at 0 and have been for DEATH_GRACE_MS
   if (decayed.hunger <= 0 && decayed.happiness <= 0 && decayed.pets <= 0) {
-    // estimate how long it's been at zero using overflow of loss beyond 100
-    const overflowHours = Math.max(0, hoursElapsed - (100 / DECAY_PER_HOUR));
+    const overflowHours = Math.max(0, hoursElapsed - (STARTING_STAT / DECAY_PER_HOUR));
     if (overflowHours * 60 * 60 * 1000 >= DEATH_GRACE_MS) {
       decayed.alive = false;
       decayed.diedAt = Timestamp.now();
@@ -528,7 +508,6 @@ async function logEvent(type, text) {
   });
 }
 
-// ---- COOLDOWN ----
 function getCooldownRemaining() {
   const last = parseInt(localStorage.getItem("blobLastAction") || "0", 10);
   const remaining = ACTION_COOLDOWN_MS - (Date.now() - last);
@@ -546,7 +525,7 @@ function updateCooldownUI() {
   if (remaining > 0) {
     btns.forEach(b => b.disabled = true);
     const mins = Math.ceil(remaining / 60000);
-    note.textContent = `you can look after the blob again in ~${mins} min`;
+    note.textContent = `you can look after the orb again in ~${mins} min`;
   } else {
     if (currentPet && currentPet.alive) btns.forEach(b => b.disabled = false);
     note.textContent = "";
@@ -554,22 +533,17 @@ function updateCooldownUI() {
 }
 setInterval(updateCooldownUI, 15000);
 
-// ---- BLOB FACE RENDERING ----
-// deliberately janky ascii faces, slapped on with a text element like a geocities
-// midi-era site would've done it. not centered perfectly on purpose.
 const ASCII_FACES = {
   dead: "( x_x )",
   happy: "( ｡◕ ‿‿ ◕｡ )",
   hungry: "( o_O) ",
   neglected: "( >_< )",
-  neutral: " :] "
+  neutral: "( :] )"
 };
 
 function renderFace(mood) {
   const face = document.getElementById("blobFace");
   const glyph = ASCII_FACES[mood] || ASCII_FACES.neutral;
-  // tiny random jitter each render so it never sits perfectly still, like it's
-  // rendered in a font nobody bothered to kern properly
   const jitterX = (Math.random() * 4 - 2).toFixed(1);
   const jitterRot = (Math.random() * 4 - 2).toFixed(1);
   face.innerHTML = `
@@ -609,7 +583,6 @@ const moodLabels = {
   dead: "has passed away"
 };
 
-// ---- RENDER ----
 let currentPet = null;
 
 function render(pet) {
@@ -651,7 +624,6 @@ function render(pet) {
   }
 }
 
-// ---- ACTIONS ----
 const feedBtn = document.getElementById("feedBtn");
 const playBtn = document.getElementById("playBtn");
 const comfortBtn = document.getElementById("comfortBtn");
@@ -674,7 +646,7 @@ async function performAction(boost, verb) {
   };
 
   await updateDoc(ref, updated);
-  await logEvent("care", `${myName} ${verb} the orb`);
+  await logEvent("care", `${myName} ${verb} the blob`);
 }
 
 feedBtn.addEventListener("click", () => performAction(FEED_BOOST, "fed"));
@@ -688,9 +660,9 @@ hatchBtn.addEventListener("click", async () => {
   const newGen = (pet.generation || 1) + 1;
 
   await setDoc(ref, {
-    hunger: 80,
-    happiness: 80,
-    pets: 80,
+    hunger: STARTING_STAT,
+    happiness: STARTING_STAT,
+    pets: STARTING_STAT,
     alive: true,
     generation: newGen,
     bornAt: Timestamp.now(),
@@ -701,7 +673,6 @@ hatchBtn.addEventListener("click", async () => {
   await logEvent("birth", `${myName} hatched generation ${newGen}`);
 });
 
-// ---- LOG ----
 function renderLog(entries) {
   const box = document.getElementById("logBox");
   if (entries.length === 0) {
@@ -729,28 +700,24 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
-// ---- INIT ----
 async function init() {
   await ensurePetExists();
   const ref = getPetRef();
 
-  // live updates to the pet doc
   onSnapshot(ref, async (snap) => {
     if (!snap.exists()) return;
     let pet = snap.data();
     const decayed = applyDecay(pet);
 
-    // if decay caused a death that isn't reflected in Firestore yet, persist it
     if (decayed.alive === false && pet.alive === true) {
       await updateDoc(ref, { alive: false, diedAt: decayed.diedAt });
       await logEvent("death", `the blob (gen ${pet.generation}) didn't make it — nobody came by in time`);
-      return; // onSnapshot will re-fire with the update
+      return;
     }
 
     render(decayed);
   });
 
-  // live updates to the log
   const logQuery = query(collection(db, LOG_COLLECTION), orderBy("createdAt", "desc"), limit(LOG_LIMIT));
   onSnapshot(logQuery, (snap) => {
     const entries = snap.docs.map(d => d.data());
@@ -763,7 +730,6 @@ init().catch(err => {
   document.getElementById("blobStatusText").textContent = "couldn't reach the blob (check firebase config)";
 });
 
-// refresh decay-only view every 30s so bars visibly drain without needing an action
 setInterval(() => {
   if (currentPet) render(applyDecay(currentPet));
 }, 30000);

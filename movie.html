@@ -24,6 +24,28 @@
 
       <p> also coming soon: suggestions box</p>
 
+      <div class="suggestion-box-container">
+  <h2>💡 Digital Suggestion Box</h2>
+  <p>Share your ideas, comments, or feature requests with our team.</p>
+
+  <form action="/submit-suggestion" method="POST">
+    <!-- Optional Name Field -->
+    <div class="form-group">
+      <label for="user-name">Your Name (Optional):</label>
+      <input type="text" id="user-name" name="name" placeholder="Anonymous">
+    </div>
+
+    <!-- The Main Suggestion Box -->
+    <div class="form-group">
+      <label for="user-suggestion">Your Suggestion:</label>
+      <textarea id="user-suggestion" name="suggestion" rows="6" required placeholder="Type your idea here..."></textarea>
+    </div>
+
+    <!-- Submit Button -->
+    <button type="submit">Submit Feedback</button>
+  </form>
+</div>
+
       <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
 
       <footer>
@@ -34,7 +56,7 @@
 
     </div>
   </div>
-
+  <div class="ticker"><span>✦ thank you for visiting and i welcome you with open arms ✦</span></div>
   <script src="js/nav.js"></script>
   <script src="js/effects.js"></script>
 
