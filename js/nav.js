@@ -20,12 +20,11 @@ const NAV_TREE = [
           
         ]
       },
+      { label: "the orb", href: "/orb/orb.html"},
     ]
   },
-  { label: "the orb", href: "/orb/orb.html"},
     { 
     label: "coming soon ", 
-    href: "/comingsoon.html",
     children: [
       { label: "coming soon", href: "/comingsoon.html" },
       { label: "working title", href: "/movie.html" },
@@ -33,8 +32,6 @@ const NAV_TREE = [
   },
 ];
 
-// full current path, normalised: "/" becomes "/index.html",
-// "/now/" becomes "/now/index.html", etc.
 function currentPath() {
   let p = window.location.pathname;
   if (p.endsWith("/")) p += "index.html";
@@ -47,11 +44,6 @@ function containsHere(item, here) {
   if (item.children) return item.children.some((c) => containsHere(c, here));
   return false;
 }
-
-// build the "│     │     ├── " style prefix for a node.
-// ancestorsLast = array of booleans: for each ancestor level, was that
-// ancestor the last item among its siblings? (last = blank space,
-// not-last = "│     " continuation line)
 function treePrefix(ancestorsLast, isLastSelf) {
   const lead = ancestorsLast.map((wasLast) => (wasLast ? "      " : "│     ")).join("");
   return lead + (isLastSelf ? "└── " : "├── ");
