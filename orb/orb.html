@@ -402,12 +402,12 @@ const db = getFirestore(app);
 const PET_DOC = "pets/theblob";
 const LOG_COLLECTION = "petLog";
 const STARTING_STAT = 80;
-const DECAY_PER_HOUR = 100;
+const DECAY_PER_HOUR = 8;
 const FEED_BOOST = { hunger: 30, happiness: 5, pets: 0 };
 const PLAY_BOOST = { hunger: -4, happiness: 28, pets: 0 };
 const COMFORT_BOOST = { hunger: 0, happiness: 10, pets: 25 };
 const ACTION_COOLDOWN_MS = 3 * 60 * 1000;
-const DEATH_GRACE_MS = 1 * 60 * 60 * 1000;
+const DEATH_GRACE_MS = 8 * 60 * 60 * 1000;
 const LOG_LIMIT = 30;
 
 let myName = localStorage.getItem("blobVisitorName") || "";
@@ -604,7 +604,28 @@ function render(pet) {
     pet.alive
       ? `generation ${pet.generation} · born ${bornDate.toLocaleDateString()}`
       : `generation ${pet.generation} · lived from ${bornDate.toLocaleDateString()} until ${(pet.diedAt.toDate ? pet.diedAt.toDate() : new Date(pet.diedAt)).toLocaleDateString()}`;
+      
+  const countdownEl = document.getElementById("blobCountdown");
+  if (pet.alive) {
+    const last = pet.lastUpdated.toMillis ? pet.lastUpdated.toMillis() : pet.lastUpdated;
+    const hoursElapsed = Math.max(0, (Date.now() - last) / (1000 * 60 * 60));
+    const hoursToZero = STARTING_STAT / DECAY_PER_HOUR;
+    const graceHours = DEATH_GRACE_MS / (1000 * 60 * 60);
+    const totalHoursToDeath = hoursToZero + graceHours;
+    const hoursLeft = Math.max(0, totalHoursToDeath - hoursElapsed);
 
+    if (hoursLeft <= 0) {
+      countdownEl.textContent = "on the brink...";
+    } else {
+      const h = Math.floor(hoursLeft);
+      const m = Math.round((hoursLeft - h) * 60);
+      countdownEl.textContent = h > 0
+        ? `will pass away in ~${h}h ${m}m if left unattended`
+        : `will pass away in ~${m}m if left unattended`;
+    }
+  } else {
+    countdownEl.textContent = "";
+  }
   document.getElementById("hungerFill").style.width = pet.hunger + "%";
   document.getElementById("happinessFill").style.width = pet.happiness + "%";
   document.getElementById("petsFill").style.width = pet.pets + "%";
