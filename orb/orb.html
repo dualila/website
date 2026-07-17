@@ -578,10 +578,10 @@ const moodColors = {
 };
 
 const moodLabels = {
-  happy: "feeling great!",
+  happy: "feeling great !!!! ",
   neutral: "doing okay",
   hungry: "getting hungry...",
-  neglected: "feeling forgotten :(",
+  neglected: "feeling neglected :(",
   dead: "has passed away"
 };
 
@@ -648,12 +648,12 @@ async function performAction(boost, verb) {
   };
 
   await updateDoc(ref, updated);
-  await logEvent("care", `${myName} ${verb} the blob`);
+  await logEvent("care", `${myName} ${verb} the orb`);
 }
 
 feedBtn.addEventListener("click", () => performAction(FEED_BOOST, "fed"));
 playBtn.addEventListener("click", () => performAction(PLAY_BOOST, "played with"));
-comfortBtn.addEventListener("click", () => performAction(COMFORT_BOOST, "petted"));
+comfortBtn.addEventListener("click", () => performAction(COMFORT_BOOST, "gave a pat to"));
 
 hatchBtn.addEventListener("click", async () => {
   const ref = getPetRef();
@@ -678,7 +678,7 @@ hatchBtn.addEventListener("click", async () => {
 function renderLog(entries) {
   const box = document.getElementById("logBox");
   if (entries.length === 0) {
-    box.innerHTML = `<div class="log-empty">no visitors yet — be the first</div>`;
+    box.innerHTML = `<div class="log-empty">no visitors yet — be the first ???</div>`;
     return;
   }
   box.innerHTML = entries.map(e => {
@@ -713,7 +713,7 @@ async function init() {
 
     if (decayed.alive === false && pet.alive === true) {
       await updateDoc(ref, { alive: false, diedAt: decayed.diedAt });
-      await logEvent("death", `the blob (gen ${pet.generation}) didn't make it — nobody came by in time`);
+      await logEvent("death", `the orb (gen ${pet.generation}) didn't make it — nobody came by in time `);
       return;
     }
 
@@ -728,8 +728,8 @@ async function init() {
 }
 
 init().catch(err => {
-  console.error("blob init failed:", err);
-  document.getElementById("blobStatusText").textContent = "couldn't reach the blob (check firebase config)";
+  console.error("orb init failed:", err);
+  document.getElementById("blobStatusText").textContent = "couldn't reach the orb ( lily need to check firebase config)";
 });
 
 setInterval(() => {
