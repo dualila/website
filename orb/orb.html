@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<div class="blob-meta" id="blobMetaText"></div>
+        <div class="blob-countdown" id="blobCountdown"></div>
 <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
 <title>the orb</title>
 <link rel="stylesheet" href="../css/site.css">
@@ -33,7 +35,7 @@
   }
   
   .blob-page .subtitle {
-    font-family: "times new roman", "Comic Sans", cursive;
+    font-family: "times new roman", cursive;
     font-size: 0.85rem;
     color: var(--cyan);
     text-shadow: 0 0 6px var(--cyan);
@@ -96,7 +98,7 @@
   }
 
   .blob-status {
-    font-family: "times new roman", "Comic Sans", cursive;
+    font-family: "times new roman", cursive;
     font-weight: bold;
     font-size: 1.1rem;
     color: var(--gold);
@@ -165,7 +167,7 @@
   }
 
   .blob-btn {
-    font-family: "Comic Sans MS", cursive;
+    font-family: "", cursive;
     font-weight: bold;
     font-size: 0.78rem;
     background: linear-gradient(to bottom, var(--hot-pink), #9900cc);
@@ -176,7 +178,15 @@
     cursor: pointer;
     transition: filter 0.15s ease;
   }
-
+.blob-countdown {
+    font-family: "times new roman", cursive;
+    font-size: 0.76rem;
+    color: var(--hungry);
+    text-shadow: 0 0 4px rgba(255, 179, 71, 0.45);
+    text-align: center;
+    min-height: 16px;
+    margin: -16px 0 24px;
+  }
   .blob-btn:hover:not(:disabled) {
     filter: brightness(1.2);
     animation: blobJelly 0.4s;
