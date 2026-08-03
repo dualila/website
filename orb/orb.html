@@ -348,6 +348,7 @@
 
         <div class="blob-status" id="blobStatusText">...</div>
         <div class="blob-meta" id="blobMetaText"></div>
+        <div class="blob-countdown" id="blobCountdown"></div>
 
         <div class="stat-row" id="statRow">
           <div class="stat">
@@ -614,26 +615,29 @@ function render(pet) {
       : `generation ${pet.generation} · lived from ${bornDate.toLocaleDateString()} until ${(pet.diedAt.toDate ? pet.diedAt.toDate() : new Date(pet.diedAt)).toLocaleDateString()}`;
       
   const countdownEl = document.getElementById("blobCountdown");
-  if (pet.alive) {
-    const last = pet.lastUpdated.toMillis ? pet.lastUpdated.toMillis() : pet.lastUpdated;
-    const hoursElapsed = Math.max(0, (Date.now() - last) / (1000 * 60 * 60));
-    const hoursToZero = STARTING_STAT / DECAY_PER_HOUR;
-    const graceHours = DEATH_GRACE_MS / (1000 * 60 * 60);
-    const totalHoursToDeath = hoursToZero + graceHours;
-    const hoursLeft = Math.max(0, totalHoursToDeath - hoursElapsed);
+  if (countdownEl) {
+    if (pet.alive) {
+      const last = pet.lastUpdated.toMillis ? pet.lastUpdated.toMillis() : pet.lastUpdated;
+      const hoursElapsed = Math.max(0, (Date.now() - last) / (1000 * 60 * 60));
+      const hoursToZero = STARTING_STAT / DECAY_PER_HOUR;
+      const graceHours = DEATH_GRACE_MS / (1000 * 60 * 60);
+      const totalHoursToDeath = hoursToZero + graceHours;
+      const hoursLeft = Math.max(0, totalHoursToDeath - hoursElapsed);
 
-    if (hoursLeft <= 0) {
-      countdownEl.textContent = "on the brink...";
+      if (hoursLeft <= 0) {
+        countdownEl.textContent = "on the brink...";
+      } else {
+        const h = Math.floor(hoursLeft);
+        const m = Math.round((hoursLeft - h) * 60);
+        countdownEl.textContent = h > 0
+          ? `will pass away in ~${h}h ${m}m if left unattended`
+          : `will pass away in ~${m}m if left unattended`;
+      }
     } else {
-      const h = Math.floor(hoursLeft);
-      const m = Math.round((hoursLeft - h) * 60);
-      countdownEl.textContent = h > 0
-        ? `will pass away in ~${h}h ${m}m if left unattended`
-        : `will pass away in ~${m}m if left unattended`;
+      countdownEl.textContent = "";
     }
-  } else {
-    countdownEl.textContent = "";
   }
+
   document.getElementById("hungerFill").style.width = pet.hunger + "%";
   document.getElementById("happinessFill").style.width = pet.happiness + "%";
   document.getElementById("petsFill").style.width = pet.pets + "%";
