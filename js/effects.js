@@ -1,7 +1,3 @@
-// effects.js — shared visual effects for every page.
-// Currently: sparkle cursor trail. Add new shared effects here so we're not
-// copy-pasting the same script into every HTML file.
-
 (function sparkleTrail() {
   const sparkleChars = ['✦', '✧', '☆', '★', '✨','✦', '✧', '☆', '★', '✨','✦', '✧', '☆', 'lily', 'lily','lilywakefield.com.au', '*'];
   let lastSparkle = 0;
