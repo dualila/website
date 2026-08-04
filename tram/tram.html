@@ -641,7 +641,7 @@
       log(moodLine(PASS), 'bad');
       S.patience = clamp(S.patience-5,0,100); S.complaints++;
     } else if(roll < 0.50){ // someone shows up
-      if(chance(0.55)) runCast(pickCastId());
+      if(chance(0.65)) runCast(pickCastId());
       else runSaga(pick(SAGAS));
     } else if(roll < 0.57){ // timetable starer
       const m = rnd(4,9);
