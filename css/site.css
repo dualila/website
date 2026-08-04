@@ -987,8 +987,6 @@ footer img { vertical-align: middle; margin: 0 4px; }
 
 .download-card,
 .widget-box,
-.guestbook-entries,
-.now-page .now-nav,
 .archive-page .archive-entry {
   background-image:
     radial-gradient(rgba(255, 255, 255, 0.3) 1px, transparent 1px),
@@ -1314,16 +1312,16 @@ a.track-name:hover {
   }
 
 /* ==========================================
-   DOT VISIBILITY 
+   DOT SIZE 
    ========================================== */
 .radio-console, .lastfm-box, .rotation-box, .genre-box, .bio-container,
 .contact-box, .age-widget, .context-box,
-.download-card, .widget-box, .guestbook-entries, .sidebar, .counter,
+.download-card, .widget-box, .sidebar, .counter,
 .now-page .now-section, .now-page .now-footnote, .now-page .top-tracks-box,
-.now-page .now-nav, .archive-page .archive-entry {
+.archive-page .archive-entry {
   background-image:
-    radial-gradient(rgba(255, 255, 255, 0.4) 1.5px, transparent 1.5px),
-    radial-gradient(rgba(255, 255, 255, 0.4) 1.5px, transparent 1.5px);
+    radial-gradient(rgba(255, 255, 255, 0.4) 1px, transparent 1px),
+    radial-gradient(rgba(255, 255, 255, 0.4) 1px, transparent 1px);
   background-size: 16px 16px;
   background-position: 0 0, 8px 8px;
 }
