@@ -123,6 +123,11 @@ body::before {
 .sidebar {
   flex: 0 0 250px;
   background: #000;
+  background-image:
+    radial-gradient(rgba(255, 255, 255, 0.3) 1px, transparent 1px),
+    radial-gradient(rgba(255, 255, 255, 0.3) 1px, transparent 1px);
+  background-size: 16px 16px;
+  background-position: 0 0, 8px 8px;
   border: 3px ridge #00ffff;
   padding: 12px 10px;
   font-family: "Courier New", monospace;
@@ -130,7 +135,7 @@ body::before {
   color: #0f0;
   position: sticky;
   top: 16px;
-  animation: sidebarPulse 6s infinite;
+  animation: sidebarPulse 6s infinite, boxDotsDrift 5s linear infinite;
 }
 
 .sidebar-title {
@@ -546,13 +551,18 @@ a:hover { transform: translateX(3px); }
 .counter {
   display: inline-block;
   background: #000;
+  background-image:
+    radial-gradient(rgba(255, 255, 255, 0.3) 1px, transparent 1px),
+    radial-gradient(rgba(255, 255, 255, 0.3) 1px, transparent 1px);
+  background-size: 16px 16px;
+  background-position: 0 0, 8px 8px;
   border: 2px solid #ff0000;
   padding: 6px 10px;
   font-family: "Courier New", monospace;
   letter-spacing: 4px;
   font-size: 22px;
   color: #ff3333;
-  animation: counterGlow 1.8s infinite;
+  animation: counterGlow 1.8s infinite, boxDotsDrift 5s linear infinite;
 }
 .counter-label { display: block; font-size: 11px; color: #ccc; margin-top: 4px; }
 
@@ -933,6 +943,7 @@ footer img { vertical-align: middle; margin: 0 4px; }
   text-shadow: 0 0 4px #ffff00;
   text-align: center;
   border: 3px dotted #ff00ff;
+  animation: boxDotsDrift 5s linear infinite;
 }
 
 .now-page .now-footnote a {
@@ -964,6 +975,27 @@ footer img { vertical-align: middle; margin: 0 4px; }
 @keyframes boxDotsDrift {
   from { background-position: 0 0, 8px 8px; }
   to   { background-position: 16px 16px, 24px 24px; }
+}
+
+.contact-box,
+.age-widget,
+.context-box,
+.drawer-title,
+.now-page .now-section {
+  animation: boxDotsDrift 5s linear infinite;
+}
+
+.download-card,
+.widget-box,
+.guestbook-entries,
+.now-page .now-nav,
+.archive-page .archive-entry {
+  background-image:
+    radial-gradient(rgba(255, 255, 255, 0.3) 1px, transparent 1px),
+    radial-gradient(rgba(255, 255, 255, 0.3) 1px, transparent 1px);
+  background-size: 16px 16px;
+  background-position: 0 0, 8px 8px;
+  animation: boxDotsDrift 5s linear infinite;
 }
 
 /* ==========================================
