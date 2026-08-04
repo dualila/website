@@ -457,6 +457,7 @@
     'Your housemate texts you: "did you take the bins out?". You did not.',
     'You refresh the tram tracker. It refreshes and nothing changes.',
     'A text from YahYahs tells you they have $5 entry tonight.',
+    '"Are you still coming out tonight?" You forgot there were plans tonight.',
     'Commbank: "$300 was withdrawn from an ATM on Gertrude Street".',
     'A text from your ex tells you they threw away your favourite hoodie and to please stop calling them.',
     'Duolingo: "These reminders don\'t seem to be working."',
@@ -473,6 +474,8 @@
   const STUDY_BAD = [
     'You reread the same sentence nine times.',
     'You open the court document. You close the court document.',
+    'You convince yourself this reading can wait until next week.',
+    'You open Canvas. That was enough studying for today.',
     'A pigeon walks past and it is more interesting than the assigned reading.',
     'You think about studying, which is not the same as studying.',
     'You realise the reading was optional and you panicked for nothing.',
@@ -486,6 +489,9 @@
       'Time passes. Someone hums Be The One by Dua Lipa.',
       'Time passes. Someone hums Fame is A Gun by Addison Rae.',
       'Time passes. Someone hums and it really annoys you.',
+      'Time passes. Someone hums a jingle from a betting ad',
+      'You wonder whether every tram driver secretly knows each other.',
+      'You wonder how many hours of your life have been spent waiting.',
       'You wonder if the tram knows you are waiting.',
       'You wonder who the Premier of Victoria is at the moment.',
       'You wonder if the Southern Rail Loop will ever truely exist.',
@@ -495,7 +501,8 @@
       'You probably could have walked by now.',
       'Time passes. Someone hums and it really annoys you.',
       'You no longer have faith in PTV.',
-      'Someone hums the Hamilton soundtrack.'
+      'You lock eyes with a man holding a half-eaten kebab. He takes this as an invitation to tell you about his crypto portfolio.'
+    
     ],
     high: [
       'You look at the sand on the tram tracks.',
@@ -543,10 +550,12 @@
     ]},
     { mins:3, pat:-4, complaint:1, beats:[
       ['A short man in a Nike tech fleece arrives with a UE Boom.', 'sys'],
+      ['...', 'dim'],
       ['Now playing: Moonbeam Ice Cream by Benson Boone.', 'amber']
     ]},
     { mins:2, beats:[
       ['A cyclist rolls up to the tram stop.', 'sys'],
+      ['...', 'dim'],
       ['"Technically I\'m allowed on this tram if I fold my bike up."', 'amber']
     ]},
     { mins:3, pat:-3, complaint:1, beats:[
@@ -561,6 +570,7 @@
         ]},
     { mins:3, complaint:1, beats:[
       ['A man vapes directly under the NO SMOKING sign.', 'sys'],
+      ['...', 'dim'],
       ['The cloud smells like blue raspberry.', 'dim']
     ]},
   ];
@@ -641,7 +651,7 @@
       log(moodLine(PASS), 'bad');
       S.patience = clamp(S.patience-5,0,100); S.complaints++;
     } else if(roll < 0.50){ // someone shows up
-      if(chance(0.65)) runCast(pickCastId());
+      if(chance(0.80)) runCast(pickCastId());
       else runSaga(pick(SAGAS));
     } else if(roll < 0.57){ // timetable starer
       const m = rnd(4,9);
@@ -802,15 +812,14 @@
     endScreen(
       '<h2 style="color:var(--tram-green-dk)">You made it</h2>',
       [
-        ['Route', S.route.n],
-        ['Waited', fmt(S.wait)],
-        ['Seat', seat?'Yes (!)':'No'],
-        ['Standing', seat?'No':'Yes'],
-        ['Windows', chance(0.5)?'Dirty':'Filthy'],
-        ['Distance', km+' km'],
-        ['Board still said', S.eta+' min'],
-        ['Productivity', String(S.productivity)],
-        ['Internal complaints', String(S.complaints)],
+        ['tram route', S.route.n],
+        ['minutes waited', fmt(S.wait)],
+        ['seat available?', seat?'Yes (!)':'No :('],
+        ['have to stand', seat?'No':'Yes !!!'],
+        ['windows', chance(0.3)?'dirty','filthy','foggy'],
+        ['distance', km+' km'],
+        ['study productivity', String(S.productivity)],
+        ['internal complaints', String(S.complaints)],
         ['Melbourne rating', '<span class="stars">'+stars(seat?5:4)+'</span>']
       ]
     );
@@ -822,11 +831,11 @@
     endScreen(
       '<h2 style="color:var(--tram-green-dk)">Peak Hour</h2>',
       [
-        ['Route', S.route.n],
-        ['Waited', fmt(S.wait)],
-        ['Passengers already aboard', '196'],
-        ['Your feet', 'Never touch the floor'],
-        ['Personal space', '0 cm'],
+        ['route', S.route.n],
+        ['waited', fmt(S.wait)],
+        ['passengers already aboard', '196'],
+        ['your feet', 'never touch the floor'],
+        ['personal space', '0 cm'],
         ['Melbourne rating', '<span class="stars">'+stars(3)+'</span>']
       ],
       'Nice and warm and sweaty !!! Have funnnnnnn.'
@@ -842,13 +851,13 @@
     endScreen(
       '<h2 style="color:var(--maroon)">Wrong Tram</h2>',
       [
-        ['You boarded', wrong.n+'  '+wrong.d],
-        ['You needed', S.route.n],
-        ['Waited', fmt(S.wait)],
-        ['Stops until you noticed', '3'],
+        ['you boarded', wrong.n+'  '+wrong.d],
+        ['you needed', S.route.n],
+        ['minutes waited', fmt(S.wait)],
+        ['stops until you noticed', '3'],
         ['Melbourne rating', '<span class="stars">'+stars(2)+'</span>']
       ],
-      'Get off at the next stop. Begin again.'
+      'Get off at the next stop. begin again.'
     );
   }
 
@@ -861,10 +870,10 @@
     endScreen(
       '<h2 style="color:var(--maroon)">Fare Evasion</h2>',
       [
-        ['Route', S.route.n],
-        ['Waited', fmt(S.wait)],
-        ['Tapped on', 'No'],
-        ['Infringement', '$356' + (rnd(9,20)*10)],
+        ['tram route', S.route.n],
+        ['waited', fmt(S.wait)],
+        ['tapped on ??', 'No'],
+        ['infringement', '$356' + (rnd(9,20)*10)],
         ['Melbourne rating', '<span class="stars">'+stars(1)+'</span>']
       ],
       'You receive your fine in the mail.'
@@ -876,10 +885,10 @@
     endScreen(
       '<h2>You boarded the bus</h2>',
       [
-        ['Route', S.route.n+' (bus replacement)'],
-        ['Waited', fmt(S.wait)],
-        ['Dignity', 'Negotiable'],
-        ['Seat', 'Yes, but at what cost'],
+        ['tram route', S.route.n+' (bus replacement)'],
+        ['waited', fmt(S.wait)],
+        ['dignity', 'none'],
+        ['seat', 'yes, but at what cost'],
         ['Melbourne rating', '<span class="stars">'+stars(2)+'</span>']
       ],
       'Ew.'
@@ -892,10 +901,10 @@
     endScreen(
       '<h2 style="color:var(--maroon)">The Stand</h2>',
       [
-        ['Route', 'None'],
-        ['Waited', fmt(S.wait)],
-        ['Buses boarded', '0'],
-        ['Standards', 'Intact'],
+        ['tram route', 'None'],
+        ['minutes waited', fmt(S.wait)],
+        ['buses boarded', '0'],
+        ['standards', 'intact'],
         ['Melbourne rating', '<span class="stars">'+stars(3)+'</span>']
       ],
       'You are still at the stop. And the tram may never come.'
@@ -910,11 +919,11 @@
     endScreen(
       '<h2 style="color:var(--maroon)">You walked instead !!!</h2>',
       [
-        ['Destination', S.dest],
-        ['Waited first', fmt(S.wait)],
-        ['Then walked', km+' km'],
-        ['Regret', chance(0.5)?'Immediate':'Delayed'],
-        ['The tram', 'Arrived 90 seconds after you left'],
+        ['destination', S.dest],
+        ['waited first', fmt(S.wait)],
+        ['then walked', km+' km'],
+        ['regret', chance(0.5)?'immediate':'delayed'],
+        ['the tram', 'arrived 90 seconds after you left'],
         ['Melbourne rating', '<span class="stars">'+stars(3)+'</span>']
       ],
       'It always arrives 90 seconds after you leave. Try again next time :('
