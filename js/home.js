@@ -33,7 +33,7 @@ fetch("https://api.github.com/repos/dualila/website/commits/main")
     lastUpdated.textContent = "Unavailable";
   });
 
-// ── Melbourne weather · 
+// ── Melbourne weather · precise conditions ────────────────────
 const WMO = {
   0:  ["☀️", "clear sky"],
   1:  ["🌤️", "mainly clear"],
@@ -65,24 +65,14 @@ const WMO = {
   99: ["⛈️", "thunderstorm with heavy hail"],
 };
 
-// turn a compass bearing into a proper 16-point direction, for no reason
-function windDir(deg) {
-  const dirs = ["N","NNE","NE","ENE","E","ESE","SE","SSE",
-                "S","SSW","SW","WSW","W","WNW","NW","NNW"];
-  return dirs[Math.round(deg / 22.5) % 16];
-}
-
 async function fetchWeather() {
   const weatherValEl = document.getElementById('weatherValue');
   if (!weatherValEl) return;
 
   const lat = -37.8136;
   const lon = 144.9631;
-  // ask for the works: temp, apparent temp, humidity, wind, gusts, precip, etc.
   const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
-    `&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,` +
-    `wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,cloud_cover,` +
-    `surface_pressure,is_day` +
+    `&current=temperature_2m,apparent_temperature,weather_code,is_day` +
     `&timezone=Australia%2FMelbourne`;
 
   try {
@@ -90,16 +80,9 @@ async function fetchWeather() {
     const data = await response.json();
     const c = data.current || {};
 
-    const temp    = Math.round(c.temperature_2m);
-    const feels   = Math.round(c.apparent_temperature);
-    const code    = c.weather_code;
-    const humidity = Math.round(c.relative_humidity_2m);
-    const wind    = Math.round(c.wind_speed_10m);
-    const gust    = Math.round(c.wind_gusts_10m);
-    const dir     = windDir(c.wind_direction_10m);
-    const precip  = c.precipitation;
-    const cloud   = Math.round(c.cloud_cover);
-    const pressure = Math.round(c.surface_pressure);
+    const temp  = Math.round(c.temperature_2m);
+    const feels = Math.round(c.apparent_temperature);
+    const code  = c.weather_code;
 
     // look up the exact description + icon
     let [icon, condition] = WMO[code] || ["✨", "vibing"];
@@ -124,13 +107,7 @@ async function fetchWeather() {
     weatherValEl.innerHTML = `
       <span style="font-size: 24px; display: block; margin-bottom: 4px;">${icon}</span>
       <span>${temp}°C &bull; ${condition}</span>
-      <span style="display:block; font-size:11px; color:#c8ffd8; margin-top:6px; line-height:1.6;">
-        ${feelsLine}<br>
-        💧 ${humidity}% humidity<br>
-        🌬️ ${wind} km/h ${dir}${gust > wind + 5 ? ` (gusts ${gust})` : ""}<br>
-        ☁️ ${cloud}% cloud${precip > 0 ? ` &bull; ${precip} mm` : ""}<br>
-        <span style="opacity:.7;">📊 ${pressure} hPa · for no reason</span>
-      </span>
+      <span style="display:block; font-size:11px; color:#c8ffd8; margin-top:6px;">${feelsLine}</span>
     `;
   } catch (error) {
     console.error("Weather fetch failed:", error);
