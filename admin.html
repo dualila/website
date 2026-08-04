@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>admin · authorised personnel only</title>
+  <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+  <link rel="stylesheet" href="css/site.css">
+  <meta name="robots" content="noindex">
+  <style>
+    /* ── admin ──────────────────────────────────────────── */
+    .admin-wrap { max-width: 640px; margin: 0 auto; }
+
+    .terminal {
+      background: #000;
+      border: 2px inset #00ff00;
+      padding: 16px;
+      font-family: "Courier New", monospace;
+      font-size: 13px;
+      color: #0f0;
+      text-shadow: 0 0 4px #0f0;
+    }
+
+    /* login */
+    .login-box label { display:block; margin: 10px 0 3px; letter-spacing:1px; }
+    .login-box input {
+      width: 100%;
+      background: #001a00;
+      border: 1px solid #0f0;
+      color: #0f0;
+      font-family: "Courier New", monospace;
+      font-size: 14px;
+      padding: 7px;
+      text-shadow: 0 0 4px #0f0;
+    }
+    .login-box input.shake { animation: adShake .35s; border-color:#f66; }
+    @keyframes adShake {
+      0%,100%{ transform:translateX(0) }
+      20%,60%{ transform:translateX(-5px) }
+      40%,80%{ transform:translateX(5px) }
+    }
+    .login-box .lg-btn {
+      margin-top: 14px;
+      width: 100%;
+      background: linear-gradient(to bottom, #00ff00, #009900);
+      color: #002200;
+      border: 2px outset #0f0;
+      font-family: "Courier New", monospace;
+      font-weight: bold;
+      font-size: 15px;
+      padding: 9px;
+      cursor: pointer;
+      letter-spacing: 2px;
+    }
+    .login-box .lg-btn:hover { filter: brightness(1.15); }
+    .login-note { font-size: 11px; opacity: .6; margin-top: 10px; }
+    .caret::after { content:"▌"; animation: retro-blink .8s steps(2,start) infinite; }
+
+    /* control room */
+    .panel { display: none; }
+    .panel.on { display: block; }
+
+    .gauge-row { display:flex; gap:12px; flex-wrap:wrap; margin: 12px 0; }
+    .gauge {
+      flex:1 1 140px; border:1px dashed #0f0; padding:8px 10px; background:#001100;
+    }
+    .gauge .g-label { font-size:11px; opacity:.8; letter-spacing:1px; }
+    .gauge .g-val { font-size:20px; font-weight:bold; }
+    .bar { height:8px; background:#003300; border:1px solid #0f0; margin-top:6px; overflow:hidden; }
+    .bar > i { display:block; height:100%; background:#0f0; width:20%; transition:width .5s; }
+
+    .toggles { margin: 14px 0; }
+    .toggle-line {
+      display:flex; justify-content:space-between; align-items:center;
+      border-bottom:1px dotted #063; padding:8px 2px;
+    }
+    .toggle-line span { letter-spacing:.5px; }
+    .sw {
+      background:#200; color:#f66; border:1px solid #f66;
+      font-family:"Courier New",monospace; font-weight:bold; font-size:12px;
+      padding:4px 10px; cursor:pointer; min-width:64px;
+    }
+    .sw.on { background:#020; color:#0f0; border-color:#0f0; }
+
+    .danger {
+      margin-top:16px; border:2px solid #f00; padding:12px; background:#160000;
+      text-align:center;
+    }
+    .danger .d-title { color:#f66; text-shadow:0 0 5px #f00; letter-spacing:2px; font-weight:bold; }
+    .danger .d-btn {
+      margin-top:10px; background:linear-gradient(to bottom,#ff0000,#990000);
+      color:#fff; border:2px outset #f00; font-family:"Courier New",monospace;
+      font-weight:bold; padding:9px 16px; cursor:pointer; letter-spacing:1px;
+    }
+
+    .log-title { margin-top:16px; opacity:.8; letter-spacing:1px; }
+    .adminlog {
+      margin-top:6px; background:#000; border:1px solid #063; padding:8px;
+      height:130px; overflow-y:auto; font-size:12px; line-height:1.6;
+    }
+    .adminlog::-webkit-scrollbar { width:10px; }
+    .adminlog::-webkit-scrollbar-track { background:#000; border-left:1px dashed #0f0; }
+    .adminlog::-webkit-scrollbar-thumb { background:#0f0; border:2px solid #000; }
+    .adminlog .warn { color:#ffcc00; }
+    .adminlog .bad { color:#ff5555; }
+
+    .logout {
+      margin-top:14px; background:none; border:1px solid #0f0; color:#0f0;
+      font-family:"Courier New",monospace; padding:6px 12px; cursor:pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="ticker"><span>✦ RESTRICTED ✦ authorised users only ✦ RESTRICTED ✦</span></div>
+
+  <div class="layout">
+    <div class="sidebar" id="sidebar"></div>
+
+    <div class="frame">
+
+      <div class="hero">
+        <h1>✧ admin ✧</h1>
+        <p class="blink">☆ 🔒 secure control panel 🔒 ☆</p>
+      </div>
+
+      <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
+
+      <div class="content admin-wrap">
+
+        <!-- LOGIN -->
+        <div class="terminal login-box panel on" id="loginPanel">
+          <div>&gt; lily wakefield dot com dot au secure control access panel </div>
+          <div>&gt; please authenticate to continue<span class="caret"></span></div>
+
+          <label for="adUser">username</label>
+          <input type="text" id="adUser" autocomplete="off" placeholder="lily wakefield">
+
+          <label for="adPass">password</label>
+          <input type="password" id="adPass" autocomplete="off" placeholder="••••••••">
+
+          <button class="lg-btn" id="adLogin" type="button">LOG IN</button>
+          <div class="login-note" id="adNote">access restricted to lily wakefield only </div>
+        </div>
+
+        <!-- CONTROL ROOM -->
+        <div class="terminal panel" id="roomPanel">
+          <div>&gt; ACCESS GRANTED. welcome back, <span id="whoami">admin</span>.</div>
+          <div>&gt; you now have full control of lilywakefield.com.au</div>
+
+          <div class="toggles" id="toggles"></div>
+
+          <div class="log-title">&gt; live system log</div>
+          <div class="adminlog" id="adminLog"></div>
+
+          <div class="danger">
+            <button class="d-btn" id="nukeBtn" type="button">delete lilywakefield.com.au</button>
+          </div>
+
+
+          <button class="logout" id="logoutBtn" type="button">◄ log out</button>
+        </div>
+
+      </div>
+
+      <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
+
+      <footer>
+        ★ ° ☆ ° ★ ° ☆ ° ★ 2026 lily wakefield ★ ° ☆ ° ★ ° ☆ ° ★<br>
+        <img src="/images/favicon.ico" alt="site icon" width="24" height="24">
+        best experienced with an open heart
+      </footer>
+
+    </div>
+  </div>
+
+  <script src="js/nav.js"></script>
+  <script src="js/effects.js"></script>
+
+  <script>
+    const loginPanel = document.getElementById("loginPanel");
+    const roomPanel  = document.getElementById("roomPanel");
+    const adUser = document.getElementById("adUser");
+    const adPass = document.getElementById("adPass");
+    const adNote = document.getElementById("adNote");
+    const logEl  = document.getElementById("adminLog");
+
+    function logLine(text, cls) {
+      const p = document.createElement("div");
+      if (cls) p.className = cls;
+      const t = new Date().toLocaleTimeString();
+      p.textContent = `[${t}] ${text}`;
+      logEl.appendChild(p);
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    //
+    const btn = document.getElementById("adLogin");
+    btn.addEventListener("click", doLogin);
+    adPass.addEventListener("keydown", (e) => { if (e.key === "Enter") doLogin(); });
+
+    //
+    const EMPTY_LINES = [
+      "you have to type SOMETHING. this is a secure facility.",
+      "the password can be anything. it cannot be nothing.",
+      "at least pretend to have credentials.",
+    ];
+    let emptyTries = 0;
+
+    function doLogin() {
+      const pass = adPass.value.trim();
+
+      //
+      if (!pass) {
+        adNote.textContent = EMPTY_LINES[emptyTries % EMPTY_LINES.length];
+        emptyTries++;
+        adPass.classList.remove("shake");
+        void adPass.offsetWidth;   // 
+        adPass.classList.add("shake");
+        adPass.focus();
+        return;
+      }
+
+      const who = (adUser.value.trim() || "admin").slice(0, 24);
+      btn.disabled = true;
+      btn.textContent = "◌ AUTHENTICATING...";
+      adNote.textContent = "verifying credentials against the mainframe...";
+
+      //
+      setTimeout(() => {
+        adNote.innerHTML = "log in";
+      }, 900);
+
+      setTimeout(() => {
+        document.getElementById("whoami").textContent = who;
+        loginPanel.classList.remove("on");
+        roomPanel.classList.add("on");
+        bootRoom(who);
+      }, 1700);
+    }
+
+    //
+    const SWITCHES = [
+      { name: "dark mode",                  on: "it was already dark" },
+      { name: "summon a tram",              on: "a tram has been summoned (2 min away)" },
+      { name: "ban anonymous losers",       on: "you would be banning yourself." },
+      { name: "enable comic sans",          on: "it was never disabled" },
+      { name: "give lily red hair again",   on: "absolutely not." },
+      { name: "pay off HECS debt",      on: "$120,000 debt cleared." },
+    ];
+
+    function bootRoom(who) {
+      // build toggles
+      const wrap = document.getElementById("toggles");
+      SWITCHES.forEach((s) => {
+        const row = document.createElement("div");
+        row.className = "toggle-line";
+        const label = document.createElement("span");
+        label.textContent = "› " + s.name;
+        const sw = document.createElement("button");
+        sw.className = "sw";
+        sw.type = "button";
+        sw.textContent = "OFF";
+        sw.addEventListener("click", () => {
+          const nowOn = sw.classList.toggle("on");
+          sw.textContent = nowOn ? "ON" : "OFF";
+          logLine(nowOn ? `★ ${s.name}: ${s.on}` : `${s.name}: switched off.`,
+                  nowOn ? "warn" : "");
+        });
+        row.appendChild(label);
+        row.appendChild(sw);
+        wrap.appendChild(row);
+      });
+
+      // opening log
+      logLine(`admin session opened for '${who}'.`);
+      logLine("loading site modules...");
+      logLine("orb.exe .......... ok");
+      logLine("tram_simulator ... ok (delayed)");
+      logLine("the_wall ......... ok");
+      logLine("chatroom ......... 2 anonymous losers online", "warn");
+      logLine("all systems normal. do not touch anything.", "warn");
+
+      // ambient log chatter
+      setInterval(ambient, 5200);
+    }
+
+    const AMBIENT = [
+      "visitor #217 is patting the orb .",
+      "someone placed a pixel and it was slightly off-centre.",
+      "the tram is still 2 minutes away.",
+      "background dot texture drifted 0.4px. corrected.",
+      "a guestbook entry was signed 'anonymous loser'.",
+      "the orb blinked but no one saw it.",
+      "checked whether the movie is done. it is not.",
+      "cheese levels in fridge low.",
+    ];
+    function ambient() {
+      AMBIENT.push(AMBIENT.shift());
+      logLine(AMBIENT[0]);
+    }
+
+    //
+    const nuke = document.getElementById("nukeBtn");
+    let arming = false;
+    nuke.addEventListener("click", () => {
+      if (arming) return;
+      arming = true;
+      let n = 3;
+      logLine("DELETING LILY WAKEFIELD DOT COM DOT AU INITIATED.", "bad");
+      nuke.textContent = `⚠ DELETING IN ${n}...`;
+      const iv = setInterval(() => {
+        n--;
+        if (n > 0) {
+          nuke.textContent = `⚠ DELETING IN ${n}...`;
+          logLine(`...${n}...`, "bad");
+        } else {
+          clearInterval(iv);
+          logLine("erasing lilywakefield.com.au ...", "bad");
+          setTimeout(() => {
+            logLine("...", "bad");
+            setTimeout(() => {
+              logLine("kidding xx", "warn");
+              nuke.textContent = "DELETE WEBSITE";
+              arming = false;
+            }, 1200);
+          }, 900);
+        }
+      }, 900);
+    });
+
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      location.reload();
+    });
+  </script>
+
+</body>
+</html>

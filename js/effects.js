@@ -32,3 +32,35 @@ star.style.animationDelay=-Math.random()*20+"s";
 document.body.appendChild(star);
 
 }
+
+(function hiddenAdminLink() {
+  function addIt() {
+    const footer = document.querySelector('footer');
+    if (!footer || footer.querySelector('.secret-admin')) return;
+
+    const a = document.createElement('a');
+    a.className = 'secret-admin';
+    a.href = '/admin.html';
+    a.textContent = '🔒';               
+    a.style.cssText =
+      'color:rgba(255,0,255,0.50);text-decoration:none;margin-left:8px;' +
+      'transition:color .3s,text-shadow .3s;';
+
+    a.addEventListener('mouseenter', () => {
+      a.style.color = '#ff00ff';
+      a.style.textShadow = '0 0 6px #ff00ff';
+    });
+    a.addEventListener('mouseleave', () => {
+      a.style.color = 'rgba(255,0,255,0.14)';
+      a.style.textShadow = 'none';
+    });
+
+    footer.appendChild(a);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', addIt);
+  } else {
+    addIt();
+  }
+})();
