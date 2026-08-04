@@ -215,7 +215,7 @@
         adNote.textContent = EMPTY_LINES[emptyTries % EMPTY_LINES.length];
         emptyTries++;
         adPass.classList.remove("shake");
-        void adPass.offsetWidth;   // 
+        void adPass.offsetWidth;   //
         adPass.classList.add("shake");
         adPass.focus();
         return;
@@ -239,6 +239,21 @@
       }, 1700);
     }
 
+    // 
+    const SPECIAL_GREETINGS = {
+      "lily": "oh. it's actually you. hi lily.",
+      "lily wakefield": "oh. it's actually you. hi lily.",
+    };
+
+    // 
+    const PW_VERDICTS = [
+      "★★★★★",
+      "my granny could guess that.",
+      "surprisingly strong.",
+      "★★☆☆☆",
+      "★☆☆☆☆",
+    ];
+
     //
     const SWITCHES = [
       { name: "dark mode",                  on: "it was already dark" },
@@ -246,7 +261,7 @@
       { name: "ban anonymous losers",       on: "you would be banning yourself." },
       { name: "enable comic sans",          on: "it was never disabled" },
       { name: "give lily red hair again",   on: "absolutely not." },
-      { name: "pay off HECS debt",      on: "$120,000 debt cleared." },
+      { name: "pay off HECS debt",          on: "$120,000 debt cleared." },
     ];
 
     function bootRoom(who) {
@@ -274,11 +289,15 @@
 
       // opening log
       logLine(`admin session opened for '${who}'.`);
-      logLine("loading site modules...");
+      const special = SPECIAL_GREETINGS[who.toLowerCase()];
+      if (special) logLine(special, "warn");
+      logLine("loading site .....");
       logLine("orb.exe .......... ok");
       logLine("tram_simulator ... ok (delayed)");
       logLine("the_wall ......... ok");
       logLine("chatroom ......... 2 anonymous losers online", "warn");
+      logLine("password accepted. strength assessment: " +
+              PW_VERDICTS[Math.floor(Math.random() * PW_VERDICTS.length)], "warn");
       logLine("all systems normal. do not touch anything.", "warn");
 
       // ambient log chatter
@@ -295,7 +314,9 @@
       "checked whether the movie is done. it is not.",
       "cheese levels in fridge low.",
     ];
+    let deleting = false;   
     function ambient() {
+      if (deleting) return;
       AMBIENT.push(AMBIENT.shift());
       logLine(AMBIENT[0]);
     }
@@ -306,6 +327,7 @@
     nuke.addEventListener("click", () => {
       if (arming) return;
       arming = true;
+      deleting = true;  
       let n = 3;
       logLine("DELETING LILY WAKEFIELD DOT COM DOT AU INITIATED.", "bad");
       nuke.textContent = `⚠ DELETING IN ${n}...`;
@@ -321,8 +343,9 @@
             logLine("...", "bad");
             setTimeout(() => {
               logLine("kidding xx", "warn");
-              nuke.textContent = "DELETE WEBSITE";
+              nuke.textContent = "delete lilywakefield.com.au";
               arming = false;
+              deleting = false;   // 
             }, 1200);
           }, 900);
         }
@@ -330,7 +353,8 @@
     });
 
     document.getElementById("logoutBtn").addEventListener("click", () => {
-      location.reload();
+      logLine("you can never truly be logged out.", "warn");
+      setTimeout(() => location.reload(), 700);
     });
   </script>
 
