@@ -265,11 +265,12 @@
       mykiBroken:false,
       phoneDead:false,
       boardedBus:false,
-      lbSubmitted:false
+      lbSubmitted:false,
+      cast:{}               // 
     };
   }
 
-  const WX = ["sunny","cloudy","raining","windy","stormy"];
+  const WX = ["sunny","cloudy","rainy","windy","stormy"];
   function shiftWeather(){
     const r = Math.random();
     if(r < 0.45) S.wxIdx = 0;        
@@ -278,8 +279,6 @@
     else if(r < 0.93) S.wxIdx = 3;  
     else S.wxIdx = 4;                
   }
-  // change the weather; only announce it in the log when it actually changes.
-  // pass force=true to guarantee a real change (used by the weather event).
   function changeWeather(force){
     const before = S.wxIdx;
     do { shiftWeather(); } while(force && S.wxIdx===before);
@@ -288,6 +287,8 @@
       if(S.wxIdx===4) log('When will this tram come?.', 'dim');
     }
   }
+  function mood(){ return S.patience>66 ? 'high' : S.patience>33 ? 'mid' : 'low'; }
+  function moodLine(bank){ const arr = bank[mood()] || bank.mid; return pick(arr); }
 
   const ROUTES = [
     {n:"86",  d:"Bundoora – Docklands"},
@@ -301,7 +302,7 @@
   /* ---------- render: board + status ---------- */
   function paint(){
     const r = S.route;
-    $("boardSvc").textContent = r ? ("▶ "+r.n+"  "+r.d) : "NO SERVICE SELECTED";
+    $("boardSvc").textContent = r ? ("★ "+r.n+"  "+r.d) : "NO SERVICE SELECTED";
     $("boardEta").textContent = (S.phase==="approach") ? "NOW" :
                                  (r ? S.eta+" min" : "-- min");
     $("stWait").textContent = fmt(S.wait);
@@ -351,15 +352,15 @@
     const dOpts = $("destOpts");
     DESTS.forEach(d=>{
       const el = document.createElement("div");
-      el.className="opt"; el.innerHTML='<span class="box">☐</span>'+d;
-      el.onclick=()=>{ S.dest=d; [...dOpts.children].forEach(c=>{c.classList.remove("sel");c.querySelector(".box").textContent="☐";}); el.classList.add("sel"); el.querySelector(".box").textContent="☑"; check(); };
+      el.className="opt"; el.innerHTML='<span class="box">★</span>'+d;
+      el.onclick=()=>{ S.dest=d; [...dOpts.children].forEach(c=>{c.classList.remove("sel");c.querySelector(".box").textContent="★";}); el.classList.add("sel"); el.querySelector(".box").textContent="☑"; check(); };
       dOpts.appendChild(el);
     });
     const rOpts = $("routeOpts");
     ROUTES.forEach(r=>{
       const el = document.createElement("div");
-      el.className="opt"; el.innerHTML='<span class="box">☐</span><b>'+r.n+'</b>&nbsp;'+r.d;
-      el.onclick=()=>{ S.route=r; [...rOpts.children].forEach(c=>{c.classList.remove("sel");c.querySelector(".box").textContent="☐";}); el.classList.add("sel"); el.querySelector(".box").textContent="☑"; paint(); check(); };
+      el.className="opt"; el.innerHTML='<span class="box">★</span><b>'+r.n+'</b>&nbsp;'+r.d;
+      el.onclick=()=>{ S.route=r; [...rOpts.children].forEach(c=>{c.classList.remove("sel");c.querySelector(".box").textContent="★";}); el.classList.add("sel"); el.querySelector(".box").textContent="☑"; paint(); check(); };
       rOpts.appendChild(el);
     });
     function check(){
@@ -404,7 +405,6 @@
     S.progress = clamp(S.progress + progress + rnd(2,7), 0, 999);
     // ETA drifts: mostly refuses to go down
     if(chance(0.18) && S.eta>1) S.eta -= 1; else if(chance(0.35)) S.eta += rnd(0,2);
-    // weather jumps around (announced in the log only when it changes)
     if(chance(0.25)) changeWeather();
     if(event && chance(0.72)) randomEvent();
     paint();
@@ -438,7 +438,7 @@
     tick(rnd(120,240), {event:false});
   }
   function actWait(){
-    log(pick(VOID_LINES), 'dim');
+    log(moodLine(VOID), 'dim');   // 
     S.awareness = clamp(S.awareness+rnd(2,6),0,100);
     tick(rnd(45,90), {progress:1});
   }
@@ -479,65 +479,67 @@
     'You highlight the entire page. Now nothing is highlighted.',
     'You watch the lecture at 2x speed.'
   ];
-  const VOID_LINES = [
-    'You consider your relationship to public transport, and the greater implications of public funding.',
-    'Time passes. Someone hums 24K Magic by Bruno Mars.',
-    'Time passes. Someone hums Be The One by Dua Lipa.',
-    'Time passes. Someone hums Fame is A Gun by Addison Rae.',
-    'Time passes. Someone hums and it really annoys you.',
-    'You wonder if the tram knows you are waiting.',
-    'You wonder who the premier of Victoria is at the moment.',
-    'You wonder if the Southern Rail Loop will ever truely exist.',
-    'You wonder if a train to the aiport was just a dream you had once.'
-  ];
+  const VOID = {
+    mid: [
+      'You consider your relationship to public transport, and the greater implications of public funding.',
+      'Time passes. Someone hums 24K Magic by Bruno Mars.',
+      'Time passes. Someone hums Be The One by Dua Lipa.',
+      'Time passes. Someone hums Fame is A Gun by Addison Rae.',
+      'Time passes. Someone hums and it really annoys you.',
+      'You wonder if the tram knows you are waiting.',
+      'You wonder who the Premier of Victoria is at the moment.',
+      'You wonder if the Southern Rail Loop will ever truely exist.',
+      'You wonder if a train to the aiport was just a dream you had once.'
+    ],
+    low: [
+      'You probably could have walked by now.',
+      'Time passes. Someone hums and it really annoys you.',
+      'You no longer have faith in PTV.',
+      'Someone hums the Hamilton soundtrack.'
+    ],
+    high: [
+      'You look at the sand on the tram tracks.',
+      'The tram will come when it comes.',
+      'Somewhere the tram is doing its best.',
+      'You could be anywhere but here you are at the tram stop. Maybe you should invest in a bike.'
+    ]
+  };
   const MISS_LINES = [
     'You were looking at your phone. The tram came and went without you :(',
     'You blinked, the tram arrived, opened its doors, and left.',
     'You were deep in your notes. The tram came and did not wait for you.',
     'You glanced up a second too late. The tram has been and gone.'
   ];
+  // 
+  const PASS = {
+    mid:  ['It is not.', 'It was not yours.', 'It keeps going. Not yours.'],
+    low:  ['Of course it was not yours.', 'Not yours. Obviously not yours.', 'It is not. It is never yours.'],
+    high: ['It is not yours.', 'Not yours. Maybe the next one, then.', 'It is not. That is alright. It will come.']
+  };
+  // 
+  const LATE = {
+    low:  ['Okay.', 'You are not even surprised anymore.', 'The board lies.'],
+    high: ['That is okay.', 'You do not mind too much.', 'The tram will come. It always eventually comes.']
+  };
 
-  /* ---------- chained vignettes (sagas) ---------- */
+  /* ----------  ---------- */
   const SAGAS = [
-    { mins:10, pat:-4, beats:[
-      ['A teenager arrives.', 'sys'],
-      ['"I\'m only going two stops."', 'amber'],
-    ]},
-    { mins:20, pat:-6, beats:[
-      ['An elderly man shakes his head.', 'sys'],
-      ['"They\'re never on time."', 'amber'],
-      ['It feels like twenty minutes pass ...', 'dim'],
-      ['He is now explaining tram privatisation.', 'amber']
-    ]},
     { mins:3, beats:[
       ['Someone asks the group:', 'sys'],
       ['"Is this still the free tram zone?"', 'amber'],
       ['...', 'dim'],
-      ['Nobody knows.', 'amber']
+      ['Nobody answers.', 'amber']
     ]},
     { mins:2, pat:-5, beats:[
       ['Authorised Officers appear.', 'amber'],
-      ['Everyone suddenly looks at the ground.', 'dim']
+      ['Everyone looks at the ground.', 'dim']
     ]},
     { mins:2, beats:[
       ['A tradie drinks an entire dare iced coffee in one go.', 'sys'],
     ]},
-     { mins:3, beats:[
-      ['A man is on the phone, loudly closing a deal.', 'sys'],
-      ['"Yeah mate, circle back, touch base, EOD. No worries mate."', 'amber'],
-    ]},
     { mins:2, beats:[
       ['A man wearing sunglasses after sunset gets to the stop, visibly annoyed that all the seats under the shelter are taken.', 'sys'],
       ['You assume he has been awake since Friday.', 'dim']
-    ]},
-    { mins:15, pat:-3, beats:[
-      ['A nice old lady starts knitting.', 'sys'],
-      ['...', 'dim'],
-      ['She is halfway through a scarf.', 'dim'],
-      ['...', 'dim'],
-      ['She has finished the scarf.', 'amber'],
-      ['...', 'dim'],
-      ['She starts another.', 'dim']
     ]},
     { mins:3, pat:-4, complaint:1, beats:[
       ['A short man in a Nike tech fleece arrives with a UE Boom.', 'sys'],
@@ -546,10 +548,6 @@
     { mins:2, beats:[
       ['A cyclist rolls up to the tram stop.', 'sys'],
       ['"Technically I\'m allowed on this tram if I fold my bike up."', 'amber']
-    ]},
-    { mins:2, beats:[
-      ['A tourist looks delighted.', 'sys'],
-      ['"Is this the famous tram?????"', 'amber']
     ]},
     { mins:3, pat:-3, complaint:1, beats:[
       ['Two tourists are arguing with each other.', 'sys'],
@@ -581,6 +579,51 @@
     if(s.complaint) S.complaints += s.complaint;
   }
 
+  const CAST = {
+    knitter:{ mins:12, pat:-2, line(n){
+      if(n===1) return [['A nice old lady starts knitting.','sys']];
+      if(n===2) return [['The knitting lady has finished her scarf.','dim'],['She casts on another one.','dim']];
+      if(n===3) return [['The knitting lady is on her third scarf.','dim'],['You have produced nothing in the same amount of time.','dim']];
+      return [['The knitting lady is now on scarf number '+n+'.','dim'],['She could clothe the entire shelter by now.','dim']];
+    }},
+    tourist:{ mins:2, line(n){
+      if(n===1) return [['A tourist looks delighted.','sys'],['"Is this the famous tram?????"','amber']];
+      if(n===2) return [['The tourist is still here.','sys'],['"...does anyone know when the tram is coming?"','amber']];
+      return [['The tourist has stopped asking questions.','sys'],['They have accepted Melbourne as home now.','dim']];
+    }},
+    dealGuy:{ mins:3, pat:-1, line(n){
+      if(n===1) return [['A man is on the phone, loudly closing a deal.','sys'],['"Yeah mate, circle back, touch base, EOD. No worries mate."','amber']];
+      if(n===2) return [['The deal guy has circled back.','sys'],['"Nah totally, let\'s take it offline."','amber']];
+      if(n===3) return [['The deal guy has circled back for the third time.','dim'],['The deal is not closing.','dim']];
+      return [['The deal guy circles back yet again.','dim'],['"Alright mate I\'m catching what you\'re throwing."','amber']];
+    }},
+    oldMan:{ mins:8, pat:-3, line(n){
+      if(n===1) return [['An elderly man shakes his head.','sys'],['"They\'re never on time."','amber']];
+      if(n===2) return [['The elderly man is now explaining tram privatisation.','amber'],['You have learned three things you did not want to know.','dim']];
+      return [['The elderly man has reached the 1990s in his lecture.','dim'],['There is no sign he intends to stop and there is no sign of the tram.','dim']];
+    }},
+    teen:{ mins:6, pat:-2, line(n){
+      if(n===1) return [['A teenager arrives.','sys'],['"I\'m only going two stops."','amber']];
+      if(n===2) return [['The teenager is still here.','dim'],['They are telling you about their situationship now.','dim']];
+      return [['You and the teenager are at this point, friends.','dim'],['You know their star sign and you also know their ex\'s name.','dim']];
+    }}
+  };
+
+  function runCast(id){
+    const c = CAST[id];
+    S.cast[id] = (S.cast[id]||0) + 1;
+    c.line(S.cast[id]).forEach(b=> log(b[0], b[1]||'dim'));
+    S.wait += (c.mins||3)*60;
+    if(typeof c.pat === "number") S.patience = clamp(S.patience + c.pat, 0, 100);
+  }
+  function pickCastId(){
+    const ids = Object.keys(CAST);
+    const seen = ids.filter(id=>S.cast[id]);
+    if(seen.length && chance(0.6)) return pick(seen);         //
+    const unseen = ids.filter(id=>!S.cast[id]);
+    return pick(unseen.length ? unseen : ids);                // 
+  }
+
   /* ---------- random events ---------- */
   function randomEvent(forced){
     const roll = Math.random();
@@ -588,16 +631,18 @@
       S.eta += rnd(1,3);
       $("boardStrip").textContent = 'Delayed. Please listen for announcements.';
       log('The board updates. It now says '+S.eta+' min.', 'amber');
+      if(mood()!=='mid') log(moodLine(LATE), 'dim');
       S.patience = clamp(S.patience-4,0,100);
     } else if(roll < 0.24){ // a tram passes, not yours
       passingTram();
       log('A tram passes.', 'sys');
       log('You think it could be yours.', 'dim');
       log('...', 'dim');
-      log('It is not.', 'bad');
+      log(moodLine(PASS), 'bad');
       S.patience = clamp(S.patience-5,0,100); S.complaints++;
-    } else if(roll < 0.50){ // CHAINED SAGA
-      runSaga(pick(SAGAS));
+    } else if(roll < 0.50){ // someone shows up
+      if(chance(0.55)) runCast(pickCastId());
+      else runSaga(pick(SAGAS));
     } else if(roll < 0.57){ // timetable starer
       const m = rnd(4,9);
       log('A passenger studies the timetable.', 'sys');
@@ -635,7 +680,7 @@
       log('Is that ... my tram ???', 'good');
       log('It is a tram and it is YOUR tram.', 'good');
     }
-    // fake-out headlights sometimes tack onto observe
+    // fake-out headlights
     if(forced && chance(0.4) && S.phase==="wait"){
       log('You see headlights.', 'sys');
       log('Is it a tram?', 'dim');
@@ -666,7 +711,7 @@
     $("busNo").onclick  = endStandards;
   }
 
-  /* ---------- arrival: awareness decides whether you even notice ---------- */
+  /* -------------------- */
   function arrivalOrMiss(){
     const missChance = clamp((100 - S.awareness)/200, 0, 0.55);
     if(chance(missChance)){
@@ -723,7 +768,7 @@
 
   // which "you made it" do you actually get?
   function boardOutcome(){
-    const wrongChance = 0.07 + (100-S.awareness)/500; // heads-down -> wrong tram
+    const wrongChance = 0.07 + (100-S.awareness)/500; // head down -> wrong tram
     if(chance(wrongChance)) return endWrongTram();
     if(chance(0.18)) return endPeakHour();
     return endMadeIt();
