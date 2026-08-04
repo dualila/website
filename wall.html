@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>the wall</title>
+  <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+  <link rel="stylesheet" href="css/site.css">
+  <meta property="og:title" content="the wall">
+  <meta property="og:description" content=".">
+  <meta property="og:type" content="website">
+  <style>
+    /* ── the wall ─────────────────────────────────────── */
+    .wall-wrap { text-align: center; }
+
+    .wall-scroll {
+      max-width: 100%;
+      overflow: auto;
+      margin: 0 auto 14px;
+      border: 3px ridge #00ffff;
+      background: #050017;
+      padding: 6px;
+      line-height: 0;
+    }
+
+    #wall {
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      width: 100%;
+      max-width: 560px;
+      height: auto;
+      cursor: crosshair;
+      touch-action: none;
+      display: block;
+      margin: 0 auto;
+    }
+    #wall.zoomed { width: 1100px; max-width: none; }
+
+    .wall-hud {
+      font-family: "Courier New", monospace;
+      font-size: 13px;
+      color: #00ff88;
+      text-shadow: 0 0 5px #00ff88;
+      margin: 6px 0 12px;
+      letter-spacing: 1px;
+    }
+    .wall-hud .cooldown { color: #ff5c8a; text-shadow: 0 0 5px #ff5c8a; }
+
+    .palette {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px;
+      max-width: 460px;
+      margin: 0 auto 12px;
+    }
+    .swatch {
+      width: 30px;
+      height: 30px;
+      border: 3px outset #ff00ff;
+      cursor: pointer;
+      padding: 0;
+      transition: transform .1s;
+    }
+    .swatch:hover { transform: scale(1.15); }
+    .swatch.selected {
+      border: 3px inset #fff;
+      transform: scale(1.2);
+      box-shadow: 0 0 10px #fff;
+    }
+
+    .wall-controls {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+    .wall-selected {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: "Courier New", monospace;
+      font-size: 13px;
+      color: #ffff00;
+      text-shadow: 0 0 3px #ffff00;
+    }
+    .wall-selected .chip {
+      width: 20px; height: 20px;
+      border: 2px solid #fff;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="ticker"><span>✦ thanks for visting please draw something ✦</span></div>
+
+  <div class="layout">
+    <div class="sidebar" id="sidebar"></div>
+
+    <div class="frame">
+
+      <div class="hero">
+        <h1>✧ the wall ✧</h1>
+        <p class="blink">☆ please place a pixel ☆</p>
+      </div>
+
+      <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
+
+      <div class="content wall-wrap">
+
+        <div class="update-box" id="wallStats">✦ wall</div>
+
+        <div class="wall-scroll">
+          <canvas id="wall" width="500" height="500"></canvas>
+        </div>
+
+        <div class="wall-hud" id="wallHud">pick a colour, then click the grid</div>
+
+        <div class="palette" id="palette"></div>
+
+        <div class="wall-controls">
+          <div class="wall-selected">
+            selected: <span class="chip" id="selectedChip"></span>
+          </div>
+        </div>
+
+        <p style="font-size:12px; color:#c77dff;">
+          ★ be kind to the wall ★
+        </p>
+
+      </div>
+
+      <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
+
+      <footer>
+        ★ ° ☆ ° ★ ° ☆ ° ★ 2026 lily wakefield ★ ° ☆ ° ★ ° ☆ ° ★<br>
+        <img src="/images/favicon.ico" alt="site icon" width="24" height="24">
+        best experienced with an open heart
+      </footer>
+
+    </div>
+  </div>
+
+  <script src="js/nav.js"></script>
+  <script src="js/effects.js"></script>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getFirestore, doc, setDoc, increment, onSnapshot
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA25PaWUE39RuX-huMHoziQVUPy_pNFXUE",
+      authDomain: "dot-com-44502.firebaseapp.com",
+      projectId: "dot-com-44502",
+      storageBucket: "dot-com-44502.firebasestorage.app",
+      messagingSenderId: "124684406308",
+      appId: "1:124684406308:web:146706a03bb4bd451552b1",
+      measurementId: "G-HPF4E6G5YW"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const boardRef = doc(db, "place", "board");
+
+    // ── config ──────────────────────────────────────────
+    const GRID = 50;              // 50 x 50 board
+    const CELL = 10;              // canvas px per cell (500x500 canvas)
+    const COOLDOWN_MS = 10000;    // 10s between placements
+    const EMPTY_BG = "#12103a";
+    const GRIDLINE = "rgba(255,255,255,0.05)";
+
+    // palette
+    const PALETTE = [
+      "#ffffff", "#000000", "#ff00ff", "#ff5c8a",
+      "#ff2f2f", "#ff9c00", "#ffe600", "#aaff00",
+      "#00ff88", "#00ffcc", "#00ffff", "#3aa8ff",
+      "#2b4bff", "#9900cc", "#c77dff", "#8a5a2b"
+    ];
+
+    // ── state ───────────────────────────────────────────
+    let selected = 2;             // 
+    let pixels = {};              // 
+    let hover = null;             // {x, y} or null
+
+    const canvas = document.getElementById("wall");
+    const ctx = canvas.getContext("2d");
+    canvas.width = GRID * CELL;
+    canvas.height = GRID * CELL;
+
+    // ── palette UI ──────────────────────────────────────
+    const paletteEl = document.getElementById("palette");
+    const chipEl = document.getElementById("selectedChip");
+
+    PALETTE.forEach((color, i) => {
+      const b = document.createElement("button");
+      b.className = "swatch" + (i === selected ? " selected" : "");
+      b.style.background = color;
+      b.type = "button";
+      b.setAttribute("aria-label", `colour ${i}`);
+      b.addEventListener("click", () => {
+        selected = i;
+        document.querySelectorAll(".swatch").forEach((s) => s.classList.remove("selected"));
+        b.classList.add("selected");
+        chipEl.style.background = color;
+      });
+      paletteEl.appendChild(b);
+    });
+    chipEl.style.background = PALETTE[selected];
+
+    // ── drawing ─────────────────────────────────────────
+    function draw() {
+      ctx.fillStyle = EMPTY_BG;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      for (const key in pixels) {
+        const [x, y] = key.split("_").map(Number);
+        ctx.fillStyle = PALETTE[pixels[key]] || EMPTY_BG;
+        ctx.fillRect(x * CELL, y * CELL, CELL, CELL);
+      }
+
+      // faint grid
+      ctx.strokeStyle = GRIDLINE;
+      ctx.lineWidth = 1;
+      for (let i = 0; i <= GRID; i++) {
+        ctx.beginPath();
+        ctx.moveTo(i * CELL + 0.5, 0);
+        ctx.lineTo(i * CELL + 0.5, canvas.height);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(0, i * CELL + 0.5);
+        ctx.lineTo(canvas.width, i * CELL + 0.5);
+        ctx.stroke();
+      }
+
+      // hover outline
+      if (hover) {
+        ctx.strokeStyle = "#ffffff";
+        ctx.lineWidth = 2;
+        ctx.strokeRect(hover.x * CELL + 1, hover.y * CELL + 1, CELL - 2, CELL - 2);
+      }
+    }
+
+    // ── coordinate mapping (accounts for css scaling) ───
+    function cellFromEvent(e) {
+      const rect = canvas.getBoundingClientRect();
+      const x = Math.floor((e.clientX - rect.left) / rect.width * GRID);
+      const y = Math.floor((e.clientY - rect.top) / rect.height * GRID);
+      if (x < 0 || y < 0 || x >= GRID || y >= GRID) return null;
+      return { x, y };
+    }
+
+    // ── cooldown ────────────────────────────────────────
+    const hudEl = document.getElementById("wallHud");
+    function remainingCooldown() {
+      const last = Number(localStorage.getItem("wall_last") || 0);
+      return Math.max(0, COOLDOWN_MS - (Date.now() - last));
+    }
+    function updateHud() {
+      const left = remainingCooldown();
+      if (left > 0) {
+        hudEl.innerHTML = `<span class="cooldown">cooldown: ${(left / 1000).toFixed(1)}s</span>`;
+      } else if (hover) {
+        hudEl.textContent = `(${hover.x}, ${hover.y}) · click to place`;
+      } else {
+        hudEl.textContent = "pick a colour, then click the grid";
+      }
+    }
+    setInterval(updateHud, 100);
+
+    // ── placement ───────────────────────────────────────
+    async function place(x, y) {
+      if (remainingCooldown() > 0) return;
+      const key = `${x}_${y}`;
+
+      // optimistic local update so it feels instant
+      pixels[key] = selected;
+      draw();
+      localStorage.setItem("wall_last", String(Date.now()));
+
+      try {
+        await setDoc(
+          boardRef,
+          { pixels: { [key]: selected }, count: increment(1) },
+          { merge: true }
+        );
+      } catch (err) {
+        console.error("pixel write failed:", err);
+        hudEl.innerHTML = `<span class="cooldown">couldn't reach the wall — try again</span>`;
+      }
+    }
+
+    // ── canvas events ───────────────────────────────────
+    canvas.addEventListener("mousemove", (e) => {
+      hover = cellFromEvent(e);
+      draw();
+      updateHud();
+    });
+    canvas.addEventListener("mouseleave", () => { hover = null; draw(); });
+    canvas.addEventListener("click", (e) => {
+      const cell = cellFromEvent(e);
+      if (cell) place(cell.x, cell.y);
+    });
+
+    document.getElementById("zoomBtn")?.addEventListener("click", () => {
+      canvas.classList.toggle("zoomed");
+    });
+
+    // ── live sync ───────────────────────────────────────
+    const statsEl = document.getElementById("wallStats");
+    onSnapshot(boardRef, (snap) => {
+      const data = snap.exists() ? snap.data() : {};
+      pixels = data.pixels || {};
+      const total = data.count || 0;
+      statsEl.textContent = `✦ ${total.toLocaleString()} pixels placed all-time`;
+      draw();
+    }, (err) => {
+      console.error("wall listener failed:", err);
+      statsEl.textContent = "✦ the wall is offline right now";
+    });
+
+    draw();
+  </script>
+
+</body>
+</html>
