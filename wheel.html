@@ -64,11 +64,20 @@
     .verdict.pop { animation: vpop .5s ease; }
     @keyframes vpop { 0%{transform:scale(.4);opacity:0} 60%{transform:scale(1.15)} 100%{transform:scale(1)} }
 
-    /* options editor */
     .opts-box {
       max-width: 460px; margin: 0 auto;
-      background: repeating-linear-gradient(45deg,#1a0060,#1a0060 10px,#20007a 10px,#20007a 20px);
+      background-color: #0a0033;
+      background-image:
+        radial-gradient(rgba(255,255,255,.25) 1px, transparent 1px),
+        radial-gradient(rgba(255,255,255,.25) 1px, transparent 1px);
+      background-size: 30px 30px;
+      background-position: 0 0, 11px 11px;
+      animation: optsDots 7s linear infinite;
       border: 2px dashed #00ffff; padding: 14px; text-align: left;
+    }
+    @keyframes optsDots {
+      from { background-position: 0 0, 11px 11px; }
+      to   { background-position: 22px 22px, 33px 33px; }
     }
     .opts-title { font-family:"Courier New",monospace; font-size:12px; color:#ffff00; text-transform:uppercase; letter-spacing:2px; margin-bottom:8px; text-align:center; }
     .opt-line { display:flex; gap:6px; margin-bottom:6px; }
@@ -280,8 +289,7 @@
     renderOpts();
     draw();
   </script>
-
-  <script src="js/nav.js"></script>
+ <script src="js/nav.js"></script>
   <script src="js/effects.js"></script>
 </body>
 </html>

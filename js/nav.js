@@ -27,6 +27,7 @@ const NAV_TREE = [
       { label: "the orb", href: "/orb/orb.html"},
       { label: "tram simulator", href: "/tram/tram.html"},
       { label: "the wall", href: "/wall.html" },
+      { label: "wheel of indecision", href: "/wheel.html" },
     ]
   },
     { 
