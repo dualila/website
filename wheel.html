@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>✧ the wheel of indecision ✧</title>
+  <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+  <link rel="stylesheet" href="css/site.css">
+  <meta property="og:title" content="the wheel of indecision">
+  <meta property="og:description" content="if you can't decide? let the wheel decide for you.">
+  <meta property="og:type" content="website">
+  <style>
+    /* ── wheel ──────────────────────────────────────────── */
+    .wheel-wrap { text-align: center; }
+
+    .wheel-stage {
+      position: relative;
+      width: min(420px, 88vw);
+      margin: 0 auto 14px;
+    }
+    .wheel-stage canvas {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 50%;
+      box-shadow: 0 0 22px rgba(255,0,255,.5), 0 0 40px rgba(0,255,255,.3);
+      background: #060022;
+    }
+    /* pointer */
+    .wheel-ptr {
+      position: absolute;
+      top: -6px; left: 50%;
+      transform: translateX(-50%);
+      width: 0; height: 0;
+      border-left: 16px solid transparent;
+      border-right: 16px solid transparent;
+      border-top: 28px solid #ffe600;
+      filter: drop-shadow(0 0 5px #ffe600);
+      z-index: 3;
+    }
+    /* hub / spin button */
+    .wheel-hub {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      width: 76px; height: 76px;
+      border-radius: 50%;
+      background: linear-gradient(#ff00ff,#9900cc);
+      border: 3px outset #ff00ff;
+      color: #fff; font-family: "Comic Sans MS", cursive; font-weight: bold;
+      font-size: 15px; cursor: pointer; z-index: 2;
+      box-shadow: 0 0 12px #ff00ff;
+    }
+    .wheel-hub:hover { filter: brightness(1.15); }
+    .wheel-hub:disabled { opacity: .7; cursor: wait; }
+
+    .verdict {
+      font-family: "Comic Sans MS", cursive;
+      font-size: 22px; font-weight: bold;
+      min-height: 30px; margin: 8px 0 16px;
+      color: #fff;
+      text-shadow: 2px 2px 0 #ff00ff, -1px -1px 0 #00ffff;
+    }
+    .verdict.pop { animation: vpop .5s ease; }
+    @keyframes vpop { 0%{transform:scale(.4);opacity:0} 60%{transform:scale(1.15)} 100%{transform:scale(1)} }
+
+    /* options editor */
+    .opts-box {
+      max-width: 460px; margin: 0 auto;
+      background: repeating-linear-gradient(45deg,#1a0060,#1a0060 10px,#20007a 10px,#20007a 20px);
+      border: 2px dashed #00ffff; padding: 14px; text-align: left;
+    }
+    .opts-title { font-family:"Courier New",monospace; font-size:12px; color:#ffff00; text-transform:uppercase; letter-spacing:2px; margin-bottom:8px; text-align:center; }
+    .opt-line { display:flex; gap:6px; margin-bottom:6px; }
+    .opt-line input {
+      flex:1; font-family:"Comic Sans MS",cursive; font-size:14px;
+      background:#001a2e; color:#00ffff; border:2px inset #00ffff; padding:6px;
+    }
+    .opt-line .rm {
+      background:#400; color:#f66; border:1px solid #f66; cursor:pointer;
+      font-family:"Courier New",monospace; font-weight:bold; padding:0 10px;
+    }
+    .opts-add {
+      margin-top:6px; width:100%;
+      background:linear-gradient(to bottom,#33ff00,#1c9900); color:#0f3eb5;
+      border:2px outset #00ff88; font-family:"Comic Sans MS",cursive; font-weight:bold;
+      padding:7px; cursor:pointer;
+    }
+    .opts-add:hover { filter:brightness(1.12); }
+
+    .confetti { position: fixed; pointer-events: none; z-index: 9999; font-size: 20px;
+      animation: cfall 1.2s ease-out forwards; }
+    @keyframes cfall {
+      from { opacity:1; transform: translate(0,0) rotate(0); }
+      to   { opacity:0; transform: translate(var(--cx), 120px) rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="ticker"><span>✦ let the wheel decide · you clearly can't ✦</span></div>
+
+  <div class="layout">
+    <div class="sidebar" id="sidebar"></div>
+
+    <div class="frame">
+
+      <div class="hero">
+        <h1>✧ the wheel of indecision ✧</h1>
+        <p class="blink">☆ give it a spin ☆</p>
+      </div>
+
+      <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
+
+      <div class="content wheel-wrap">
+
+        <div class="wheel-stage">
+          <div class="wheel-ptr"></div>
+          <canvas id="wheel" width="440" height="440"></canvas>
+          <button class="wheel-hub" id="spinBtn" type="button">SPIN</button>
+        </div>
+
+        <div class="verdict" id="verdict">&nbsp;</div>
+
+        <div class="opts-box">
+          <div class="opts-title">★ what are we spinning about? ★</div>
+          <div id="optList"></div>
+          <button class="opts-add" id="addOpt" type="button">+ add another option !!!</button>
+        </div>
+
+      </div>
+
+      <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
+
+      <footer>
+        ★ ° ☆ ° ★ ° ☆ ° ★ 2026 lily wakefield ★ ° ☆ ° ★ ° ☆ ° ★<br>
+        <img src="/images/favicon.ico" alt="site icon" width="24" height="24">
+        best experienced with an open heart
+      </footer>
+
+    </div>
+  </div>
+
+  <script src="/js/nav.js"></script>
+  <script src="/js/effects.js"></script>
+
+  <script>
+    // 
+    let options = ["have a nap", "eat some cheese", "study for equity exam", "touch grass", "make more of this stupid website", "go to the gym"];
+
+    const COLORS = ["#ff5c8a","#ff9c00","#ffe600","#aaff00","#00ff88","#00ffcc","#3aa8ff","#9900cc","#c77dff","#ff00ff"];
+
+    const canvas = document.getElementById("wheel");
+    const ctx = canvas.getContext("2d");
+    const R = canvas.width / 2;
+    let angle = 0;        // current rotation (radians)
+    let spinning = false;
+
+    function draw() {
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      const n = options.length;
+      const slice = (Math.PI * 2) / n;
+
+      for (let i = 0; i < n; i++) {
+        const start = angle + i * slice;
+        ctx.beginPath();
+        ctx.moveTo(R, R);
+        ctx.arc(R, R, R - 4, start, start + slice);
+        ctx.closePath();
+        ctx.fillStyle = COLORS[i % COLORS.length];
+        ctx.fill();
+        ctx.lineWidth = 2; ctx.strokeStyle = "#060022"; ctx.stroke();
+
+        // label
+        ctx.save();
+        ctx.translate(R, R);
+        ctx.rotate(start + slice / 2);
+        ctx.textAlign = "right";
+        ctx.fillStyle = "#0d0733";
+        ctx.font = "bold 16px 'Comic Sans MS', cursive";
+        const label = options[i].length > 16 ? options[i].slice(0,15) + "…" : options[i];
+        ctx.fillText(label, R - 18, 6);
+        ctx.restore();
+      }
+
+      // rim
+      ctx.beginPath();
+      ctx.arc(R, R, R - 4, 0, Math.PI * 2);
+      ctx.lineWidth = 6; ctx.strokeStyle = "#ff00ff"; ctx.stroke();
+    }
+
+    const verdictEl = document.getElementById("verdict");
+    const spinBtn = document.getElementById("spinBtn");
+
+    function spin() {
+      if (spinning || options.length < 2) return;
+      spinning = true;
+      spinBtn.disabled = true;
+      verdictEl.textContent = "\u00a0";
+
+      const spins = 5 + Math.random() * 4;                 // full turns
+      const target = angle + spins * Math.PI * 2 + Math.random() * Math.PI * 2;
+      const startA = angle;
+      const dur = 4200 + Math.random() * 800;
+      const t0 = performance.now();
+
+      function frame(now) {
+        const p = Math.min(1, (now - t0) / dur);
+        const ease = 1 - Math.pow(1 - p, 3);               // ease-out cubic
+        angle = startA + (target - startA) * ease;
+        draw();
+        if (p < 1) {
+          requestAnimationFrame(frame);
+        } else {
+          spinning = false;
+          spinBtn.disabled = false;
+          announce();
+        }
+      }
+      requestAnimationFrame(frame);
+    }
+
+    function announce() {
+      // pointer sits at the top (−90°). 
+      const n = options.length;
+      const slice = (Math.PI * 2) / n;
+      const norm = ((angle % (Math.PI*2)) + Math.PI*2) % (Math.PI*2);
+      const pointer = (-Math.PI/2 - norm + Math.PI*2 * 2) % (Math.PI*2);
+      const idx = Math.floor(pointer / slice) % n;
+      const pick = options[idx];
+
+      verdictEl.textContent = "★ " + pick + " ★";
+      verdictEl.classList.remove("pop"); void verdictEl.offsetWidth; verdictEl.classList.add("pop");
+      confetti();
+    }
+
+    function confetti() {
+      const chars = ["✦","✧","★","✨","💖","🎉"];
+      const cx = window.innerWidth/2;
+      for (let i=0;i<20;i++){
+        const s=document.createElement("span");
+        s.className="confetti"; s.textContent=chars[Math.floor(Math.random()*chars.length)];
+        s.style.left=cx+"px"; s.style.top="40%";
+        s.style.setProperty("--cx",(Math.random()*400-200)+"px");
+        s.style.color=COLORS[Math.floor(Math.random()*COLORS.length)];
+        document.body.appendChild(s);
+        setTimeout(()=>s.remove(),1200);
+      }
+    }
+
+    spinBtn.addEventListener("click", spin);
+    canvas.addEventListener("click", spin);
+
+    // ── options editor ─────────────────────────────────────
+    const optList = document.getElementById("optList");
+    function renderOpts() {
+      optList.innerHTML = "";
+      options.forEach((opt, i) => {
+        const line = document.createElement("div");
+        line.className = "opt-line";
+        const inp = document.createElement("input");
+        inp.value = opt; inp.maxLength = 30;
+        inp.addEventListener("input", () => { options[i] = inp.value; draw(); });
+        const rm = document.createElement("button");
+        rm.className = "rm"; rm.type = "button"; rm.textContent = "×";
+        rm.title = "remove";
+        rm.addEventListener("click", () => {
+          if (options.length <= 2) return;   // need at least two to decide
+          options.splice(i,1); renderOpts(); draw();
+        });
+        line.appendChild(inp); line.appendChild(rm);
+        optList.appendChild(line);
+      });
+    }
+    document.getElementById("addOpt").addEventListener("click", () => {
+      if (options.length >= 12) return;      // keep it readable
+      options.push("new option"); renderOpts(); draw();
+    });
+
+    renderOpts();
+    draw();
+  </script>
+
+  <script src="js/nav.js"></script>
+  <script src="js/effects.js"></script>
+</body>
+</html>
