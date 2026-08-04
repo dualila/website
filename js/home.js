@@ -37,7 +37,7 @@ async function fetchWeather() {
   const weatherValEl = document.getElementById('weatherValue');
   if (!weatherValEl) return;
 
-  // Example coordinates for Melbourne, Australia (adjust as needed!)
+  //
   const lat = -37.8136;
   const lon = 144.9631;
   const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`;

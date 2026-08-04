@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>✧ pop it ✧</title>
+  <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+  <link rel="stylesheet" href="css/site.css">
+  <meta property="og:title" content="pop it">
+  <meta property="og:description" content="a sheet of virtual bubble wrap. pop it. that's the whole website.">
+  <meta property="og:type" content="website">
+  <style>
+    /* ── pop it ──────────────────────────────────────────── */
+    .pop-wrap { text-align: center; }
+
+    .pop-hud {
+      font-family: "Courier New", monospace;
+      font-size: 13px;
+      color: #00ff88;
+      text-shadow: 0 0 5px #00ff88;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+
+    .pop-sheet {
+      display: grid;
+      gap: 8px;
+      justify-content: center;
+      max-width: 520px;
+      margin: 0 auto 16px;
+      padding: 14px;
+      border: 3px ridge #00ffff;
+      background: #0a0033;
+      background-image:
+        radial-gradient(rgba(255,255,255,.18) 1px, transparent 1px),
+        radial-gradient(rgba(255,255,255,.18) 1px, transparent 1px);
+      background-size: 20px 20px;
+      background-position: 0 0, 10px 10px;
+    }
+
+    .bubble {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      padding: 0;
+      background:
+        radial-gradient(circle at 32% 30%, #ffffff 0%, #ff8ad4 22%, #ff00ff 60%, #9900cc 100%);
+      box-shadow: 0 3px 6px rgba(0,0,0,.45), inset -2px -3px 6px rgba(0,0,0,.35), inset 3px 3px 8px rgba(255,255,255,.55);
+      transition: transform .08s ease;
+    }
+    .bubble:hover { transform: scale(1.06); }
+    .bubble:active { transform: scale(.9); }
+
+    /* popped: flattened, dented, done */
+    .bubble.popped {
+      cursor: default;
+      background:
+        radial-gradient(circle at 50% 50%, #16003a 0%, #240055 70%, #1a0040 100%);
+      box-shadow: inset 3px 4px 8px rgba(0,0,0,.7), inset -2px -2px 5px rgba(120,0,160,.35);
+      transform: scale(.82);
+      animation: popSquish .18s ease;
+    }
+    @keyframes popSquish {
+      0%   { transform: scale(1); }
+      45%  { transform: scale(.7); }
+      100% { transform: scale(.82); }
+    }
+
+    .pop-actions { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; }
+    .pop-btn {
+      background: linear-gradient(to bottom, #ff00ff, #9900cc);
+      color: #fff; border: 2px outset #ff00ff;
+      font-family: "Comic Sans MS", cursive; font-weight: bold;
+      font-size: 13px; padding: 8px 16px; cursor: pointer;
+    }
+    .pop-btn:hover { filter: brightness(1.15); }
+    .pop-btn.reset { background: linear-gradient(to bottom, #00ff88, #009955); color:#04231a; border-color:#00ff88; }
+
+    .pop-hint { font-family:"Courier New",monospace; font-size:11px; color:#c77dff; margin-top:12px; letter-spacing:1px; }
+
+    /* the little sound toggle */
+    .snd { color:#ffe600; cursor:pointer; text-decoration:underline; }
+  </style>
+</head>
+<body>
+
+  <div class="ticker"><span>✦ pop the bubbles ✦ that's it ✦ that's the website ✦</span></div>
+
+  <div class="layout">
+    <div class="sidebar" id="sidebar"></div>
+
+    <div class="frame">
+
+      <div class="hero">
+        <h1>✧ pop it ✧</h1>
+        <p class="blink">☆ pop the whole sheet · i believe in you ☆</p>
+      </div>
+
+      <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
+
+      <div class="content pop-wrap">
+
+        <div class="pop-hud" id="popHud">0 popped · sound: <span class="snd" id="sndToggle">on</span></div>
+
+        <div class="pop-sheet" id="sheet"></div>
+
+        <div class="pop-actions">
+          <button class="pop-btn" id="popAll" type="button">💥 pop all</button>
+          <button class="pop-btn reset" id="reset" type="button">✦ fresh sheet</button>
+        </div>
+
+        <p class="pop-hint">★ clear the sheet and a new one appears · forever ★</p>
+
+      </div>
+
+      <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
+
+      <footer>
+        ★ ° ☆ ° ★ ° ☆ ° ★ 2026 lily wakefield ★ ° ☆ ° ★ ° ☆ ° ★<br>
+        <img src="/images/favicon.ico" alt="site icon" width="24" height="24">
+        best experienced with an open heart
+      </footer>
+
+    </div>
+  </div>
+
+  <script src="/js/nav.js"></script>
+  <script src="/js/effects.js"></script>
+
+  <script>
+    const COLS = 10;
+    const ROWS = 10;
+    const TOTAL = COLS * ROWS;
+
+    const sheet = document.getElementById("sheet");
+    const hud   = document.getElementById("popHud");
+    const sndToggle = document.getElementById("sndToggle");
+    sheet.style.gridTemplateColumns = `repeat(${COLS}, 1fr)`;
+
+    let popped = 0;
+    let soundOn = true;
+
+    // ── a tiny synthesised "pop" (no audio files needed) ──
+    let audioCtx = null;
+    function pop_sound() {
+      if (!soundOn) return;
+      try {
+        audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+        const t = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(420 + Math.random() * 220, t);
+        osc.frequency.exponentialRampToValueAtTime(140, t + 0.06);
+        gain.gain.setValueAtTime(0.28, t);
+        gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.09);
+        osc.connect(gain).connect(audioCtx.destination);
+        osc.start(t);
+        osc.stop(t + 0.1);
+      } catch (e) { /* audio not available, no biggie */ }
+    }
+
+    function updateHud() {
+      hud.innerHTML = `${popped} popped · sound: <span class="snd" id="sndToggle">${soundOn ? "on" : "off"}</span>`;
+      document.getElementById("sndToggle").addEventListener("click", toggleSound);
+    }
+    function toggleSound() { soundOn = !soundOn; updateHud(); }
+    sndToggle.addEventListener("click", toggleSound);
+
+    function popBubble(btn) {
+      if (btn.classList.contains("popped")) return;
+      btn.classList.add("popped");
+      popped++;
+      pop_sound();
+      updateHud();
+      if (popped >= TOTAL) {
+        setTimeout(() => {
+          hud.innerHTML = `✦ you popped all ${TOTAL}. a fresh sheet, for you. ✦`;
+          setTimeout(build, 900);
+        }, 200);
+      }
+    }
+
+    function build() {
+      sheet.innerHTML = "";
+      popped = 0;
+      updateHud();
+      for (let i = 0; i < TOTAL; i++) {
+        const b = document.createElement("button");
+        b.className = "bubble";
+        b.type = "button";
+        b.setAttribute("aria-label", "bubble");
+        b.addEventListener("click", () => popBubble(b));
+        // pop-on-drag: hold the mouse and sweep across the sheet
+        b.addEventListener("mouseenter", (e) => { if (e.buttons === 1) popBubble(b); });
+        sheet.appendChild(b);
+      }
+    }
+
+    document.getElementById("popAll").addEventListener("click", () => {
+      const left = [...sheet.querySelectorAll(".bubble:not(.popped)")];
+      left.forEach((b, i) => setTimeout(() => popBubble(b), i * 14)); // rapid-fire cascade
+    });
+
+    document.getElementById("reset").addEventListener("click", build);
+
+    build();
+  </script>
+  <script src="js/nav.js"></script>
+  <script src="js/effects.js"></script>
+
+</body>
+</html>
