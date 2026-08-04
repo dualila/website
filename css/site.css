@@ -123,9 +123,7 @@ body::before {
 .sidebar {
   flex: 0 0 250px;
   background: #000;
-  background-image:
-    radial-gradient(rgba(255, 255, 255, 0.3) 1px, transparent 1px),
-    radial-gradient(rgba(255, 255, 255, 0.3) 1px, transparent 1px);
+  background-image:;
   background-size: 16px 16px;
   background-position: 0 0, 8px 8px;
   border: 3px ridge #00ffff;
@@ -1316,12 +1314,12 @@ a.track-name:hover {
    ========================================== */
 .radio-console, .lastfm-box, .rotation-box, .genre-box, .bio-container,
 .contact-box, .age-widget, .context-box,
-.download-card, .widget-box, .sidebar, .counter,
+.download-card, .widget-box, .counter,
 .now-page .now-section, .now-page .now-footnote, .now-page .top-tracks-box,
 .archive-page .archive-entry {
   background-image:
-    radial-gradient(rgba(255, 255, 255, 0.4) 1px, transparent 1px),
-    radial-gradient(rgba(255, 255, 255, 0.4) 1px, transparent 1px);
+    radial-gradient(rgba(255, 255, 255, 0.3) 1px, transparent 1px),
+    radial-gradient(rgba(255, 255, 255, 0.3) 1px, transparent 1px);
   background-size: 16px 16px;
   background-position: 0 0, 8px 8px;
 }
