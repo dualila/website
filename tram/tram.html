@@ -70,6 +70,9 @@
     margin-top:12px;padding:14px 16px;height:clamp(320px,50vh,480px);overflow-y:auto;
     font-size:14px;line-height:1.7;scroll-behavior:smooth;color:#c8ffd8;
   }
+  .tram-game .screen::-webkit-scrollbar { width: 10px; }
+  .tram-game .screen::-webkit-scrollbar-track { background: #000; border-left: 1px dashed #00ff00; }
+  .tram-game .screen::-webkit-scrollbar-thumb { background: #00ff00; border: 2px solid #000; }
   .tram-game .screen p{margin:0 0 7px}
   .tram-game .screen .sys{color:#00ffff}
   .tram-game .screen .amber{color:#ffd700}
@@ -621,7 +624,7 @@
         return [['The tourist has stopped asking questions.','sys'],['They have accepted Melbourne as home now.','dim']];
       }},
     dealGuy:{ mins:3, pat:-1,
-      bye:[['The deal guy boards a tram mid-sentence.','sys'],['"...yeah I\'m getting a wriggle on, might drop out."','amber']],
+      bye:[['The deal guy boards a number 16 tram mid-sentence.','sys'],['"...yeah I\'m getting a wriggle on, might drop out."','amber']],
       line(n){
         if(n===1) return [['A man is on speaker phone, loudly closing a deal.','sys'],['"Yeah mate, circle back, touch base, EOD. No worries mate."','amber']];
         if(n===2) return [['The deal guy has circled back.','sys'],['"Nah totally, let\'s take it offline."','amber']];
