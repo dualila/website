@@ -430,7 +430,7 @@
     if(S.phoneDead) return;
     S.battery   = clamp(S.battery-rnd(5,12),0,100);
     S.awareness = clamp(S.awareness-rnd(5,12),0,100);
-    log('You open your phone.', 'dim');
+    log('You check your phone.', 'dim');
     log(bagPick(PHONE), 'amber');
     if(S.battery<=0){ S.phoneDead=true; log('Your phone dies.', 'bad'); renderActions(); }
     tick(rnd(90,210));
