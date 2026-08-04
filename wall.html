@@ -14,12 +14,13 @@
     .wall-wrap { text-align: center; }
 
     .wall-scroll {
-      max-width: 100%;
+      width: 100%;
+      max-width: 560px;     
       overflow: auto;
       margin: 0 auto 14px;
       border: 3px ridge #00ffff;
       background: #050017;
-      padding: 6px;
+      padding: 0;         
       line-height: 0;
     }
 
@@ -27,12 +28,12 @@
       image-rendering: pixelated;
       image-rendering: crisp-edges;
       width: 100%;
-      max-width: 560px;
+      max-width: 100%;    
       height: auto;
       cursor: crosshair;
       touch-action: none;
       display: block;
-      margin: 0 auto;
+      margin: 0;
     }
     #wall.zoomed { width: 1100px; max-width: none; }
 
@@ -184,7 +185,7 @@
     // ── state ───────────────────────────────────────────
     let selected = 2;             // 
     let pixels = {};              // 
-    let hover = null;             // {x, y} or null
+    let hover = null;             //
 
     const canvas = document.getElementById("wall");
     const ctx = canvas.getContext("2d");
@@ -276,7 +277,7 @@
       if (remainingCooldown() > 0) return;
       const key = `${x}_${y}`;
 
-      // optimistic local update so it feels instant
+      // 
       pixels[key] = selected;
       draw();
       localStorage.setItem("wall_last", String(Date.now()));
