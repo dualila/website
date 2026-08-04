@@ -14,14 +14,18 @@ const NAV_TREE = [
       { label: "radio", href: "/radio.html" },
             {
         label: "now  ",
-        href: "/now/now.html", // clicking "now" goes to the current now page
+        href: "/now/now.html", // new
         children: [
-          // the archive — clicking the arrow reveals these
-          {label: "now", href:"/now/now.html" },
-          
+          { label: "now  ", href: "/now/now.html" },
+          {
+            label: "then  ",
+            href: "/now/then.html", // old
+          },
+
         ]
       },
       { label: "the orb", href: "/orb/orb.html"},
+      { label: "tram simulator", href: "/tram/tram.html"},
     ]
   },
     { 
@@ -46,7 +50,7 @@ function containsHere(item, here) {
   return false;
 }
 function treePrefix(ancestorsLast, isLastSelf) {
-  const lead = ancestorsLast.map((wasLast) => (wasLast ? "      " : "│     ")).join("");
+  const lead = ancestorsLast.map((wasLast) => (wasLast ? "    " : "│   ")).join("");
   return lead + (isLastSelf ? "└── " : "├── ");
 }
 

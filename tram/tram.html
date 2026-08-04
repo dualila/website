@@ -191,6 +191,19 @@
   const $ = id => document.getElementById(id);
   const rnd = (a,b) => Math.floor(Math.random()*(b-a+1))+a;
   const pick = arr => arr[Math.floor(Math.random()*arr.length)];
+  const _bags = new Map();
+  function bagShuffle(){ _bags.clear(); }
+  function bagPick(arr){
+    if(!arr || !arr.length) return undefined;
+    if(arr.length === 1) return arr[0];
+    let bag = _bags.get(arr);
+    if(!bag || !bag.length){
+      bag = arr.map((_,i)=>i);
+      for(let i=bag.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [bag[i],bag[j]]=[bag[j],bag[i]]; }
+      _bags.set(arr, bag);
+    }
+    return arr[bag.pop()];
+  }
   const chance = p => Math.random() < p;
   const clamp = (n,a,b) => Math.max(a,Math.min(b,n));
   const fmt = s => Math.floor(s/60) + ":" + String(s%60).padStart(2,"0");
@@ -266,7 +279,8 @@
       phoneDead:false,
       boardedBus:false,
       lbSubmitted:false,
-      cast:{}               // 
+      cast:{},              // 
+      gone:{}               // who has already left this run
     };
   }
 
@@ -288,7 +302,7 @@
     }
   }
   function mood(){ return S.patience>66 ? 'high' : S.patience>33 ? 'mid' : 'low'; }
-  function moodLine(bank){ const arr = bank[mood()] || bank.mid; return pick(arr); }
+  function moodLine(bank){ const arr = bank[mood()] || bank.mid; return bagPick(arr); }
 
   const ROUTES = [
     {n:"86",  d:"Bundoora – Docklands"},
@@ -331,6 +345,7 @@
   /* ---------- SETUP screen ---------- */
   function renderSetup(){
     S = fresh();
+    bagShuffle();          // fresh shuffle of every deck for this wait
     FS.myId = null; localMyKey = null;
     clearLog();
     log('You are at the tram stop.', 'sys');
@@ -416,7 +431,7 @@
     S.battery   = clamp(S.battery-rnd(5,12),0,100);
     S.awareness = clamp(S.awareness-rnd(5,12),0,100);
     log('You open your phone.', 'dim');
-    log(pick(PHONE), 'amber');
+    log(bagPick(PHONE), 'amber');
     if(S.battery<=0){ S.phoneDead=true; log('Your phone dies.', 'bad'); renderActions(); }
     tick(rnd(90,210));
   }
@@ -424,9 +439,9 @@
     log('You open your notes.', 'dim');
     if(chance(0.5)){
       S.productivity += rnd(1,3);
-      log(pick(STUDY_GOOD), 'good');
+      log(bagPick(STUDY_GOOD), 'good');
     } else {
-      log(pick(STUDY_BAD), 'dim');
+      log(bagPick(STUDY_BAD), 'dim');
     }
     S.awareness = clamp(S.awareness-rnd(15,25),0,100); // head down = miss the tram
     tick(rnd(180,360));
@@ -489,7 +504,7 @@
       'Time passes. Someone hums Be The One by Dua Lipa.',
       'Time passes. Someone hums Fame is A Gun by Addison Rae.',
       'Time passes. Someone hums and it really annoys you.',
-      'Time passes. Someone hums a jingle from a betting ad',
+      'Time passes. Someone hums a jingle from a betting ad.',
       'You wonder whether every tram driver secretly knows each other.',
       'You wonder how many hours of your life have been spent waiting.',
       'You wonder if the tram knows you are waiting.',
@@ -590,33 +605,43 @@
   }
 
   const CAST = {
-    knitter:{ mins:12, pat:-2, line(n){
-      if(n===1) return [['A nice old lady starts knitting.','sys']];
-      if(n===2) return [['The knitting lady has finished her scarf.','dim'],['She casts on another one.','dim']];
-      if(n===3) return [['The knitting lady is on her third scarf.','dim'],['You have produced nothing in the same amount of time.','dim']];
-      return [['The knitting lady is now on scarf number '+n+'.','dim'],['She could clothe the entire shelter by now.','dim']];
-    }},
-    tourist:{ mins:2, line(n){
-      if(n===1) return [['A tourist looks delighted.','sys'],['"Is this the famous tram?????"','amber']];
-      if(n===2) return [['The tourist is still here.','sys'],['"...does anyone know when the tram is coming?"','amber']];
-      return [['The tourist has stopped asking questions.','sys'],['They have accepted Melbourne as home now.','dim']];
-    }},
-    dealGuy:{ mins:3, pat:-1, line(n){
-      if(n===1) return [['A man is on the phone, loudly closing a deal.','sys'],['"Yeah mate, circle back, touch base, EOD. No worries mate."','amber']];
-      if(n===2) return [['The deal guy has circled back.','sys'],['"Nah totally, let\'s take it offline."','amber']];
-      if(n===3) return [['The deal guy has circled back for the third time.','dim'],['The deal is not closing.','dim']];
-      return [['The deal guy circles back yet again.','dim'],['"Alright mate I\'m catching what you\'re throwing."','amber']];
-    }},
-    oldMan:{ mins:8, pat:-3, line(n){
-      if(n===1) return [['An elderly man shakes his head.','sys'],['"They\'re never on time."','amber']];
-      if(n===2) return [['The elderly man is now explaining tram privatisation.','amber'],['You have learned three things you did not want to know.','dim']];
-      return [['The elderly man has reached the 1990s in his lecture.','dim'],['There is no sign he intends to stop and there is no sign of the tram.','dim']];
-    }},
-    teen:{ mins:6, pat:-2, line(n){
-      if(n===1) return [['A teenager arrives.','sys'],['"I\'m only going two stops."','amber']];
-      if(n===2) return [['The teenager is still here.','dim'],['They are telling you about their situationship now.','dim']];
-      return [['You and the teenager are at this point, friends.','dim'],['You know their star sign and you also know their ex\'s name.','dim']];
-    }}
+    knitter:{ mins:12, pat:-2,
+      bye:[['The knitting lady packs up all her scarves and boards a tram.','sys'],['The tram shelter feels a little colder without her.','dim']],
+      line(n){
+        if(n===1) return [['A nice old lady starts knitting.','sys']];
+        if(n===2) return [['The knitting lady has finished her scarf.','dim'],['She casts on another one.','dim']];
+        if(n===3) return [['The knitting lady is on her third scarf.','dim'],['You have produced nothing in the same amount of time.','dim']];
+        return [['The knitting lady is now on scarf number '+n+'.','dim'],['She could clothe the entire shelter by now.','dim']];
+      }},
+    tourist:{ mins:2,
+      bye:[['The tourist gets on a tram.','sys'],['You wave goodbye.','dim'],['You are still waiting.','dim']],
+      line(n){
+        if(n===1) return [['A tourist looks delighted.','sys'],['"Is this the famous tram?????"','amber']];
+        if(n===2) return [['The tourist is still here.','sys'],['"...does anyone know when the tram is coming?"','amber']];
+        return [['The tourist has stopped asking questions.','sys'],['They have accepted Melbourne as home now.','dim']];
+      }},
+    dealGuy:{ mins:3, pat:-1,
+      bye:[['The deal guy boards a tram mid-sentence.','sys'],['"...yeah I\'m getting a wriggle on, might drop out."','amber']],
+      line(n){
+        if(n===1) return [['A man is on speaker phone, loudly closing a deal.','sys'],['"Yeah mate, circle back, touch base, EOD. No worries mate."','amber']];
+        if(n===2) return [['The deal guy has circled back.','sys'],['"Nah totally, let\'s take it offline."','amber']];
+        if(n===3) return [['The deal guy has circled back for the third time.','dim'],['The deal is not closing.','dim']];
+        return [['The deal guy circles back yet again.','dim'],['"Alright mate I\'m catching what you\'re throwing."','amber']];
+      }},
+    oldMan:{ mins:8, pat:-3,
+      bye:[['The elderly man\'s tram arrives.','sys'],['You hope he has a nice day.','dim']],
+      line(n){
+        if(n===1) return [['An elderly man shakes his head.','sys'],['"They\'re never on time."','amber']];
+        if(n===2) return [['The elderly man is now explaining tram privatisation.','amber'],['You have learned three things you did not want to know.','dim']];
+        return [['The elderly man has reached the 1990s in his lecture.','dim'],['There is no sign he intends to stop and there is no sign of the tram.','dim']];
+      }},
+    teen:{ mins:6, pat:-2,
+      bye:[['The teenager leaves.','sys'],['You realise you will never know how the situationship ended.','dim']],
+      line(n){
+        if(n===1) return [['A teenager arrives.','sys'],['"I\'m only going two stops."','amber']];
+        if(n===2) return [['The teenager is still here.','dim'],['They are telling you about their situationship now.','dim']];
+        return [['You and the teenager are at this point, friends.','dim'],['You know their star sign and you also know their ex\'s name.','dim']];
+      }}
   };
 
   function runCast(id){
@@ -627,11 +652,20 @@
     if(typeof c.pat === "number") S.patience = clamp(S.patience + c.pat, 0, 100);
   }
   function pickCastId(){
-    const ids = Object.keys(CAST);
+    const ids = Object.keys(CAST).filter(id=>!S.gone[id]);
+    if(!ids.length) return null;
     const seen = ids.filter(id=>S.cast[id]);
     if(seen.length && chance(0.6)) return pick(seen);         //
     const unseen = ids.filter(id=>!S.cast[id]);
     return pick(unseen.length ? unseen : ids);                // 
+  }
+  // 
+  function maybeDepart(){
+    const leavers = Object.keys(CAST).filter(id => S.cast[id] && !S.gone[id] && CAST[id].bye);
+    if(!leavers.length || !chance(0.45)) return;
+    const id = pick(leavers);
+    CAST[id].bye.forEach(b=> log(b[0], b[1]||'dim'));
+    S.gone[id] = true;
   }
 
   /* ---------- random events ---------- */
@@ -650,9 +684,10 @@
       log('...', 'dim');
       log(moodLine(PASS), 'bad');
       S.patience = clamp(S.patience-5,0,100); S.complaints++;
+      maybeDepart(); //
     } else if(roll < 0.50){ // someone shows up
-      if(chance(0.80)) runCast(pickCastId());
-      else runSaga(pick(SAGAS));
+      if(chance(0.80)){ const id = pickCastId(); if(id) runCast(id); else runSaga(bagPick(SAGAS)); }
+      else runSaga(bagPick(SAGAS));
     } else if(roll < 0.57){ // timetable starer
       const m = rnd(4,9);
       log('A passenger studies the timetable.', 'sys');
@@ -665,7 +700,7 @@
       log('"For more information, visit ptv-dot-vic-dot-gov-dot-au."', 'amber');
       S.patience = clamp(S.patience-3,0,100); S.complaints++;
     } else if(roll < 0.69){ // it's not working
-      log('A stranger presses something.', 'sys');
+      log('Someone presses something.', 'sys');
       log('"It\'s not working," they announce, to no one.', 'amber');
     } else if(roll < 0.75){ // weather shift
       changeWeather(true);
@@ -675,7 +710,7 @@
     } else if(roll < 0.86){ // progress reducer
       S.progress = clamp(S.progress-6,0,999);
       log('The board flashes: OPERATIONAL REQUIREMENTS.', 'amber');
-      log('Whatever that means.', 'dim');
+      log('Whatever that means ???', 'dim');
     } else if(roll < 0.90){ // driver break 
       runSaga(DRIVER_BREAK);
     } else if(roll < 0.94){ // driver waves 
@@ -725,7 +760,7 @@
   function arrivalOrMiss(){
     const missChance = clamp((100 - S.awareness)/200, 0, 0.55);
     if(chance(missChance)){
-      log(pick(MISS_LINES), 'bad');
+      log(bagPick(MISS_LINES), 'bad');
       S.progress = rnd(45,70);
       S.patience = clamp(S.patience-10,0,100);
       S.complaints++;
@@ -780,7 +815,7 @@
   function boardOutcome(){
     const wrongChance = 0.07 + (100-S.awareness)/500; // head down -> wrong tram
     if(chance(wrongChance)) return endWrongTram();
-    if(chance(0.18)) return endPeakHour();
+    if(chance(0.30)) return endPeakHour();
     return endMadeIt();
   }
 
@@ -814,9 +849,9 @@
       [
         ['tram route', S.route.n],
         ['minutes waited', fmt(S.wait)],
-        ['seat available?', seat?'Yes (!)':'No :('],
-        ['have to stand', seat?'No':'Yes !!!'],
-        ['windows', chance(0.3)?'dirty','filthy','foggy'],
+        ['seat available?', seat?'yes (!)':'no :('],
+        ['have to stand', seat?'no':'yes !!!'],
+        ['windows', pick(['dirty','filthy','foggy'])],
         ['distance', km+' km'],
         ['study productivity', String(S.productivity)],
         ['internal complaints', String(S.complaints)],
