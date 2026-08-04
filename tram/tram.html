@@ -606,7 +606,7 @@
 
   const CAST = {
     knitter:{ mins:12, pat:-2,
-      bye:[['The knitting lady packs up all her scarves and boards a tram.','sys'],['The tram shelter feels a little colder without her.','dim']],
+      bye:[['The knitting lady packs up all her scarves and boards a number 58 tram.','sys'],['The tram shelter feels a little colder without her.','dim']],
       line(n){
         if(n===1) return [['A nice old lady starts knitting.','sys']];
         if(n===2) return [['The knitting lady has finished her scarf.','dim'],['She casts on another one.','dim']];
@@ -625,7 +625,7 @@
       line(n){
         if(n===1) return [['A man is on speaker phone, loudly closing a deal.','sys'],['"Yeah mate, circle back, touch base, EOD. No worries mate."','amber']];
         if(n===2) return [['The deal guy has circled back.','sys'],['"Nah totally, let\'s take it offline."','amber']];
-        if(n===3) return [['The deal guy has circled back for the third time.','dim'],['The deal is not closing.','dim']];
+        if(n===3) return [['The deal guy has circled back for the third time.','sys'],['The deal is not closing.','dim']];
         return [['The deal guy circles back yet again.','dim'],['"Alright mate I\'m catching what you\'re throwing."','amber']];
       }},
     oldMan:{ mins:8, pat:-3,
@@ -633,14 +633,14 @@
       line(n){
         if(n===1) return [['An elderly man shakes his head.','sys'],['"They\'re never on time."','amber']];
         if(n===2) return [['The elderly man is now explaining tram privatisation.','amber'],['You have learned three things you did not want to know.','dim']];
-        return [['The elderly man has reached the 1990s in his lecture.','dim'],['There is no sign he intends to stop and there is no sign of the tram.','dim']];
+        return [['The elderly man has reached the 1990s in his lecture.','amber'],['There is no sign he intends to stop and there is no sign of the tram.','sys']];
       }},
     teen:{ mins:6, pat:-2,
       bye:[['The teenager leaves, catching the 6 to Melbourne University.','sys'],['You realise you will never know how the situationship ended.','dim']],
       line(n){
         if(n===1) return [['A teenager arrives.','sys'],['"I\'m only going two stops."','amber']];
-        if(n===2) return [['The teenager is still here.','dim'],['They are telling you about their situationship now.','dim']];
-        return [['You and the teenager are at this point, friends.','dim'],['You know their star sign and you also know their ex\'s name.','dim']];
+        if(n===2) return [['The teenager is still here.','sys'],['They are telling you about their situationship now.','dim']];
+        return [['You and the teenager are at this point, friends.','amber'],['You know their star sign and you also know their ex\'s name.','dim']];
       }}
   };
 

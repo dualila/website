@@ -72,6 +72,41 @@
       "if you're seeing this email me",
       'make sure to visit the chatroom'
     ];
+
+    // ── live last.fm scrobble ──────────────────────────────
+    const NP_LASTFM_USER = "lily-wkfld";
+    const NP_LASTFM_KEY = "320c29920c2820467b0ac8daae64cb76";
+
+    async function refreshNowPlaying() {
+      try {
+        const url = `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks` +
+                    `&user=${NP_LASTFM_USER}` +
+                    `&api_key=${NP_LASTFM_KEY}` +
+                    `&format=json&limit=1`;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        const track = data?.recenttracks?.track?.[0];
+        if (!track) return;
+
+        const nowPlaying = track["@attr"] && track["@attr"].nowplaying === "true";
+        const name = (track.name || "");
+        const artist = (track.artist && track.artist["#text"] || "");
+        if (!name || !artist) return;
+
+        const label = nowPlaying ? "is currently listening to" : "last played";
+        // 
+        STATUS_MESSAGES[0] = `${label}: ${name} - ${artist}`;
+      } catch (err) {
+        console.error("now playing fetch failed:", err);
+        // 
+      }
+    }
+
+    refreshNowPlaying();
+    setInterval(refreshNowPlaying, 30000); // poll every 30s
+    // ───────────────────────────────────────────────────────
+
     const statusEl = document.getElementById('statusLine');
     let msgIndex = 0;
     let charIndex = 0;
