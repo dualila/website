@@ -1337,3 +1337,4 @@ a.track-name:hover {
   /* keep the marquee readable but stop it looping forever */
   .ticker span { animation: none; padding-left: 0; }
 }
+.tod-latenight .sidebar { border-color: #6a5cff; }

@@ -77,6 +77,33 @@
   .blob-svg.mood-neglected { animation-name: breathe-tired; animation-duration: 4.6s; }
   .blob-svg.mood-dead { animation: none; opacity: 0.6; filter: grayscale(0.6); }
 
+
+  .blob-svg.orb-sleeping {
+    animation-name: breathe-tired;
+    animation-duration: 5.2s;
+    filter: brightness(0.62) saturate(0.85) drop-shadow(0 0 12px rgba(90,110,255,0.55));
+  }
+  .orb-zzz {
+    position: absolute;
+    top: 14%;
+    right: 16%;
+    z-index: 2;
+    font-family: "Courier New", monospace;
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+    color: #9fb4ff;
+    text-shadow: 0 0 6px rgba(120,150,255,0.7);
+    pointer-events: none;
+    opacity: 0;
+  }
+  .orb-zzz.show { animation: orbZzz 3.2s ease-in-out infinite; }
+  @keyframes orbZzz {
+    0%   { opacity: 0; transform: translateY(6px) scale(0.9); }
+    30%  { opacity: 0.9; }
+    70%  { opacity: 0.9; }
+    100% { opacity: 0; transform: translateY(-14px) scale(1.1); }
+  }
+
   @keyframes breathe {
     0%, 100% { transform: scale(1, 1) translateY(0); }
     50% { transform: scale(1.02, 0.97) translateY(2px); }
@@ -344,6 +371,7 @@
             <ellipse class="blob-body" id="blobBody" cx="100" cy="115" rx="72" ry="62" fill="#ff00ff"/>
             <g id="blobFace"></g>
           </svg>
+          <div class="orb-zzz" id="orbZzz">z z z</div>
         </div>
 
         <div class="blob-status" id="blobStatusText">...</div>
@@ -552,9 +580,8 @@ const ASCII_FACES = {
   neutral: ":]"
 };
 
-function renderFace(mood) {
+function setFaceGlyph(glyph) {
   const face = document.getElementById("blobFace");
-  const glyph = ASCII_FACES[mood] || ASCII_FACES.neutral;
   const jitterX = (Math.random() * 4 - 2).toFixed(1);
   const jitterRot = (Math.random() * 4 - 2).toFixed(1);
   face.innerHTML = `
@@ -568,6 +595,32 @@ function renderFace(mood) {
       style="letter-spacing:-1px;">${glyph}</text>
   `;
 }
+
+function renderFace(mood) {
+  setFaceGlyph(ASCII_FACES[mood] || ASCII_FACES.neutral);
+}
+
+function orbPeriod() {
+  if (window.TIME_OF_DAY && window.TIME_OF_DAY.period) return window.TIME_OF_DAY.period;
+  const h = new Date().getHours();
+  if (h < 5) return "latenight";
+  if (h < 11) return "morning";
+  if (h < 17) return "day";
+  if (h < 21) return "evening";
+  return "night";
+}
+function orbIsAsleep() {
+  const p = orbPeriod();
+  return p === "latenight" || p === "night";
+}
+const SLEEP_FACE = "( ˘ ｡ ˘ )";
+const SLEEP_LINES = [
+  "the orb is dreaming...",
+  "shhh — the orb is asleep",
+  "the orb dreams of being fed",
+  "do not wake the orb (you can still feed it)",
+];
+const sleepLine = SLEEP_LINES[Math.floor(Math.random() * SLEEP_LINES.length)];
 
 function moodFromStats(pet) {
   if (!pet.alive) return "dead";
@@ -607,6 +660,17 @@ function render(pet) {
   body.setAttribute("fill", moodColors[mood]);
   renderFace(mood);
   document.getElementById("blobStatusText").textContent = moodLabels[mood];
+
+  const zzz = document.getElementById("orbZzz");
+  if (pet.alive && orbIsAsleep()) {
+    svg.classList.add("orb-sleeping");
+    setFaceGlyph(SLEEP_FACE);
+    document.getElementById("blobStatusText").textContent = sleepLine;
+    if (zzz) zzz.classList.add("show");
+  } else {
+    svg.classList.remove("orb-sleeping");
+    if (zzz) zzz.classList.remove("show");
+  }
 
   const bornDate = pet.bornAt.toDate ? pet.bornAt.toDate() : new Date(pet.bornAt);
   document.getElementById("blobMetaText").textContent =
@@ -771,6 +835,7 @@ setInterval(() => {
 </script>
 <script src="../js/nav.js"></script>
 <script src="../js/effects.js"></script>
+<script src="../js/daynight.js"></script>
 
 </body>
 </html>
