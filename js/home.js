@@ -59,6 +59,18 @@ async function fetchWeather() {
     else if ([71, 73, 75, 77, 85, 86].includes(code)) { icon = "❄️"; condition = "Snowy"; }
     else if ([95, 96, 99].includes(code)) { icon = "⛈️"; condition = "Stormy"; }
 
+    // after dark
+    const hr = new Date().getHours();
+    const isNight = (window.TIME_OF_DAY &&
+        (window.TIME_OF_DAY.period === "night" || window.TIME_OF_DAY.period === "latenight"))
+      || hr >= 21 || hr < 5;
+    if (isNight) {
+      if (code === 0) { icon = "🌙"; condition = "dark. obviously"; }
+      else if ([1, 2, 3].includes(code)) { icon = "🌙"; condition = "dark & cloudy"; }
+      else if ([45, 48].includes(code)) { icon = "🌫️"; condition = "dark & foggy"; }
+      // 
+    }
+
     // Update the DOM with the retro layout
     weatherValEl.innerHTML = `
       <span style="font-size: 24px; display: block; margin-bottom: 4px;">${icon}</span>

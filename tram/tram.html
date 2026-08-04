@@ -263,6 +263,14 @@
     try{ localStorage.setItem(LB_KEY, JSON.stringify(l)); }catch(e){}
   }
 
+  /* ---------- time of day ---------- */
+  function isTramNight(){
+    const p = window.TIME_OF_DAY && window.TIME_OF_DAY.period;
+    if(p) return p === "latenight" || p === "night";
+    const h = new Date().getHours();
+    return h >= 21 || h < 5;
+  }
+
   /* ---------- game state ---------- */
   let S;
   function fresh(){
@@ -276,7 +284,7 @@
       complaints:0,
       productivity:0,
       progress:0,           // 
-      eta:rnd(4,8),         // 
+      eta: isTramNight() ? rnd(9,16) : rnd(4,8),  // night service is sparser
       wxIdx:0,              // 
       mykiBroken:false,
       phoneDead:false,
@@ -353,6 +361,7 @@
     clearLog();
     log('You are at the tram stop.', 'sys');
     log('It is '+WX[S.wxIdx].toLowerCase()+'.', 'dim');
+    if(isTramNight()) log('The night network is running. Service is... reduced.', 'dim');
     log('Where are you going? Which tram are you taking?', 'dim');
     paint();
 
@@ -394,7 +403,7 @@
     clearLog();
     log('You are going to <b>'+S.dest.toLowerCase()+'</b> on the <b>'+S.route.n+'</b>.', 'sys');
     log('The board says '+S.eta+' minutes.', 'amber');
-    $("boardStrip").textContent = "Next: "+S.route.n+" to "+S.route.d.split("–")[1].trim();
+    $("boardStrip").textContent = (isTramNight() ? "◄ NIGHT NETWORK · " : "") + "Next: "+S.route.n+" to "+S.route.d.split("–")[1].trim();
     paint();
     renderActions();
   }
@@ -614,7 +623,7 @@
         if(n===1) return [['A nice old lady starts knitting.','sys']];
         if(n===2) return [['The knitting lady has finished her scarf.','dim'],['She casts on another one.','dim']];
         if(n===3) return [['The knitting lady is on her third scarf.','dim'],['You have produced nothing in the same amount of time.','dim']];
-        return [['The knitting lady is now on scarf number '+n+'.','dim'],['She could clothe the tram entire shelter by now.','dim']];
+        return [['The knitting lady is now on scarf number '+n+'.','dim'],['She could clothe the entire tram shelter by now.','dim']];
       }},
     tourist:{ mins:2,
       bye:[['The tourist gets on a tram.','sys'],['You wave goodbye.','dim'],['You are still waiting.','dim']],
@@ -1040,5 +1049,6 @@
 </script>
 <script src="../js/nav.js"></script>
 <script src="../js/effects.js"></script>
+<script src="../js/daynight.js"></script>
 </body>
 </html>
