@@ -43,7 +43,7 @@ document.body.appendChild(star);
     a.href = '/admin.html';
     a.textContent = '🔒';               
     a.style.cssText =
-      'color:rgba(255,0,255,0.50);text-decoration:none;margin-left:8px;' +
+      'color:rgba(255,0,255,1);text-decoration:none;margin-left:8px;' +
       'transition:color .3s,text-shadow .3s;';
 
     a.addEventListener('mouseenter', () => {
