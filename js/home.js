@@ -32,49 +32,105 @@ fetch("https://api.github.com/repos/dualila/website/commits/main")
     console.error("Failed to fetch last updated date:", error);
     lastUpdated.textContent = "Unavailable";
   });
-// Melbourne weather
+
+// ── Melbourne weather · 
+const WMO = {
+  0:  ["☀️", "clear sky"],
+  1:  ["🌤️", "mainly clear"],
+  2:  ["⛅", "partly cloudy"],
+  3:  ["☁️", "overcast"],
+  45: ["🌫️", "fog"],
+  48: ["🌫️", "depositing fog"],
+  51: ["🌦️", "light drizzle"],
+  53: ["🌦️", "moderate drizzle"],
+  55: ["🌧️", "dense drizzle"],
+  56: ["🌧️", "light freezing drizzle"],
+  57: ["🌧️", "dense freezing drizzle"],
+  61: ["🌦️", "slight rain"],
+  63: ["🌧️", "moderate rain"],
+  65: ["🌧️", "heavy rain"],
+  66: ["🌧️", "light freezing rain"],
+  67: ["🌧️", "heavy freezing rain"],
+  71: ["🌨️", "slight snowfall"],
+  73: ["🌨️", "moderate snowfall"],
+  75: ["❄️", "heavy snowfall"],
+  77: ["❄️", "snow grains"],
+  80: ["🌦️", "slight rain showers"],
+  81: ["🌧️", "moderate rain showers"],
+  82: ["⛈️", "violent rain showers"],
+  85: ["🌨️", "slight snow showers"],
+  86: ["❄️", "heavy snow showers"],
+  95: ["⛈️", "thunderstorm"],
+  96: ["⛈️", "thunderstorm with slight hail"],
+  99: ["⛈️", "thunderstorm with heavy hail"],
+};
+
+// turn a compass bearing into a proper 16-point direction, for no reason
+function windDir(deg) {
+  const dirs = ["N","NNE","NE","ENE","E","ESE","SE","SSE",
+                "S","SSW","SW","WSW","W","WNW","NW","NNW"];
+  return dirs[Math.round(deg / 22.5) % 16];
+}
+
 async function fetchWeather() {
   const weatherValEl = document.getElementById('weatherValue');
   if (!weatherValEl) return;
 
-  //
   const lat = -37.8136;
   const lon = 144.9631;
-  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`;
+  // ask for the works: temp, apparent temp, humidity, wind, gusts, precip, etc.
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
+    `&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,` +
+    `wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,cloud_cover,` +
+    `surface_pressure,is_day` +
+    `&timezone=Australia%2FMelbourne`;
 
   try {
     const response = await fetch(url);
     const data = await response.json();
-    const temp = Math.round(data.current_weather.temperature);
-    const code = data.current_weather.weathercode;
+    const c = data.current || {};
 
-    // Map Open-Meteo WMO codes to retro emoji/GIF representations
-    let icon = "✨";
-    let condition = "Vibing";
+    const temp    = Math.round(c.temperature_2m);
+    const feels   = Math.round(c.apparent_temperature);
+    const code    = c.weather_code;
+    const humidity = Math.round(c.relative_humidity_2m);
+    const wind    = Math.round(c.wind_speed_10m);
+    const gust    = Math.round(c.wind_gusts_10m);
+    const dir     = windDir(c.wind_direction_10m);
+    const precip  = c.precipitation;
+    const cloud   = Math.round(c.cloud_cover);
+    const pressure = Math.round(c.surface_pressure);
 
-    if (code === 0) { icon = "☀️"; condition = "Sunny"; }
-    else if ([1, 2, 3].includes(code)) { icon = "⛅"; condition = "Partly Cloudy"; }
-    else if ([45, 48].includes(code)) { icon = "🌫️"; condition = "Foggy"; }
-    else if ([51, 53, 55, 61, 63, 65, 80, 81, 82].includes(code)) { icon = "🌧️"; condition = "Rainy"; }
-    else if ([71, 73, 75, 77, 85, 86].includes(code)) { icon = "❄️"; condition = "Snowy"; }
-    else if ([95, 96, 99].includes(code)) { icon = "⛈️"; condition = "Stormy"; }
+    // look up the exact description + icon
+    let [icon, condition] = WMO[code] || ["✨", "vibing"];
 
-    // after dark
+    // after dark, a clear sky isn't "clear" — it's just dark, obviously
     const hr = new Date().getHours();
     const isNight = (window.TIME_OF_DAY &&
         (window.TIME_OF_DAY.period === "night" || window.TIME_OF_DAY.period === "latenight"))
+      || (c.is_day === 0)
       || hr >= 21 || hr < 5;
     if (isNight) {
       if (code === 0) { icon = "🌙"; condition = "dark. obviously"; }
-      else if ([1, 2, 3].includes(code)) { icon = "🌙"; condition = "dark & cloudy"; }
+      else if ([1, 2].includes(code)) { icon = "🌙"; condition = "dark, mostly clear"; }
+      else if (code === 3) { icon = "🌙"; condition = "dark & overcast"; }
       else if ([45, 48].includes(code)) { icon = "🌫️"; condition = "dark & foggy"; }
-      // 
+      // precipitation keeps its exact description — weather doesn't care about the sun
     }
 
-    // Update the DOM with the retro layout
+    // "feels like" only worth showing if it actually differs
+    const feelsLine = (feels !== temp) ? `feels like ${feels}°` : `feels about right`;
+
     weatherValEl.innerHTML = `
       <span style="font-size: 24px; display: block; margin-bottom: 4px;">${icon}</span>
       <span>${temp}°C &bull; ${condition}</span>
+      <span style="display:block; font-size:11px; color:#c8ffd8; margin-top:6px; line-height:1.6;">
+        ${feelsLine}<br>
+        💧 ${humidity}% humidity<br>
+        🌬️ ${wind} km/h ${dir}${gust > wind + 5 ? ` (gusts ${gust})` : ""}<br>
+        ☁️ ${cloud}% cloud${precip > 0 ? ` &bull; ${precip} mm` : ""}<br>
+        <span style="opacity:.7;">📊 ${pressure} hPa · for no reason</span>
+      </span>
     `;
   } catch (error) {
     console.error("Weather fetch failed:", error);
