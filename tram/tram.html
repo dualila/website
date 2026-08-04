@@ -797,7 +797,7 @@
     let decline = 0.14 + (S.mykiBroken?0.22:0) + (100-S.patience)/320;
     if(chance(decline)){
       S.patience = clamp(S.patience-18,0,100); paint();
-      log('Card declined.', 'bad');
+      log('Card declined. You spot Authorised Officers in the rear of the tram and they spot you.', 'bad');
       log('Your patience has decreased.', 'dim');
       if(chance(0.55)){
         log('You step off. The doors close. It leaves. You watch it go.', 'bad');
