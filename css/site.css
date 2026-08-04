@@ -3,8 +3,12 @@
    ========================================== */
 * { box-sizing: border-box; }
 
+img { max-width: 100%; }
+
 html {
   background-color: #0a0033;
+  -webkit-text-size-adjust: 100%; 
+  overflow-x: hidden;             
 }
 
 body {
@@ -13,6 +17,7 @@ body {
   font-family: "Comic Sans MS", "Comic Sans", serif;
   position: relative;
   overflow-x: hidden;
+  -webkit-tap-highlight-color: rgba(255, 0, 255, 0.3); 
 }
 
 body::after {
@@ -94,6 +99,11 @@ body::before {
   .track img, .now-page .track-art { width: 36px; height: 36px; }
   .album-card img { width: 52px; height: 52px; }
   .avatar-placeholder { width: 120px; height: 120px; }
+
+  
+  .sidebar a { display: inline-block; padding: 4px 2px; }
+  .nav-button { padding: 12px 22px; }
+  .drawer-title { padding: 14px 15px; } 
 }
 
 @media (max-width: 400px) {
@@ -113,6 +123,11 @@ body::before {
 .sidebar {
   flex: 0 0 250px;
   background: #000;
+  background-image:
+    radial-gradient(rgba(255, 255, 255, 0.3) 1px, transparent 1px),
+    radial-gradient(rgba(255, 255, 255, 0.3) 1px, transparent 1px);
+  background-size: 16px 16px;
+  background-position: 0 0, 8px 8px;
   border: 3px ridge #00ffff;
   padding: 12px 10px;
   font-family: "Courier New", monospace;
@@ -120,7 +135,7 @@ body::before {
   color: #0f0;
   position: sticky;
   top: 16px;
-  animation: sidebarPulse 6s infinite;
+  animation: sidebarPulse 6s infinite, boxDotsDrift 5s linear infinite;
 }
 
 .sidebar-title {
@@ -272,7 +287,7 @@ body::before {
 @keyframes retro-blink { to { visibility: hidden; } }
 
 /* ==========================================
-   ABOUT PAGE CONTENT & AVATAR
+   ABOUT PAGE CONTENT
    ========================================== */
 .bio-container { display: flex; gap: 30px; flex-wrap: wrap; margin-top: 20px; }
 .avatar-column { flex: 1; min-width: 200px; text-align: center; }
@@ -487,7 +502,7 @@ body::before {
 }
 
 /* ==========================================
-   GUESTBOOK / CHATROOM INTERFACE
+   GUESTBOOK 
    ========================================== */
 .guestbook textarea, .guestbook input[type="text"] {
   width: 100%;
@@ -495,6 +510,7 @@ body::before {
   color: #0f0;
   border: 2px inset #00ff00;
   font-family: "Courier New", monospace;
+  font-size: 16px; /* 16px min */
   padding: 8px;
 }
 .guestbook input[type="text"] { padding: 6px; margin-bottom: 8px; }
@@ -535,13 +551,18 @@ a:hover { transform: translateX(3px); }
 .counter {
   display: inline-block;
   background: #000;
+  background-image:
+    radial-gradient(rgba(255, 255, 255, 0.3) 1px, transparent 1px),
+    radial-gradient(rgba(255, 255, 255, 0.3) 1px, transparent 1px);
+  background-size: 16px 16px;
+  background-position: 0 0, 8px 8px;
   border: 2px solid #ff0000;
   padding: 6px 10px;
   font-family: "Courier New", monospace;
   letter-spacing: 4px;
   font-size: 22px;
   color: #ff3333;
-  animation: counterGlow 1.8s infinite;
+  animation: counterGlow 1.8s infinite, boxDotsDrift 5s linear infinite;
 }
 .counter-label { display: block; font-size: 11px; color: #ccc; margin-top: 4px; }
 
@@ -922,6 +943,7 @@ footer img { vertical-align: middle; margin: 0 4px; }
   text-shadow: 0 0 4px #ffff00;
   text-align: center;
   border: 3px dotted #ff00ff;
+  animation: boxDotsDrift 5s linear infinite;
 }
 
 .now-page .now-footnote a {
@@ -955,8 +977,29 @@ footer img { vertical-align: middle; margin: 0 4px; }
   to   { background-position: 16px 16px, 24px 24px; }
 }
 
+.contact-box,
+.age-widget,
+.context-box,
+.drawer-title,
+.now-page .now-section {
+  animation: boxDotsDrift 5s linear infinite;
+}
+
+.download-card,
+.widget-box,
+.guestbook-entries,
+.now-page .now-nav,
+.archive-page .archive-entry {
+  background-image:
+    radial-gradient(rgba(255, 255, 255, 0.3) 1px, transparent 1px),
+    radial-gradient(rgba(255, 255, 255, 0.3) 1px, transparent 1px);
+  background-size: 16px 16px;
+  background-position: 0 0, 8px 8px;
+  animation: boxDotsDrift 5s linear infinite;
+}
+
 /* ==========================================
-   NOW PAGE — BLOG POST STYLES
+   NOW PAGE — BLOG POST 
    ========================================== */
 .entry-label {
   font-weight: bold;
@@ -993,7 +1036,7 @@ footer img { vertical-align: middle; margin: 0 4px; }
 
 .now-page .blog-post p {
   margin: 0 0 1.2em;
-  text-indent: 1.5em; /* classic book-style indent */
+  text-indent: 1.5em; 
 }
 
 .now-page .blog-post p.entry-label,
@@ -1269,3 +1312,33 @@ a.track-name:hover {
     border: 3px ridge #ff00ff;
     padding: 16px;
   }
+
+/* ==========================================
+   DOT VISIBILITY 
+   ========================================== */
+.radio-console, .lastfm-box, .rotation-box, .genre-box, .bio-container,
+.contact-box, .age-widget, .context-box,
+.download-card, .widget-box, .guestbook-entries, .sidebar, .counter,
+.now-page .now-section, .now-page .now-footnote, .now-page .top-tracks-box,
+.now-page .now-nav, .archive-page .archive-entry {
+  background-image:
+    radial-gradient(rgba(255, 255, 255, 0.4) 1.5px, transparent 1.5px),
+    radial-gradient(rgba(255, 255, 255, 0.4) 1.5px, transparent 1.5px);
+  background-size: 16px 16px;
+  background-position: 0 0, 8px 8px;
+}
+
+/* ==========================================
+   MOTION SAFETY
+   ========================================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  /* keep the marquee readable but stop it looping forever */
+  .ticker span { animation: none; padding-left: 0; }
+}
