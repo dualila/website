@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+  <link rel="stylesheet" href="../css/site.css">
+<title>waiting for a tram</title>
+<meta property="og:title" content="waiting for the tram simulator">
+<meta property="og:description" content="you stand at the tram stop. the board says 2 minutes. it has said 2 minutes for a while ...">
+<meta property="og:type" content="website">
+<style>
+  :root{
+    --tram-green-dk:#00ff88;
+    --maroon:#ff5c8a;
+  }
+
+  .tram-game{ max-width:640px; margin:0 auto; font-family:"Courier New",monospace; color:#c8ffd8; }
+  .tram-game *{ box-sizing:border-box; }
+
+  .tram-game .board{
+    background:#0a0700;
+    border:3px ridge #ffb000;
+    padding:12px 14px;
+    color:#ffb000;
+    position:relative;overflow:hidden;
+    box-shadow:0 0 14px rgba(255,176,0,.35) inset;
+  }
+  .tram-game .board::after{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background:repeating-linear-gradient(0deg, rgba(0,0,0,.35) 0 1px, transparent 1px 3px);
+    mix-blend-mode:multiply;
+  }
+  @media (prefers-reduced-motion: no-preference){
+    .tram-game .board{animation:tgFlick 6s infinite}
+  }
+  @keyframes tgFlick{ 0%,97%,100%{filter:none} 98%{filter:brightness(.7)} 99%{filter:brightness(1.15)} }
+  .tram-game .board-row{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+  .tram-game .board .svc{
+    font-weight:bold;text-transform:uppercase;letter-spacing:1px;
+    font-size:clamp(14px,3.6vw,19px);
+    text-shadow:0 0 8px rgba(255,176,0,.55);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .tram-game .board .eta{
+    font-weight:bold;font-size:clamp(15px,4vw,22px);white-space:nowrap;
+    text-shadow:0 0 8px rgba(255,176,0,.55);
+  }
+  .tram-game .board .strip{
+    margin-top:8px;border-top:1px dashed #5c3f00;padding-top:6px;
+    font-size:clamp(10px,2.6vw,12px);color:#e69f00;letter-spacing:1px;min-height:1.3em;
+  }
+  .tram-game .passer{
+    position:absolute;left:-40%;top:0;bottom:0;width:34%;display:none;
+    background:linear-gradient(90deg,transparent, rgba(120,255,190,.28) 40%, rgba(120,255,190,.5) 55%, transparent);
+  }
+  .tram-game .passer.go{display:block}
+  @media (prefers-reduced-motion: no-preference){
+    .tram-game .passer.go{animation:tgSlide 1.4s linear}
+  }
+  @keyframes tgSlide{from{left:-40%}to{left:130%}}
+
+  .tram-game .status{display:grid;grid-template-columns:repeat(auto-fit,minmax(58px,1fr));gap:8px;margin-top:12px}
+  .tram-game .stat{background:#000;border:2px solid #00ffff;box-shadow:0 0 8px #00ffff inset;padding:6px 4px;text-align:center}
+  .tram-game .stat .k{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#bbb}
+  .tram-game .stat .v{font-weight:bold;font-size:clamp(12px,3.3vw,15px);color:#0f0;text-shadow:0 0 5px #0f0;white-space:nowrap}
+
+  .tram-game .screen{
+    background:#000;border:2px solid #ff00ff;box-shadow:0 0 10px #ff00ff inset;
+    margin-top:12px;padding:14px 16px;height:clamp(320px,50vh,480px);overflow-y:auto;
+    font-size:14px;line-height:1.7;scroll-behavior:smooth;color:#c8ffd8;
+  }
+  .tram-game .screen p{margin:0 0 7px}
+  .tram-game .screen .sys{color:#00ffff}
+  .tram-game .screen .amber{color:#ffd700}
+  .tram-game .screen .bad{color:#ff5c8a}
+  .tram-game .screen .good{color:#0f0;text-shadow:0 0 5px #0f0}
+  .tram-game .screen .dim{color:#8a93c4}
+  .tram-game .screen .big{font-weight:bold;letter-spacing:1px;text-transform:uppercase}
+
+  .tram-game .actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}
+  .tram-game button{
+    font-family:"Courier New",monospace;font-weight:bold;font-size:13px;cursor:pointer;
+    background:#000;color:#00ffff;border:2px solid #00ffff;box-shadow:0 0 8px #00ffff inset;
+    padding:11px 8px;text-align:left;letter-spacing:.3px;transition:transform .15s ease;
+  }
+  .tram-game button:hover{transform:rotate(-1deg) scale(1.03);color:#fff}
+  .tram-game button:active{transform:translateY(1px)}
+  .tram-game button:disabled{opacity:.45;cursor:not-allowed;transform:none}
+  .tram-game button:focus-visible{outline:3px solid #ffd700;outline-offset:2px}
+  .tram-game button.wide{grid-column:1 / -1;text-align:center}
+  .tram-game button.go{color:#0f0;border-color:#0f0;box-shadow:0 0 10px #0f0 inset}
+  .tram-game button.danger{color:#ff5c8a;border-color:#ff3ea5;box-shadow:0 0 10px #ff3ea5 inset}
+
+  .tram-game .card{margin-top:12px}
+  .tram-game .card h2{
+    font-family:"Courier New","Arial Black",sans-serif;text-transform:uppercase;
+    font-size:16px;margin:0 0 8px;color:#ff00ff;text-shadow:0 0 6px #ff00ff;letter-spacing:.5px;
+  }
+  .tram-game .opts{display:grid;gap:7px}
+  .tram-game .opt{
+    background:#000;border:2px solid #00ffff;box-shadow:0 0 6px #00ffff inset;
+    padding:9px 11px;cursor:pointer;font-size:13px;color:#c8ffd8;
+    display:flex;align-items:center;gap:8px;transition:transform .15s ease;
+  }
+  .tram-game .opt:hover{transform:rotate(-1deg) scale(1.02);color:#fff}
+  .tram-game .opt.sel{background:#00381f;border-color:#0f0;box-shadow:0 0 10px #0f0 inset;color:#0f0}
+  .tram-game .opt .box{font-weight:bold}
+  .tram-game .rule{border:0;border-top:2px dashed #ff00ff;margin:14px 0}
+
+  .tram-game .receipt{background:#000;border:2px solid #00ffff;box-shadow:0 0 8px #00ffff inset;padding:12px}
+  .tram-game .receipt .line{display:flex;justify-content:space-between;border-bottom:1px dotted #245;padding:4px 0;font-size:13px}
+  .tram-game .receipt .line:last-child{border-bottom:0}
+  .tram-game .receipt .k{color:#9fb0d8}
+  .tram-game .receipt .v{font-weight:bold;text-align:right;color:#0f0;text-shadow:0 0 4px #0f0}
+  .tram-game .stars{color:#ffd700;letter-spacing:2px;text-shadow:0 0 5px #ffd700}
+
+  /* leaderboard */
+  .tram-game .lb{margin-top:14px}
+  .tram-game .lb h3{font-family:"Courier New","Arial Black",sans-serif;font-size:12px;letter-spacing:1px;text-transform:uppercase;margin:0 0 6px;color:#00ffff;text-shadow:0 0 6px #00ffff}
+  .tram-game .lb ol{margin:0;padding:0;list-style:none;counter-reset:r}
+  .tram-game .lb li{counter-increment:r;display:flex;justify-content:space-between;align-items:center;background:#000;border:2px solid #00ffff;box-shadow:0 0 6px #00ffff inset;padding:6px 10px;margin-bottom:5px;font-size:13px;color:#c8ffd8}
+  .tram-game .lb li::before{content:counter(r) ".";font-weight:bold;margin-right:8px;color:#ffd700}
+  .tram-game .lb li .nm{flex:1;display:flex;flex-direction:column;gap:1px}
+  .tram-game .lb li .sub{opacity:.7;font-size:11px;font-weight:normal;color:#9fb0d8}
+  .tram-game .lb li .tm{font-weight:bold;color:#0f0;text-shadow:0 0 4px #0f0}
+  .tram-game .lb li.you{background:#2a1500;border-color:#ffb000;box-shadow:0 0 10px #ffb000 inset}
+  .tram-game .lb li.you .tm{color:#ffb000;text-shadow:0 0 5px #ffb000}
+  .tram-game .nameform{display:flex;gap:6px;margin-top:8px}
+  .tram-game .nameform input{flex:1;font-family:"Courier New",monospace;font-size:13px;padding:8px;border:2px solid #00ffff;background:#000;color:#0f0;min-width:0}
+  .tram-game .nameform input::placeholder{color:#567}
+</style>
+</head>
+<body>
+
+  <div class="ticker"><span>✦ thank you for waiting for the tram ✦</span></div>
+
+  <div class="layout">
+    <div class="sidebar" id="sidebar"></div>
+
+    <div class="frame">
+
+      <div class="hero">
+        <h1>waiting for the tram</h1>
+        <div class="subtitle">you are waiting for the tram but maybe it's waiting for you</div>
+      </div>
+
+      <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
+
+      <!-- ===== the game ===== -->
+      <div class="tram-game">
+        <div class="board" id="board">
+          <div class="passer" id="passer"></div>
+          <div class="board-row">
+            <span class="svc" id="boardSvc">◄ NO SERVICE SELECTED</span>
+            <span class="eta" id="boardEta">-- min</span>
+          </div>
+          <div class="strip" id="boardStrip">for more information probably you should visit www.ptv.vic.gov.au</div>
+        </div>
+
+        <div class="status" id="status">
+          <div class="stat"><div class="k">waited</div><div class="v" id="stWait">0:00</div></div>
+          <div class="stat"><div class="k">phone battery</div><div class="v" id="stBat">100%</div></div>
+          <div class="stat"><div class="k">patience</div><div class="v" id="stPat">okay</div></div>
+          <div class="stat"><div class="k">awareness</div><div class="v" id="stAwr">sharp</div></div>
+        </div>
+
+        <div class="screen" id="screen"></div>
+
+        <div id="stage"></div>
+      </div>
+
+      <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
+
+      <footer>
+        ★ ° ☆ ° ★ ° ☆ ° ★ 2026 lily wakefield ★ ° ☆ ° ★ ° ☆ ° ★<br>
+        <img src="/images/favicon.ico" alt="site icon" width="24" height="24">
+        best experienced with an open heart
+      </footer>
+
+    </div>
+  </div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  /* -------------------- */
+  const $ = id => document.getElementById(id);
+  const rnd = (a,b) => Math.floor(Math.random()*(b-a+1))+a;
+  const pick = arr => arr[Math.floor(Math.random()*arr.length)];
+  const chance = p => Math.random() < p;
+  const clamp = (n,a,b) => Math.max(a,Math.min(b,n));
+  const fmt = s => Math.floor(s/60) + ":" + String(s%60).padStart(2,"0");
+  const firebaseConfig = {
+    apiKey: "AIzaSyA25PaWUE39RuX-huMHoziQVUPy_pNFXUE",
+    authDomain: "dot-com-44502.firebaseapp.com",
+    projectId: "dot-com-44502",
+    storageBucket: "dot-com-44502.firebasestorage.app",
+    messagingSenderId: "124684406308",
+    appId: "1:124684406308:web:146706a03bb4bd451552b1",
+    measurementId: "G-HPF4E6G5YW"
+  };
+  const COLL = "tramLeaderboard";
+  const FS = { ready:false, db:null, unsub:null, top:[], myId:null };
+
+  function initFirebase(){
+    try{
+      if(typeof firebase==="undefined") return;
+      if(!firebaseConfig.apiKey || firebaseConfig.apiKey.indexOf("PASTE")>-1) return;
+      const app = (firebase.apps && firebase.apps.length) ? firebase.app() : firebase.initializeApp(firebaseConfig);
+      FS.db = firebase.firestore();
+      FS.ready = true;
+    }catch(e){ FS.ready=false; }
+  }
+
+  function subscribeLB(){
+    if(!FS.ready || FS.unsub) return;
+    try{
+      FS.unsub = FS.db.collection(COLL).orderBy("s","desc").limit(5).onSnapshot(
+        snap=>{
+          FS.top = snap.docs.map(d=>({id:d.id, name:d.data().name, s:d.data().s, route:d.data().route, dest:d.data().dest}));
+          if($("lbArea")) renderLeaderboard();
+        },
+        err=>{ FS.ready=false; if($("lbArea")) renderLeaderboard(); }
+      );
+    }catch(e){ FS.ready=false; }
+  }
+  /* ---- local fallback board (no Firebase / offline / preview) ---- */
+  const LB_KEY = "tram-sim-leaderboard-v2";
+  const SEED = [
+    {name:"lilywakefield.com.au", s:2842, route:"96", dest:"out and about"},  // 47:22
+    {name:"Anonymous Loser",      s:2350, route:"86", dest:"uni"},            // 39:10
+    {name:"Ned Bennett",          s:2045, route:"11", dest:"home"}            // 34:05
+  ];
+  let memLB = null, localMyKey = null;
+  function loadLocal(){
+    try{ const r = localStorage.getItem(LB_KEY); if(r) return JSON.parse(r); }catch(e){}
+    return memLB ? memLB.slice() : SEED.slice();
+  }
+  function saveLocalEntry(entry){
+    let l = loadLocal(); l.push(entry);
+    l.sort((a,b)=>b.s-a.s); l = l.slice(0,5);
+    memLB = l.slice(); localMyKey = entry.name+"|"+entry.s;
+    try{ localStorage.setItem(LB_KEY, JSON.stringify(l)); }catch(e){}
+  }
+
+  /* ---------- game state ---------- */
+  let S;
+  function fresh(){
+    return {
+      phase:"setup",        // 
+      dest:null, route:null,
+      wait:0,               // seconds waited
+      battery:100,
+      patience:80,          // 
+      awareness:100,        // 
+      complaints:0,
+      productivity:0,
+      progress:0,           // 
+      eta:rnd(4,8),         // 
+      wxIdx:0,              // 
+      mykiBroken:false,
+      phoneDead:false,
+      boardedBus:false,
+      lbSubmitted:false
+    };
+  }
+
+  const WX = ["sunny","cloudy","raining","windy","stormy"];
+  function shiftWeather(){
+    const r = Math.random();
+    if(r < 0.45) S.wxIdx = 0;        
+    else if(r < 0.62) S.wxIdx = 1;   
+    else if(r < 0.80) S.wxIdx = 2;   
+    else if(r < 0.93) S.wxIdx = 3;  
+    else S.wxIdx = 4;                
+  }
+  // change the weather; only announce it in the log when it actually changes.
+  // pass force=true to guarantee a real change (used by the weather event).
+  function changeWeather(force){
+    const before = S.wxIdx;
+    do { shiftWeather(); } while(force && S.wxIdx===before);
+    if(S.wxIdx !== before){
+      log('The weather turns '+WX[S.wxIdx]+'.', 'sys');
+      if(S.wxIdx===4) log('When will this tram come?.', 'dim');
+    }
+  }
+
+  const ROUTES = [
+    {n:"86",  d:"Bundoora – Docklands"},
+    {n:"96",  d:"East Brunswick – St Kilda"},
+    {n:"109", d:"Port Melbourne – Box Hill"},
+    {n:"19",  d:"North Coburg – City"},
+    {n:"11",  d:"Docklands – West Preston"}
+  ];
+  const DESTS = ["uni","work","home","out and about"];
+
+  /* ---------- render: board + status ---------- */
+  function paint(){
+    const r = S.route;
+    $("boardSvc").textContent = r ? ("▶ "+r.n+"  "+r.d) : "NO SERVICE SELECTED";
+    $("boardEta").textContent = (S.phase==="approach") ? "NOW" :
+                                 (r ? S.eta+" min" : "-- min");
+    $("stWait").textContent = fmt(S.wait);
+    $("stBat").textContent  = S.battery+"%";
+    $("stPat").textContent  = S.patience>66?"okay":S.patience>33?"thin":"gone";
+    $("stAwr").textContent  = S.awareness>66?"sharp":S.awareness>33?"hazy":"gone";
+  }
+
+  /* ---------- log ---------- */
+  function log(text, cls){
+    const p = document.createElement("p");
+    if(cls) p.className = cls;
+    p.innerHTML = text;
+    const sc = $("screen");
+    sc.appendChild(p);
+    sc.scrollTop = sc.scrollHeight;
+  }
+  function clearLog(){ $("screen").innerHTML = ""; }
+
+  function passingTram(){
+    const el = $("passer");
+    el.classList.remove("go"); void el.offsetWidth; el.classList.add("go");
+    setTimeout(()=>el.classList.remove("go"), 1500);
+  }
+
+  /* ---------- SETUP screen ---------- */
+  function renderSetup(){
+    S = fresh();
+    FS.myId = null; localMyKey = null;
+    clearLog();
+    log('You are at the tram stop.', 'sys');
+    log('It is '+WX[S.wxIdx].toLowerCase()+'.', 'dim');
+    log('Where are you going? Which tram are you taking?', 'dim');
+    paint();
+
+    const stage = $("stage");
+    stage.innerHTML = `
+      <div class="card">
+        <h2>your destination ???</h2>
+        <div class="opts" id="destOpts"></div>
+        <hr class="rule">
+        <h2>route options:</h2>
+        <div class="opts" id="routeOpts"></div>
+        <button class="wide go" id="beginBtn" disabled style="margin-top:14px">choose to begin</button>
+      </div>`;
+
+    const dOpts = $("destOpts");
+    DESTS.forEach(d=>{
+      const el = document.createElement("div");
+      el.className="opt"; el.innerHTML='<span class="box">☐</span>'+d;
+      el.onclick=()=>{ S.dest=d; [...dOpts.children].forEach(c=>{c.classList.remove("sel");c.querySelector(".box").textContent="☐";}); el.classList.add("sel"); el.querySelector(".box").textContent="☑"; check(); };
+      dOpts.appendChild(el);
+    });
+    const rOpts = $("routeOpts");
+    ROUTES.forEach(r=>{
+      const el = document.createElement("div");
+      el.className="opt"; el.innerHTML='<span class="box">☐</span><b>'+r.n+'</b>&nbsp;'+r.d;
+      el.onclick=()=>{ S.route=r; [...rOpts.children].forEach(c=>{c.classList.remove("sel");c.querySelector(".box").textContent="☐";}); el.classList.add("sel"); el.querySelector(".box").textContent="☑"; paint(); check(); };
+      rOpts.appendChild(el);
+    });
+    function check(){
+      const b=$("beginBtn");
+      if(S.dest&&S.route){ b.disabled=false; b.textContent="wait for the    "+S.route.n; }
+      else b.textContent="choose to begin";
+    }
+    $("beginBtn").onclick=begin;
+  }
+
+  function begin(){
+    S.phase="wait";
+    clearLog();
+    log('You are going to <b>'+S.dest.toLowerCase()+'</b> on the <b>'+S.route.n+'</b>.', 'sys');
+    log('The board says '+S.eta+' minutes.', 'amber');
+    $("boardStrip").textContent = "Next: "+S.route.n+" to "+S.route.d.split("–")[1].trim();
+    paint();
+    renderActions();
+  }
+
+  /* ---------- ACTIONS ---------- */
+  function renderActions(){
+    $("stage").innerHTML = `
+      <div class="actions">
+        <button id="aPhone"> check phone</button>
+        <button id="aStudy"> study</button>
+        <button id="aObserve"> observe</button>
+        <button id="aWait"> just wait</button>
+        <button class="wide danger" id="aGiveUp">give up waiting and start walking.</button>
+      </div>`;
+    $("aPhone").onclick   = actPhone;
+    $("aStudy").onclick   = actStudy;
+    $("aObserve").onclick = actObserve;
+    $("aWait").onclick    = actWait;
+    $("aGiveUp").onclick  = endGiveUp;
+    if(S.phoneDead) $("aPhone").disabled = true;
+  }
+
+  // advance time, drift weather + eta, maybe fire an event, then check arrival
+  function tick(seconds, {progress=0, event=true}={}){
+    S.wait += seconds;
+    S.progress = clamp(S.progress + progress + rnd(2,7), 0, 999);
+    // ETA drifts: mostly refuses to go down
+    if(chance(0.18) && S.eta>1) S.eta -= 1; else if(chance(0.35)) S.eta += rnd(0,2);
+    // weather jumps around (announced in the log only when it changes)
+    if(chance(0.25)) changeWeather();
+    if(event && chance(0.72)) randomEvent();
+    paint();
+    if(S.phase==="wait" && S.progress>=100) arrivalOrMiss();
+  }
+
+  function actPhone(){
+    if(S.phoneDead) return;
+    S.battery   = clamp(S.battery-rnd(5,12),0,100);
+    S.awareness = clamp(S.awareness-rnd(5,12),0,100);
+    log('You open your phone.', 'dim');
+    log(pick(PHONE), 'amber');
+    if(S.battery<=0){ S.phoneDead=true; log('Your phone dies.', 'bad'); renderActions(); }
+    tick(rnd(90,210));
+  }
+  function actStudy(){
+    log('You open your notes.', 'dim');
+    if(chance(0.5)){
+      S.productivity += rnd(1,3);
+      log(pick(STUDY_GOOD), 'good');
+    } else {
+      log(pick(STUDY_BAD), 'dim');
+    }
+    S.awareness = clamp(S.awareness-rnd(15,25),0,100); // head down = miss the tram
+    tick(rnd(180,360));
+  }
+  function actObserve(){
+    log('You observe. You are paying attention!', 'dim');
+    S.awareness = clamp(S.awareness+rnd(8,14),0,100);
+    randomEvent(true);
+    tick(rnd(120,240), {event:false});
+  }
+  function actWait(){
+    log(pick(VOID_LINES), 'dim');
+    S.awareness = clamp(S.awareness+rnd(2,6),0,100);
+    tick(rnd(45,90), {progress:1});
+  }
+
+  /* ---------- content ---------- */
+  const PHONE = [
+    'PTV app: "Service update — minor delays on all routes."',
+    '67 unread messages.',
+    'Commbank: "A transaction of $3.00 was declined."',
+    'Commbank: "A suspicious transaction from "FitzroySmoke&Gift" of $54.00 was declined."',
+    'xXxShawarmaLoverxXx liked a photo of you from 2019.',
+    'BOM: "1000% Chance of rain."',
+    'xXxShawarmaLoverxXx reacted :D to your tiktok repost.',
+    '3 minutes ago: xXxShawarmaLoverxXx sent you a snapchat.',
+    'PTV app: "Service update — major delays on all routes."',
+    'Your housemate texts you: "did you take the bins out?". You did not.',
+    'You refresh the tram tracker. It refreshes and nothing changes.',
+    'A text from YahYahs tells you they have $5 entry tonight.',
+    'Commbank: "$300 was withdrawn from an ATM on Gertrude Street".',
+    'A text from your ex tells you they threw away your favourite hoodie and to please stop calling them.',
+    'Duolingo: "These reminders don\'t seem to be working."',
+    'A Facebook Marketplace seller replies "still available" four days after you asked.',
+    'Commbank: "You spent $67 on UberEats this month."'
+  ];
+  const STUDY_GOOD = [
+    'You read one paragraph and understand it !!! Maybe you will pass this semester.',
+    'You highlight something to feel more productive.',
+    'You read three lines of notes. You will now probably graduate with distinction.',
+    'You finally understand the concepts assigned this semester. The tram does not come any faster and neither does the end of your degree.',
+    'You watch the lecture at regular speed.'  
+];
+  const STUDY_BAD = [
+    'You reread the same sentence nine times.',
+    'You open the court document. You close the court document.',
+    'A pigeon walks past and it is more interesting than the assigned reading.',
+    'You think about studying, which is not the same as studying.',
+    'You realise the reading was optional and you panicked for nothing.',
+    'You highlight the entire page. Now nothing is highlighted.',
+    'You watch the lecture at 2x speed.'
+  ];
+  const VOID_LINES = [
+    'You consider your relationship to public transport, and the greater implications of public funding.',
+    'Time passes. Someone hums 24K Magic by Bruno Mars.',
+    'Time passes. Someone hums Be The One by Dua Lipa.',
+    'Time passes. Someone hums Fame is A Gun by Addison Rae.',
+    'Time passes. Someone hums and it really annoys you.',
+    'You wonder if the tram knows you are waiting.',
+    'You wonder who the premier of Victoria is at the moment.',
+    'You wonder if the Southern Rail Loop will ever truely exist.',
+    'You wonder if a train to the aiport was just a dream you had once.'
+  ];
+  const MISS_LINES = [
+    'You were looking at your phone. The tram came and went without you :(',
+    'You blinked, the tram arrived, opened its doors, and left.',
+    'You were deep in your notes. The tram came and did not wait for you.',
+    'You glanced up a second too late. The tram has been and gone.'
+  ];
+
+  /* ---------- chained vignettes (sagas) ---------- */
+  const SAGAS = [
+    { mins:10, pat:-4, beats:[
+      ['A teenager arrives.', 'sys'],
+      ['"I\'m only going two stops."', 'amber'],
+    ]},
+    { mins:20, pat:-6, beats:[
+      ['An elderly man shakes his head.', 'sys'],
+      ['"They\'re never on time."', 'amber'],
+      ['It feels like twenty minutes pass ...', 'dim'],
+      ['He is now explaining tram privatisation.', 'amber']
+    ]},
+    { mins:3, beats:[
+      ['Someone asks the group:', 'sys'],
+      ['"Is this still the free tram zone?"', 'amber'],
+      ['...', 'dim'],
+      ['Nobody knows.', 'amber']
+    ]},
+    { mins:2, pat:-5, beats:[
+      ['Authorised Officers appear.', 'amber'],
+      ['Everyone suddenly looks at the ground.', 'dim']
+    ]},
+    { mins:2, beats:[
+      ['A tradie drinks an entire dare iced coffee in one go.', 'sys'],
+    ]},
+     { mins:3, beats:[
+      ['A man is on the phone, loudly closing a deal.', 'sys'],
+      ['"Yeah mate, circle back, touch base, EOD. No worries mate."', 'amber'],
+    ]},
+    { mins:2, beats:[
+      ['A man wearing sunglasses after sunset gets to the stop, visibly annoyed that all the seats under the shelter are taken.', 'sys'],
+      ['You assume he has been awake since Friday.', 'dim']
+    ]},
+    { mins:15, pat:-3, beats:[
+      ['A nice old lady starts knitting.', 'sys'],
+      ['...', 'dim'],
+      ['She is halfway through a scarf.', 'dim'],
+      ['...', 'dim'],
+      ['She has finished the scarf.', 'amber'],
+      ['...', 'dim'],
+      ['She starts another.', 'dim']
+    ]},
+    { mins:3, pat:-4, complaint:1, beats:[
+      ['A short man in a Nike tech fleece arrives with a UE Boom.', 'sys'],
+      ['Now playing: Moonbeam Ice Cream by Benson Boone.', 'amber']
+    ]},
+    { mins:2, beats:[
+      ['A cyclist rolls up to the tram stop.', 'sys'],
+      ['"Technically I\'m allowed on this tram if I fold my bike up."', 'amber']
+    ]},
+    { mins:2, beats:[
+      ['A tourist looks delighted.', 'sys'],
+      ['"Is this the famous tram?????"', 'amber']
+    ]},
+    { mins:3, pat:-3, complaint:1, beats:[
+      ['Two tourists are arguing with each other.', 'sys'],
+      ['"I am pretty sure this IS the free tram zone Sharon."', 'dim'],
+      ['It is not.', 'bad']
+    ]},
+     { mins:5, beats:[
+      ['A first date is clearly happening at the stop.', 'sys'],
+        ['...', 'dim'],
+      ['She has mentioned her ex twice. It is not going well.', 'amber'],
+        ]},
+    { mins:3, complaint:1, beats:[
+      ['A man vapes directly under the NO SMOKING sign.', 'sys'],
+      ['The cloud smells like blue raspberry.', 'dim']
+    ]},
+  ];
+
+  const DRIVER_BREAK = { mins:12, prog:-30, pat:-6, beats:[
+    ['A tram rolls up and stops short of the platform.', 'dim'],
+    ['Instead of trying again, the driver continues on like the stop was never there.', 'dim'],
+    ['Your wait continues.', 'dim']
+  ]};
+
+  function runSaga(s){
+    s.beats.forEach(b=> log(b[0], b[1]||'dim'));
+    S.wait += (s.mins||3)*60;
+    if(s.prog) S.progress = clamp(S.progress + s.prog, 0, 999);
+    if(typeof s.pat === "number") S.patience = clamp(S.patience + s.pat, 0, 100);
+    if(s.complaint) S.complaints += s.complaint;
+  }
+
+  /* ---------- random events ---------- */
+  function randomEvent(forced){
+    const roll = Math.random();
+    if(roll < 0.14){ // tram late
+      S.eta += rnd(1,3);
+      $("boardStrip").textContent = 'Delayed. Please listen for announcements.';
+      log('The board updates. It now says '+S.eta+' min.', 'amber');
+      S.patience = clamp(S.patience-4,0,100);
+    } else if(roll < 0.24){ // a tram passes, not yours
+      passingTram();
+      log('A tram passes.', 'sys');
+      log('You think it could be yours.', 'dim');
+      log('...', 'dim');
+      log('It is not.', 'bad');
+      S.patience = clamp(S.patience-5,0,100); S.complaints++;
+    } else if(roll < 0.50){ // CHAINED SAGA
+      runSaga(pick(SAGAS));
+    } else if(roll < 0.57){ // timetable starer
+      const m = rnd(4,9);
+      log('A passenger studies the timetable.', 'sys');
+      log('They have been looking at it for '+m+' minutes.', 'dim');
+      log('Nothing happens.', 'dim');
+    } else if(roll < 0.63){ // info button
+      log('Someone presses the information button.', 'sys');
+      log('"For more information, visit ptv-dot-vic-dot-gov-dot-au."', 'sys');
+      log('They press it again.', 'dim');
+      log('"For more information, visit ptv-dot-vic-dot-gov-dot-au."', 'amber');
+      S.patience = clamp(S.patience-3,0,100); S.complaints++;
+    } else if(roll < 0.69){ // it's not working
+      log('A stranger presses something.', 'sys');
+      log('"It\'s not working," they announce, to no one.', 'amber');
+    } else if(roll < 0.75){ // weather shift
+      changeWeather(true);
+    } else if(roll < 0.81){ // progress reducer
+      S.progress = clamp(S.progress-6,0,999);
+      log('The board flashes: DRIVER CHANGE.', 'amber');
+    } else if(roll < 0.86){ // progress reducer
+      S.progress = clamp(S.progress-6,0,999);
+      log('The board flashes: OPERATIONAL REQUIREMENTS.', 'amber');
+      log('Whatever that means.', 'dim');
+    } else if(roll < 0.90){ // driver break 
+      runSaga(DRIVER_BREAK);
+    } else if(roll < 0.94){ // driver waves 
+      S.progress += rnd(6,12); S.patience = clamp(S.patience+6,0,100);
+      log('A tram driver passing through the opposite route waves and dings the bell.', 'good');
+      log('You feel better.', 'dim');
+    } else if(roll < 0.965){ // replacement bus
+      replacementBus();
+      return;
+    } else { // rare: tram arrives immediately
+      S.progress = 100;
+      log('Is that ... my tram ???', 'good');
+      log('It is a tram and it is YOUR tram.', 'good');
+    }
+    // fake-out headlights sometimes tack onto observe
+    if(forced && chance(0.4) && S.phase==="wait"){
+      log('You see headlights.', 'sys');
+      log('Is it a tram?', 'dim');
+      log('...', 'dim');
+      log(chance(0.85) ? 'No. It was a car.' : 'Yes. But it is an out-of-service tram.', 'bad');
+    }
+  }
+
+  /* ---------- replacement bus decision ---------- */
+  function replacementBus(){
+    S.phase="over"; paint();
+    $("boardStrip").textContent = 'SERVICE ALTERATION';
+    log('The display flashes.', 'sys');
+    log('SERVICE ALTERATION', 'big amber');
+    log('...', 'dim');
+    log('...', 'dim');
+    log('Replacement buses.', 'bad');
+    log('Oh no !!!', 'dim');
+    $("stage").innerHTML = `
+      <div class="card">
+        <h2>Would you like to continue?</h2>
+        <div class="opts">
+          <div class="opt" id="busYes"><span class="box">▸</span>Yes, fine, whatever</div>
+          <div class="opt" id="busNo"><span class="box">▸</span>No, I have standards !!!</div>
+        </div>
+      </div>`;
+    $("busYes").onclick = ()=>{ S.boardedBus=true; endBus(); };
+    $("busNo").onclick  = endStandards;
+  }
+
+  /* ---------- arrival: awareness decides whether you even notice ---------- */
+  function arrivalOrMiss(){
+    const missChance = clamp((100 - S.awareness)/200, 0, 0.55);
+    if(chance(missChance)){
+      log(pick(MISS_LINES), 'bad');
+      S.progress = rnd(45,70);
+      S.patience = clamp(S.patience-10,0,100);
+      S.complaints++;
+      paint();
+    } else {
+      approach();
+    }
+  }
+
+  function approach(){
+    S.phase="approach"; paint();
+    $("boardStrip").textContent = 'ARRIVING NOW — board at the door';
+    log('━━━━━━━━━━━━━━', 'dim');
+    log('TRAM APPROACHING', 'big good');
+    log('Doors: <b>OPEN</b>', 'good');
+    $("stage").innerHTML = `
+      <div class="actions">
+        <button class="wide go" id="tapOn">▶ TAP ON &amp; BOARD</button>
+        <button class="wide" id="waitBoard">Hesitate</button>
+      </div>`;
+    $("tapOn").onclick = tapOn;
+    $("waitBoard").onclick = ()=>{
+      log('You take one last hit of your vape before getting on.', 'dim');
+      if(chance(0.5)){ log('The doors close. The tram leaves without you.', 'bad'); S.progress=rnd(55,75); S.phase="wait"; S.complaints++; S.patience=clamp(S.patience-8,0,100); paint(); renderActions(); }
+      else { log('The tram waits. Board now.', 'amber'); }
+    };
+  }
+
+  function tapOn(){
+    log('You tap on.', 'sys');
+    log('...', 'dim');
+    log('PLEASE WAIT', 'amber');
+    log('...', 'dim');
+    let decline = 0.14 + (S.mykiBroken?0.22:0) + (100-S.patience)/320;
+    if(chance(decline)){
+      S.patience = clamp(S.patience-18,0,100); paint();
+      log('Card declined.', 'bad');
+      log('Your patience has decreased.', 'dim');
+      if(chance(0.55)){
+        log('You step off. The doors close. It leaves. You watch it go.', 'bad');
+        S.progress = rnd(50,72); S.phase="wait"; S.complaints++; paint(); renderActions();
+      } else {
+        log('The driver waits. Try again.', 'amber');
+      }
+    } else {
+      log('Beep beep! You are good bro.', 'good');
+      boardOutcome();
+    }
+  }
+
+  // which "you made it" do you actually get?
+  function boardOutcome(){
+    const wrongChance = 0.07 + (100-S.awareness)/500; // heads-down -> wrong tram
+    if(chance(wrongChance)) return endWrongTram();
+    if(chance(0.18)) return endPeakHour();
+    return endMadeIt();
+  }
+
+  /* ---------- endings ---------- */
+  function stars(n){ return '★★★★★☆☆☆☆☆'.slice(5-n,10-n); }
+
+  function receipt(rows){
+    return '<div class="receipt">'+rows.map(r=>
+      '<div class="line"><span class="k">'+r[0]+'</span><span class="v">'+r[1]+'</span></div>'
+    ).join('')+'</div>';
+  }
+
+  function endScreen(titleHTML, rows, note){
+    S.phase="over"; paint();
+    let html = '<div class="card">'+titleHTML+receipt(rows);
+    if(note) html += '<p style="font-size:12px;opacity:.75;margin-top:8px">'+note+'</p>';
+    html += '</div><div id="lbArea"></div>';
+    html += '<button class="wide go" id="again" style="margin-top:12px">wait again ... ?</button>';
+    $("stage").innerHTML = html;
+    $("again").onclick = renderSetup;
+    renderLeaderboard();
+  }
+
+  function endMadeIt(){
+    const km = (rnd(21,58)/10).toFixed(1);
+    const seat = chance(0.35);
+    log('━━━━━━━━━━━━━━', 'dim');
+    log('YOU MADE IT', 'big good');
+    endScreen(
+      '<h2 style="color:var(--tram-green-dk)">You made it</h2>',
+      [
+        ['Route', S.route.n],
+        ['Waited', fmt(S.wait)],
+        ['Seat', seat?'Yes (!)':'No'],
+        ['Standing', seat?'No':'Yes'],
+        ['Windows', chance(0.5)?'Dirty':'Filthy'],
+        ['Distance', km+' km'],
+        ['Board still said', S.eta+' min'],
+        ['Productivity', String(S.productivity)],
+        ['Internal complaints', String(S.complaints)],
+        ['Melbourne rating', '<span class="stars">'+stars(seat?5:4)+'</span>']
+      ]
+    );
+  }
+
+  function endPeakHour(){
+    log('━━━━━━━━━━━━━━', 'dim');
+    log('YOU MADE IT (technically)', 'big good');
+    endScreen(
+      '<h2 style="color:var(--tram-green-dk)">Peak Hour</h2>',
+      [
+        ['Route', S.route.n],
+        ['Waited', fmt(S.wait)],
+        ['Passengers already aboard', '196'],
+        ['Your feet', 'Never touch the floor'],
+        ['Personal space', '0 cm'],
+        ['Melbourne rating', '<span class="stars">'+stars(3)+'</span>']
+      ],
+      'Nice and warm and sweaty !!! Have funnnnnnn.'
+    );
+  }
+
+  function endWrongTram(){
+    const wrong = pick(ROUTES.filter(r=>r.n!==S.route.n));
+    log('You board. You sit down.', 'sys');
+    log('Three stops later...', 'dim');
+    log('This is Route '+wrong.n+'.', 'bad');
+    log('You needed Route '+S.route.n+'.', 'bad');
+    endScreen(
+      '<h2 style="color:var(--maroon)">Wrong Tram</h2>',
+      [
+        ['You boarded', wrong.n+'  '+wrong.d],
+        ['You needed', S.route.n],
+        ['Waited', fmt(S.wait)],
+        ['Stops until you noticed', '3'],
+        ['Melbourne rating', '<span class="stars">'+stars(2)+'</span>']
+      ],
+      'Get off at the next stop. Begin again.'
+    );
+  }
+
+  function endInspector(){
+    log('━━━━━━━━━━━━━━', 'dim');
+    log('You realise you never tapped on.', 'sys');
+    log('The inspectors arrive.', 'bad');
+    log('You sprint.', 'dim');
+    log('They catch you anyway.', 'dim');
+    endScreen(
+      '<h2 style="color:var(--maroon)">Fare Evasion</h2>',
+      [
+        ['Route', S.route.n],
+        ['Waited', fmt(S.wait)],
+        ['Tapped on', 'No'],
+        ['Infringement', '$356' + (rnd(9,20)*10)],
+        ['Melbourne rating', '<span class="stars">'+stars(1)+'</span>']
+      ],
+      'You receive your fine in the mail.'
+    );
+  }
+
+  function endBus(){
+    log('You board the bus.', 'bad');
+    endScreen(
+      '<h2>You boarded the bus</h2>',
+      [
+        ['Route', S.route.n+' (bus replacement)'],
+        ['Waited', fmt(S.wait)],
+        ['Dignity', 'Negotiable'],
+        ['Seat', 'Yes, but at what cost'],
+        ['Melbourne rating', '<span class="stars">'+stars(2)+'</span>']
+      ],
+      'Ew.'
+    );
+  }
+
+  function endStandards(){
+    log('You do not board the bus.', 'sys');
+    log('You have standards.', 'good');
+    endScreen(
+      '<h2 style="color:var(--maroon)">The Stand</h2>',
+      [
+        ['Route', 'None'],
+        ['Waited', fmt(S.wait)],
+        ['Buses boarded', '0'],
+        ['Standards', 'Intact'],
+        ['Melbourne rating', '<span class="stars">'+stars(3)+'</span>']
+      ],
+      'You are still at the stop. And the tram may never come.'
+    );
+  }
+
+  function endGiveUp(){
+    S.phase="over";
+    log('You decide to walk.', 'sys');
+    log('It is '+WX[S.wxIdx].toLowerCase()+'.', 'dim');
+    const km=(rnd(18,44)/10).toFixed(1);
+    endScreen(
+      '<h2 style="color:var(--maroon)">You walked instead !!!</h2>',
+      [
+        ['Destination', S.dest],
+        ['Waited first', fmt(S.wait)],
+        ['Then walked', km+' km'],
+        ['Regret', chance(0.5)?'Immediate':'Delayed'],
+        ['The tram', 'Arrived 90 seconds after you left'],
+        ['Melbourne rating', '<span class="stars">'+stars(3)+'</span>']
+      ],
+      'It always arrives 90 seconds after you leave. Try again next time :('
+    );
+  }
+
+  /* ---------- leaderboard render + submit ---------- */
+  function currentTop(){
+    if(FS.ready) return FS.top.slice();
+    return loadLocal().slice().sort((a,b)=>b.s-a.s).slice(0,5);
+  }
+  function qualifies(sec, list){ return list.length<5 || sec > list[list.length-1].s; }
+  function isYou(e){
+    return (FS.ready && FS.myId && e.id===FS.myId) ||
+           (!FS.ready && localMyKey && (e.name+"|"+e.s)===localMyKey);
+  }
+
+  function renderLeaderboard(){
+    const area = $("lbArea"); if(!area) return;
+    const list = currentTop();
+    const canSubmit = (S.wait>0) && !S.lbSubmitted && qualifies(S.wait,list);
+    const draft = (document.getElementById("lbName")||{}).value || "";
+    const live = FS.ready ? ' · live' : '';
+
+    let html = '<div class="lb"><h3>Longest Tram Wait'+live+'</h3><ol>';
+    if(list.length===0){
+      html += '<li style="opacity:.6"><span class="nm">No one has waited yet ...</span></li>';
+    }
+    list.forEach(e=>{
+      const sub = e.route ? '<span class="sub">'+esc(e.route)+(e.dest?' · '+esc(e.dest):'')+'</span>' : '';
+      html += '<li'+(isYou(e)?' class="you"':'')+'>'
+            + '<span class="nm">'+esc(e.name)+sub+'</span>'
+            + '<span class="tm">'+fmt(e.s)+'</span></li>';
+    });
+    html += '</ol>';
+
+    if(canSubmit){
+      html += '<p style="font-size:12px;opacity:.8;margin:6px 0 0">You waited '+fmt(S.wait)+' for the '+esc(S.route.n)+' to '+esc(S.dest)+':</p>'+
+              '<div class="nameform"><input id="lbName" maxlength="16" placeholder="your name ??? " value="'+esc(draft)+'"><button id="lbSave">SAVE</button></div>';
+    } else if(S.lbSubmitted && FS.ready && !FS.myId){
+      html += '<p style="font-size:12px;opacity:.7;margin:6px 0 0">Saving…</p>';
+    }
+    html += '</div>';
+    area.innerHTML = html;
+
+    if(canSubmit){
+      $("lbSave").onclick = ()=>{
+        const nm = ($("lbName").value.trim() || "Anonymous Loser").slice(0,16);
+        S.lbSubmitted = true;
+        submitScore(nm);
+        renderLeaderboard();
+      };
+    }
+  }
+
+  function submitScore(name){
+    const entry = {name:name, s:S.wait, route:S.route.n, dest:S.dest};
+    if(FS.ready){
+      FS.db.collection(COLL).add({
+        name: name, s: S.wait, route: S.route.n, dest: S.dest,
+        ts: firebase.firestore.FieldValue.serverTimestamp()
+      }).then(ref=>{ FS.myId = ref.id; if($("lbArea")) renderLeaderboard(); })
+        .catch(e=>{ saveLocalEntry(entry); if($("lbArea")) renderLeaderboard(); });
+    } else {
+      saveLocalEntry(entry);
+    }
+  }
+
+  function esc(s){ return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+  /* ---------- boot ---------- */
+  initFirebase();
+  subscribeLB();
+  renderSetup();
+})();
+</script>
+<script src="../js/nav.js"></script>
+<script src="../js/effects.js"></script>
+</body>
+</html>
