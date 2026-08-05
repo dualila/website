@@ -130,8 +130,8 @@
 
         <!-- LOGIN -->
         <div class="terminal login-box panel on" id="loginPanel">
-          <div>&gt; lily wakefield dot com dot au secure control access panel </div>
-          <div>&gt; please authenticate to continue<span class="caret"></span></div>
+          <div>&gt; lily wakefield dot com dot au secure log on panel </div>
+          <div>&gt; please log on to continue<span class="caret"></span></div>
 
           <label for="adUser">username</label>
           <input type="text" id="adUser" autocomplete="off" placeholder="lily wakefield">
@@ -145,7 +145,7 @@
 
         <!-- CONTROL ROOM -->
         <div class="terminal panel" id="roomPanel">
-          <div>&gt; ACCESS GRANTED. welcome back, <span id="whoami">admin</span>.</div>
+          <div>&gt; ACCESS GRANTED!!!!!! welcome back, <span id="whoami">lily</span></div>
           <div>&gt; you now have full control of lilywakefield.com.au</div>
 
           <div class="toggles" id="toggles"></div>
@@ -158,7 +158,7 @@
           </div>
 
 
-          <button class="logout" id="logoutBtn" type="button">◄ log out</button>
+          <button class="logout" id="logoutBtn" type="button">◄ log out ???</button>
         </div>
 
       </div>
@@ -202,9 +202,8 @@
 
     //
     const EMPTY_LINES = [
-      "you have to type SOMETHING. this is a secure facility.",
-      "the password can be anything. it cannot be nothing.",
-      "at least pretend to have credentials.",
+      "the password can be anything btw",
+      "at least pretend to log in.",
     ];
     let emptyTries = 0;
 
@@ -225,7 +224,7 @@
       const who = (adUser.value.trim() || "admin").slice(0, 24);
       btn.disabled = true;
       btn.textContent = "◌ AUTHENTICATING...";
-      adNote.textContent = "verifying credentials against the mainframe...";
+      adNote.textContent = "verifying logging on capacity ...";
 
       //
       setTimeout(() => {
@@ -249,7 +248,7 @@
     // 
     const PW_VERDICTS = [
       "★★★★★",
-      "my granny could guess that.",
+      "my granny could guess that !!!!!",
       "surprisingly strong.",
       "★★☆☆☆",
       "★☆☆☆☆",
