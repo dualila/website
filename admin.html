@@ -131,13 +131,13 @@
         <!-- LOGIN -->
         <div class="terminal login-box panel on" id="loginPanel">
           <div>&gt; lily wakefield dot com dot au secure log on panel </div>
-          <div>&gt; please log on to continue<span class="caret"></span></div>
+          <div>&gt; ★ please log on to continue ★ <span class="caret"></span></div>
 
           <label for="adUser">username</label>
-          <input type="text" id="adUser" autocomplete="off" placeholder="lily wakefield">
+          <input type="text" id="adUser" autocomplete="off" placeholder="★lily wakefield">
 
           <label for="adPass">password</label>
-          <input type="password" id="adPass" autocomplete="off" placeholder="••••••••">
+          <input type="password" id="adPass" autocomplete="off" placeholder="★★★★★★★">
 
           <button class="lg-btn" id="adLogin" type="button">LOG IN</button>
           <div class="login-note" id="adNote">access restricted to lily wakefield only </div>
@@ -224,7 +224,7 @@
       const who = (adUser.value.trim() || "admin").slice(0, 24);
       btn.disabled = true;
       btn.textContent = "◌ AUTHENTICATING...";
-      adNote.textContent = "verifying logging on capacity ...";
+      adNote.textContent = "★★★★ verifying logging on capacity ...";
 
       //
       setTimeout(() => {
@@ -248,7 +248,7 @@
     // 
     const PW_VERDICTS = [
       "★★★★★",
-      "my granny could guess that !!!!!",
+      "my granny could guess that",
       "surprisingly strong.",
       "★★☆☆☆",
       "★☆☆☆☆",
@@ -271,7 +271,7 @@
         const row = document.createElement("div");
         row.className = "toggle-line";
         const label = document.createElement("span");
-        label.textContent = "› " + s.name;
+        label.textContent = "★ " + s.name;
         const sw = document.createElement("button");
         sw.className = "sw";
         sw.type = "button";
@@ -292,13 +292,12 @@
       const special = SPECIAL_GREETINGS[who.toLowerCase()];
       if (special) logLine(special, "warn");
       logLine("loading site .....");
-      logLine("orb.exe .......... ok");
       logLine("tram_simulator ... ok (delayed)");
       logLine("the_wall ......... ok");
       logLine("chatroom ......... 2 anonymous losers online", "warn");
-      logLine("password accepted. strength assessment: " +
+      logLine("password accepted. " +
               PW_VERDICTS[Math.floor(Math.random() * PW_VERDICTS.length)], "warn");
-      logLine("all systems normal. do not touch anything.", "warn");
+      logLine("all systems normal. do not touch anything !!!", "warn");
 
       // ambient log chatter
       setInterval(ambient, 5200);
@@ -309,8 +308,8 @@
       "someone placed a pixel and it was slightly off-centre.",
       "the tram is still 2 minutes away.",
       "background dot texture drifted 0.4px. corrected.",
-      "a guestbook entry was signed 'anonymous loser'.",
-      "the orb blinked but no one saw it.",
+      "someone in the chatroom is being an 'anonymous loser'.",
+      "the orb blinked but no one saw it :(",
       "checked whether the movie is done. it is not.",
       "cheese levels in fridge low.",
     ];
@@ -342,7 +341,7 @@
           setTimeout(() => {
             logLine("...", "bad");
             setTimeout(() => {
-              logLine("kidding xx", "warn");
+              logLine("★ ★ kidding xx ★ ★", "warn");
               nuke.textContent = "delete lilywakefield.com.au";
               arming = false;
               deleting = false;   // 
@@ -353,7 +352,7 @@
     });
 
     document.getElementById("logoutBtn").addEventListener("click", () => {
-      logLine("you can never truly be logged out.", "warn");
+      logLine("★ you can never truly be logged out.", "warn");
       setTimeout(() => location.reload(), 700);
     });
   </script>
