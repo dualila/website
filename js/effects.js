@@ -1,4 +1,5 @@
-(function sparkleTrail() {
+
+function sparkleTrail() {
   const sparkleChars = ['✦', '✧', '☆', '★', '✨','✦', '✧', '☆', '★', '✨','✦', '✧', '☆', 'lily', 'lily','lilywakefield.com.au', '*'];
   let lastSparkle = 0;
 
@@ -16,22 +17,46 @@
     document.body.appendChild(el);
     setTimeout(() => el.remove(), 2400);
   });
-})();
-for(let i=0;i<40;i++){
-
-const star=document.createElement("div");
-
-star.className="star";
-
-star.style.left=Math.random()*100+"vw";
-
-star.style.animationDuration=8+Math.random()*15+"s";
-
-star.style.animationDelay=-Math.random()*20+"s";
-
-document.body.appendChild(star);
-
 }
+sparkleTrail();
+
+function onReady(fn) {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', fn);
+  } else {
+    fn();
+  }
+}
+
+function spawnStars() {
+  let field = document.getElementById('star-field');
+  if (!field) {
+    field = document.createElement('div');
+    field.id = 'star-field';
+    field.style.cssText =
+      'position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:9998;';
+    document.body.appendChild(field);
+  }
+
+  const STAR_COUNT = 35;
+  for (let i = 0; i < STAR_COUNT; i++) {
+    const star = document.createElement("div");
+    star.className = "star";
+    star.style.left = Math.random() * 100 + "vw";
+    star.style.animationDuration = 8 + Math.random() * 15 + "s";
+    star.style.animationDelay = -Math.random() * 20 + "s";
+
+    const size = 0.5 + Math.random() * 1.5;
+    const hue = Math.floor(Math.random() * 360);
+    star.style.width = size + "px";
+    star.style.height = size + "px";
+    star.style.opacity = (0.6 + Math.random() * 0.4).toFixed(2);
+    star.style.boxShadow = `0 0 ${5 + size}px hsl(${hue}, 10%, 10%)`;
+
+    field.appendChild(star);
+  }
+}
+onReady(spawnStars);
 
 (function hiddenAdminLink() {
   function addIt() {
@@ -41,7 +66,7 @@ document.body.appendChild(star);
     const a = document.createElement('a');
     a.className = 'secret-admin';
     a.href = '/admin.html';
-    a.textContent = '🔒';               
+    a.textContent = '🔒';
     a.style.cssText =
       'color:rgba(255,0,255,1);text-decoration:none;margin-left:8px;' +
       'transition:color .3s,text-shadow .3s;';
