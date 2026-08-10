@@ -770,7 +770,7 @@
         items: [ [ "observe", actObserve ], [ "look in pockets", actPockets ], [ "eavesdrop", actEavesdrop ] ]
       },
       leave: {
-        title: "leave the stop",
+        title: "go to the shop",
         items: [ [ "go to the shop", actShop ], [ "make some money", actHustle ] ]
       }
     };
@@ -1687,7 +1687,7 @@
   const EAVESDROP_LINES = [ 'Two people next to you are intensely debating whether Thornbury is officially "the new Northcote".', 'Someone whispers on speakerphone: "No, but like, he is cute when he has the hat on I swear!!"', 'A couple is arguing about whether a 20-minute walk to Lygon Street counts as "basically Carlton".', 'You overhear someone say: "I told my landlord that legally they can not ask me if I have a cat."' ];
   function actEavesdrop() {
     log("You subtly tilt your head to listen to the people near you...", "dim");
-    log('"' + bagPick(EAVESDROP_LINES) + '"', "amber");
+    log('' + bagPick(EAVESDROP_LINES) + '', "amber");
     S.awareness = clamp(S.awareness + rnd(4, 10), 0, 100);
     tick(rnd(60, 120));
   }
@@ -1731,7 +1731,7 @@
   function actShop() {
     let opts = SHOP_ITEMS.map((it, i) => '<div class="opt" data-shop="' + i + '"><span class="box">▸</span>' + it.name + "&nbsp;&nbsp;$" + it.price.toFixed(2) + "</div>").join("");
     opts += '<div class="opt" id="shopNone"><span class="box">▸</span>never mind. stay put.</div>';
-    $("stage").innerHTML = '<div class="card"><h2>the shop on the corner</h2>' + '<p style="font-size:12px;opacity:.75;margin:0 0 8px">you have to leave the stop. the tram does not wait for you.</p>' + '<div class="opts">' + opts + "</div></div>";
+    $("stage").innerHTML = '<div class="card"><h2>the shop on the corner</h2>' + '<p style="font-size:12px;opacity:.75;margin:0 0 8px">the tram will not wait for you.</p>' + '<div class="opts">' + opts + "</div></div>";
     [ ...document.querySelectorAll("[data-shop]") ].forEach(el => {
       el.onclick = () => buyShopItem(SHOP_ITEMS[+el.getAttribute("data-shop")]);
     });
@@ -1774,7 +1774,7 @@
     S.pockets.splice(S.pockets.indexOf(item), 1);
     earn(price);
     log("A stranger gives you $" + price + ".00 for " + item + ".", "good");
-    log(bagPick([ "You do not ask why they want it.", "They seem pleased.", "Probably a fair price.", "Neither of you speaks of it again." ]), "dim");
+    log(bagPick([ "You do not ask why they want it.", "They seem pleased.", "Probably a fair price."]), "dim");
     const NOT_SELLABLE = [ "Myki", "iPhone", "keys", "wallet" ];
     const left = S.pockets.filter(x => NOT_SELLABLE.indexOf(x) === -1);
     if (left.length) {
