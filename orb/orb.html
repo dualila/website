@@ -7,7 +7,7 @@
 <title>the orb</title>
 <link rel="stylesheet" href="../css/site.css">
 <style>
-  .blob-page {
+  .orb-page {
     --hot-pink: #ff00ff;
     --cyan: #00ffff;
     --gold: #ffd700;
@@ -28,11 +28,11 @@
     box-sizing: border-box;
   }
 
-  .blob-page *, .blob-page *::before, .blob-page *::after {
+  .orb-page *, .orb-page *::before, .orb-page *::after {
     box-sizing: border-box;
   }
   
-  .blob-page .subtitle {
+  .orb-page .subtitle {
     font-family: "times new roman", cursive;
     font-size: 0.85rem;
     color: var(--cyan);
@@ -43,7 +43,7 @@
     line-height: 1.5;
   }
 
-  .blob-stage {
+  .orb-stage {
     position: relative;
     width: min(320px, 78vw);
     height: min(320px, 78vw);
@@ -53,7 +53,7 @@
     margin-bottom: 8px;
   }
 
-  .blob-shadow {
+  .orb-shadow {
     position: absolute;
     bottom: 6%;
     width: 60%;
@@ -63,7 +63,7 @@
     z-index: 0;
   }
 
-  .blob-svg {
+  .orb-svg {
     position: relative;
     z-index: 1;
     width: 82%;
@@ -73,12 +73,12 @@
     filter: drop-shadow(0 0 10px rgba(255, 0, 255, 0.5));
   }
 
-  .blob-svg.mood-happy { animation-name: breathe-happy; animation-duration: 2.2s; }
-  .blob-svg.mood-neglected { animation-name: breathe-tired; animation-duration: 4.6s; }
-  .blob-svg.mood-dead { animation: none; opacity: 0.6; filter: grayscale(0.6); }
+  .orb-svg.mood-happy { animation-name: breathe-happy; animation-duration: 2.2s; }
+  .orb-svg.mood-neglected { animation-name: breathe-tired; animation-duration: 4.6s; }
+  .orb-svg.mood-dead { animation: none; opacity: 0.6; filter: grayscale(0.6); }
 
 
-  .blob-svg.orb-sleeping {
+  .orb-svg.orb-sleeping {
     animation-name: breathe-tired;
     animation-duration: 5.2s;
     filter: brightness(0.62) saturate(0.85) drop-shadow(0 0 12px rgba(90,110,255,0.55));
@@ -118,11 +118,11 @@
     50% { transform: scale(1.01, 0.98) translateY(4px); }
   }
 
-  .blob-body {
+  .orb-body {
     transition: fill 0.8s ease;
   }
 
-  .blob-status {
+  .orb-status {
     font-family: "times new roman", cursive;
     font-weight: bold;
     font-size: 1.1rem;
@@ -132,7 +132,7 @@
     text-align: center;
   }
 
-  .blob-meta {
+  .orb-meta {
     font-size: 0.72rem;
     color: #ccc;
     margin-bottom: 24px;
@@ -191,7 +191,7 @@
     justify-content: center;
   }
 
-  .blob-btn {
+  .orb-btn {
     font-family: "", cursive;
     font-weight: bold;
     font-size: 0.78rem;
@@ -203,7 +203,7 @@
     cursor: pointer;
     transition: filter 0.15s ease;
   }
-.blob-countdown {
+.orb-countdown {
     font-family: "times new roman", cursive;
     font-size: 0.76rem;
     color: var(--hungry);
@@ -212,12 +212,12 @@
     min-height: 16px;
     margin: -16px 0 24px;
   }
-  .blob-btn:hover:not(:disabled) {
+  .orb-btn:hover:not(:disabled) {
     filter: brightness(1.2);
-    animation: blobJelly 0.4s;
+    animation: orbJelly 0.4s;
   }
 
-  @keyframes blobJelly {
+  @keyframes orbJelly {
     0% { transform: scale(1); }
     25% { transform: scale(1.08,.95); }
     50% { transform: scale(.96,1.05); }
@@ -225,13 +225,13 @@
     100% { transform: scale(1); }
   }
 
-  .blob-btn:active:not(:disabled) {
+  .orb-btn:active:not(:disabled) {
     border-style: inset;
     background: linear-gradient(to bottom, #9900cc, var(--hot-pink));
     padding: 11px 17px 9px 19px;
   }
 
-  .blob-btn:disabled {
+  .orb-btn:disabled {
     opacity: 0.35;
     cursor: not-allowed;
     filter: grayscale(0.6);
@@ -335,7 +335,7 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .blob-svg { animation: none !important; }
+    .orb-svg { animation: none !important; }
   }
 </style>
 </head>
@@ -346,7 +346,7 @@
   <div class="sidebar" id="sidebar"></div>
 
   <div class="frame">
-    <div class="blob-page">
+    <div class="orb-page">
 
        <div class="hero">
         <h1>✧ the orb ✧</h1>
@@ -357,7 +357,7 @@
       <div id="nameGate" class="name-gate" style="display:none;">
         <p>who's this?</p>
         <input id="nameInput" type="text" maxlength="20" placeholder="your name isn't Dua Lipa" />
-        <button class="blob-btn" id="nameSubmit">say hi</button>
+        <button class="orb-btn" id="nameSubmit">say hi</button>
         
       </div>
 
@@ -365,18 +365,18 @@
 
         <p class="whoami">you're <strong id="whoamiName"></strong> · <button id="changeNameBtn">or not you?</button></p>
 
-        <div class="blob-stage">
-          <div class="blob-shadow"></div>
-          <svg id="blobSvg" class="blob-svg mood-neutral" viewBox="0 0 200 200">
-            <ellipse class="blob-body" id="blobBody" cx="100" cy="115" rx="72" ry="62" fill="#ff00ff"/>
-            <g id="blobFace"></g>
+        <div class="orb-stage">
+          <div class="orb-shadow"></div>
+          <svg id="orbSvg" class="orb-svg mood-neutral" viewBox="0 0 200 200">
+            <ellipse class="orb-body" id="orbBody" cx="100" cy="115" rx="72" ry="62" fill="#ff00ff"/>
+            <g id="orbFace"></g>
           </svg>
           <div class="orb-zzz" id="orbZzz">z z z</div>
         </div>
 
-        <div class="blob-status" id="blobStatusText">...</div>
-        <div class="blob-meta" id="blobMetaText"></div>
-        <div class="blob-countdown" id="blobCountdown"></div>
+        <div class="orb-status" id="orbStatusText">...</div>
+        <div class="orb-meta" id="orbMetaText"></div>
+        <div class="orb-countdown" id="orbCountdown"></div>
 
         <div class="stat-row" id="statRow">
           <div class="stat">
@@ -394,13 +394,13 @@
         </div>
 
         <div class="actions" id="actionsRow">
-          <button class="blob-btn" id="feedBtn">feed</button>
-          <button class="blob-btn" id="playBtn">play</button>
-          <button class="blob-btn" id="comfortBtn">pat</button>
+          <button class="orb-btn" id="feedBtn">feed</button>
+          <button class="orb-btn" id="playBtn">play</button>
+          <button class="orb-btn" id="comfortBtn">pat</button>
         </div>
         <div class="cooldown-note" id="cooldownNote"></div>
 
-        <button class="blob-btn hatch-btn" id="hatchBtn" style="display:none;">hatch a new orb!!!!</button>
+        <button class="orb-btn hatch-btn" id="hatchBtn" style="display:none;">hatch a new orb!!!!</button>
 
         <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
 
@@ -456,7 +456,7 @@ const ACTION_COOLDOWN_MS = 3 * 60 * 1000;
 const DEATH_GRACE_MS = 8 * 60 * 60 * 1000;
 const LOG_LIMIT = 3000;
 
-let myName = localStorage.getItem("blobVisitorName") || "";
+let myName = localStorage.getItem("orbVisitorName") || "";
 
 const nameGate = document.getElementById("nameGate");
 const petUI = document.getElementById("petUI");
@@ -477,7 +477,7 @@ document.getElementById("nameSubmit").addEventListener("click", () => {
   const val = nameInput.value.trim();
   if (!val) return;
   myName = val.slice(0, 20);
-  localStorage.setItem("blobVisitorName", myName);
+  localStorage.setItem("orbVisitorName", myName);
   showPetUI();
 });
 
@@ -557,13 +557,13 @@ async function logEvent(type, text) {
 }
 
 function getCooldownRemaining() {
-  const last = parseInt(localStorage.getItem("blobLastAction") || "0", 10);
+  const last = parseInt(localStorage.getItem("orbLastAction") || "0", 10);
   const remaining = ACTION_COOLDOWN_MS - (Date.now() - last);
   return Math.max(0, remaining);
 }
 
 function setCooldownNow() {
-  localStorage.setItem("blobLastAction", Date.now().toString());
+  localStorage.setItem("orbLastAction", Date.now().toString());
 }
 
 function updateCooldownUI() {
@@ -590,7 +590,7 @@ const ASCII_FACES = {
 };
 
 function setFaceGlyph(glyph) {
-  const face = document.getElementById("blobFace");
+  const face = document.getElementById("orbFace");
   const jitterX = (Math.random() * 4 - 2).toFixed(1);
   const jitterRot = (Math.random() * 4 - 2).toFixed(1);
   face.innerHTML = `
@@ -661,20 +661,20 @@ let currentPet = null;
 function render(pet) {
   currentPet = pet;
   const mood = moodFromStats(pet);
-  const svg = document.getElementById("blobSvg");
-  const body = document.getElementById("blobBody");
+  const svg = document.getElementById("orbSvg");
+  const body = document.getElementById("orbBody");
 
     const moodClass = mood === "happy" ? "happy" : mood === "dead" ? "dead" : mood === "neglected" ? "neglected" : "neutral";
-  svg.setAttribute("class", `blob-svg mood-${moodClass}`);
+  svg.setAttribute("class", `orb-svg mood-${moodClass}`);
   body.setAttribute("fill", moodColors[mood]);
   renderFace(mood);
-  document.getElementById("blobStatusText").textContent = moodLabels[mood];
+  document.getElementById("orbStatusText").textContent = moodLabels[mood];
 
   const zzz = document.getElementById("orbZzz");
   if (pet.alive && orbIsAsleep()) {
     svg.classList.add("orb-sleeping");
     setFaceGlyph(SLEEP_FACE);
-    document.getElementById("blobStatusText").textContent = sleepLine;
+    document.getElementById("orbStatusText").textContent = sleepLine;
     if (zzz) zzz.classList.add("show");
   } else {
     svg.classList.remove("orb-sleeping");
@@ -682,12 +682,12 @@ function render(pet) {
   }
 
   const bornDate = pet.bornAt.toDate ? pet.bornAt.toDate() : new Date(pet.bornAt);
-  document.getElementById("blobMetaText").textContent =
+  document.getElementById("orbMetaText").textContent =
     pet.alive
       ? `generation ${pet.generation} · born ${bornDate.toLocaleDateString()}`
       : `generation ${pet.generation} · lived from ${bornDate.toLocaleDateString()} until ${(pet.diedAt.toDate ? pet.diedAt.toDate() : new Date(pet.diedAt)).toLocaleDateString()}`;
       
-  const countdownEl = document.getElementById("blobCountdown");
+  const countdownEl = document.getElementById("orbCountdown");
   if (countdownEl) {
     if (pet.alive) {
       const last = pet.lastUpdated.toMillis ? pet.lastUpdated.toMillis() : pet.lastUpdated;
@@ -835,7 +835,7 @@ async function init() {
 
 init().catch(err => {
   console.error("orb init failed:", err);
-  document.getElementById("blobStatusText").textContent = "couldn't reach the orb ( lily need to check firebase config)";
+  document.getElementById("orbStatusText").textContent = "couldn't reach the orb ( lily need to check firebase config)";
 });
 
 setInterval(() => {

@@ -77,7 +77,7 @@ function showDay(ds){
   const n = new Date(ds + 'T00:00:00');
   let html = `<h2>${DOW[(n.getDay()+6)%7]} ${n.getDate()} ${MONTHS[n.getMonth()]}</h2>`;
   if(!list.length){
-    html += `<p style="color:var(--cal-dim)">nothing on this day (yet !!! )</p>`;
+    html += `<p style="color:var(--cal-dim)">nothing on this day (yet !!!)</p>`;
   } else {
     html += list.map(e => `<div class="ev"><strong>${esc(e.title)}</strong>${e.time?` · ${esc(e.time)}`:''}` +
       `${e.desc?`<div class="ev-desc">${esc(e.desc)}</div>`:''}` +
@@ -104,7 +104,7 @@ if($('s-send')){
     const title = $('s-title').value.trim();
     const date  = $('s-date').value;
     const msg   = $('s-msg');
-    if(!title || !date){ if(msg) msg.textContent = 'need at least a name and a date!'; return; }
+    if(!title || !date){ if(msg) msg.textContent = 'need more info !!!'; return; }
     try{
       await addDoc(eventsCol, {
         title, date,
