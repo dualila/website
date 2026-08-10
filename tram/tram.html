@@ -235,7 +235,7 @@
           <div class="stat"><div class="k">awareness</div><div class="v" id="stAwr">sharp</div></div>
         </div>
 
-        
+        <div class="screen-label">▸ the stop</div>
         <div class="screen" id="screen"></div>
 
         <div id="stage"></div>
@@ -893,6 +893,34 @@
     log("Duration: 00:03.", "dim");
   }
   const MICRO2 = [ clockGag, weatherLie, crowdCensus, lookUp, glove, ptvAnnounce, "A receipt blows across the platform.", "A flyer is taped to the pole, curling at the edges.", "Someone has left an umbrella leaning against the bench.", "A cigarette butt sits by your shoe.", "An abandoned shopping bag drifts past and comes back.", "There is a bike chained to the railing. It has been there for years.", "A wet newspaper is stuck to the ground.", "A single leaf lands near your feet.", "A pigeon investigates something only it can see.", "A spider has built a web in the corner of the shelter.", "There is a mysterious object on the bench. You choose not to investigate." ];
+  function ambientQuestion() {
+    if (chance(.5)) {
+      flindersAsk();
+    } else {
+      howLongAsk();
+    }
+  }
+  function howLongAsk() {
+    log("Someone turns to you.", "sys");
+    log('"How long have you been waiting?"', "amber");
+    $("stage").innerHTML = `\n      <div class="card">\n        <h2>you have to answer</h2>\n        <div class="opts">\n          <div class="opt" data-hl="Five minutes."><span class="box">▸</span>"Five minutes."</div>\n          <div class="opt" data-hl="Twenty minutes."><span class="box">▸</span>"Twenty minutes."</div>\n          <div class="opt" data-hl="An hour."><span class="box">▸</span>"An hour."</div>\n          <div class="opt" data-hl="Since Tuesday."><span class="box">▸</span>"Since Tuesday."</div>\n        </div>\n      </div>`;
+    [ ...document.querySelectorAll("[data-hl]") ].forEach(el => {
+      el.onclick = () => howLongAnswer(el.getAttribute("data-hl"));
+    });
+  }
+  function howLongAnswer(ans) {
+    log('You say: "' + ans + '"', "dim");
+    if (ans === "Since Tuesday.") {
+      log('"Since Tuesday?"', "amber");
+      log('"Yeah."', "dim");
+      log("They move away from you.", "dim");
+    } else if (chance(.3)) {
+      log(bagPick([ "They nod. They understand.", '"Same."', "They wince in solidarity.", "They look at the board, then back at you, and say nothing." ]), "dim");
+    } else {
+      log("They nod and go back to waiting.", "dim");
+    }
+    renderActions();
+  }
   function flindersAsk() {
     log("Someone turns to you.", "sys");
     log('"Does this tram go to Flinders?"', "amber");
