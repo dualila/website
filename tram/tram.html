@@ -12,11 +12,16 @@
 <style>
   :root{
     --tram-green-dk:#00ff88;
-    --maroon:#ff5c8a;
+    --maroon:#5c77ff;
+    --tg-cyan:#00ffff;
+    --tg-gold:#ffd700;
+    --cal-magenta:#ff3df0;
   }
 
   .tram-game{ max-width:640px; margin:0 auto; font-family:"Courier New",monospace; color:#c8ffd8; }
   .tram-game *{ box-sizing:border-box; }
+
+  @keyframes tgRainbow{ to{ background-position:200% center; } }
 
   .tram-game .board{
     background:#0a0700;
@@ -24,7 +29,7 @@
     padding:12px 14px;
     color:#ffb000;
     position:relative;overflow:hidden;
-    box-shadow:0 0 14px rgba(255,176,0,.35) inset;
+    box-shadow:0 0 14px rgba(255,176,0,.35) inset, 0 0 16px rgba(255,0,255,.25);
   }
   .tram-game .board::after{
     content:"";position:absolute;inset:0;pointer-events:none;
@@ -36,15 +41,22 @@
   }
   @keyframes tgFlick{ 0%,97%,100%{filter:none} 98%{filter:brightness(.7)} 99%{filter:brightness(1.15)} }
   .tram-game .board-row{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+  .tram-game .board .svc,
+  .tram-game .board .eta{
+    font-weight:bold;
+    background:linear-gradient(90deg,#ff0000,#ff9900,#ffee00,#33ff00,#00ffee,#3300ff,#ff00ee);
+    background-size:200% auto;
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    filter:drop-shadow(0 0 6px rgba(255,255,255,.35));
+    animation:tgRainbow 2s linear infinite;
+  }
   .tram-game .board .svc{
-    font-weight:bold;text-transform:uppercase;letter-spacing:1px;
+    text-transform:uppercase;letter-spacing:1px;
     font-size:clamp(14px,3.6vw,19px);
-    text-shadow:0 0 8px rgba(255,176,0,.55);
     white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   }
   .tram-game .board .eta{
-    font-weight:bold;font-size:clamp(15px,4vw,22px);white-space:nowrap;
-    text-shadow:0 0 8px rgba(255,176,0,.55);
+    font-size:clamp(15px,4vw,22px);white-space:nowrap;
   }
   .tram-game .board .strip{
     margin-top:8px;border-top:1px dashed #5c3f00;padding-top:6px;
@@ -61,10 +73,18 @@
   @keyframes tgSlide{from{left:-40%}to{left:130%}}
 
   .tram-game .status{display:grid;grid-template-columns:repeat(auto-fit,minmax(58px,1fr));gap:8px;margin-top:12px}
-  .tram-game .stat{background:#000;border:2px solid #00ffff;box-shadow:0 0 8px #00ffff inset;padding:6px 4px;text-align:center}
+  .tram-game .stat{
+    background:rgba(0,0,0,.55);border:1px solid rgba(0,255,255,.45);box-shadow:0 0 6px rgba(0,255,255,.12) inset;padding:6px 4px;text-align:center;
+    background-image:
+      radial-gradient(rgba(255,255,255,.3) 1px, transparent 1px),
+      radial-gradient(rgba(255,255,255,.3) 1px, transparent 1px);
+    background-size:16px 16px;background-position:0 0,8px 8px;
+  }
   .tram-game .stat .k{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#bbb}
   .tram-game .stat .v{font-weight:bold;font-size:clamp(12px,3.3vw,15px);color:#0f0;text-shadow:0 0 5px #0f0;white-space:nowrap}
 
+  .tram-game .screen-label{ font-family:"Courier New",monospace; font-size:9px; letter-spacing:3px;
+    color:#ff77e0; text-transform:uppercase; margin:14px 2px 5px; opacity:.85; }
   .tram-game .screen{
     background:#000;border:2px solid #ff00ff;box-shadow:0 0 10px #ff00ff inset;
     margin-top:12px;padding:14px 16px;height:clamp(320px,50vh,480px);overflow-y:auto;
@@ -81,57 +101,103 @@
   .tram-game .screen .dim{color:#8a93c4}
   .tram-game .screen .big{font-weight:bold;letter-spacing:1px;text-transform:uppercase}
 
-  .tram-game .actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}
+  .tram-game .actions{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:14px; }
   .tram-game button{
-    font-family:"Courier New",monospace;font-weight:bold;font-size:13px;cursor:pointer;
-    background:#000;color:#00ffff;border:2px solid #00ffff;box-shadow:0 0 8px #00ffff inset;
-    padding:11px 8px;text-align:left;letter-spacing:.3px;transition:transform .15s ease;
+    font-family:"Courier New",monospace; font-weight:bold; font-size:13px; cursor:pointer; text-align:left;
+    background:#0a0033; color:#c8ffd8; border:2px outset #6a3cff; padding:10px 12px; letter-spacing:.3px;
+    background-image:
+      radial-gradient(rgba(255,255,255,.16) 1px, transparent 1px),
+      radial-gradient(rgba(255,255,255,.16) 1px, transparent 1px);
+    background-size:12px 12px; background-position:0 0,6px 6px;
+    transition:filter .12s, transform .12s;
   }
-  .tram-game button:hover{transform:rotate(-1deg) scale(1.03);color:#fff}
-  .tram-game button:active{transform:translateY(1px)}
-  .tram-game button:disabled{opacity:.45;cursor:not-allowed;transform:none}
-  .tram-game button:focus-visible{outline:3px solid #ffd700;outline-offset:2px}
-  .tram-game button.wide{grid-column:1 / -1;text-align:center}
-  .tram-game button.go{color:#0f0;border-color:#0f0;box-shadow:0 0 10px #0f0 inset}
-  .tram-game button.danger{color:#ff5c8a;border-color:#ff3ea5;box-shadow:0 0 10px #ff3ea5 inset}
+  .tram-game button:hover{ filter:brightness(1.5); transform:translateX(2px); color:#fff; }
+  .tram-game button:active{ transform:translateY(1px); border-style:inset; }
+  .tram-game button:disabled{ opacity:.45; cursor:not-allowed; filter:none; transform:none; }
+  .tram-game button:focus-visible{ outline:2px solid #ffd700; outline-offset:2px; }
+  .tram-game button .arrow{ color:#ff5cf0; float:right; }
+  .tram-game button.wide{ grid-column:1 / -1; text-align:center; }
+  .tram-game button.primary{ border:2px outset #ff3df0; color:#ffd6f6; }
+  .tram-game button.back{ border:2px outset #6a3cff; color:#cbb6ff; }
+  .tram-game button.danger{ border:2px outset #ff5c8a; color:#ff9db0; }
+  .tram-game button.go{
+    background:linear-gradient(to right,#ff00ff,#00ffff); color:#0a0022;
+    border:2px outset #fff; font-family:"Courier New","Arial Black",sans-serif; letter-spacing:1px;
+    background-image:none;
+  }
+  .tram-game button.go:hover{ filter:brightness(1.2); transform:none; }
+  .tram-game .submenu-title{ grid-column:1 / -1; font-family:"Courier New",monospace; font-size:10px;
+    letter-spacing:2px; text-transform:uppercase; color:#7fb8c9; margin:2px 0 -2px; }
 
   .tram-game .card{margin-top:12px}
   .tram-game .card h2{
-    font-family:"Courier New","Arial Black",sans-serif;text-transform:uppercase;
-    font-size:16px;margin:0 0 8px;color:#ff00ff;text-shadow:0 0 6px #ff00ff;letter-spacing:.5px;
+    background-image:linear-gradient(to right,red,orange,yellow,green,blue,indigo,violet);
+    color:#fff;padding:6px 12px;border:2px solid #fff;
+    font-family:"Courier New","Arial Black",sans-serif;font-size:16px;letter-spacing:1px;
+    text-shadow:1px 1px 0 rgba(0,0,0,.5);margin:0 0 12px;
   }
   .tram-game .opts{display:grid;gap:7px}
   .tram-game .opt{
-    background:#000;border:2px solid #00ffff;box-shadow:0 0 6px #00ffff inset;
+    background:#0a0033;border:2px outset #6a3cff;box-shadow:none;
     padding:9px 11px;cursor:pointer;font-size:13px;color:#c8ffd8;
-    display:flex;align-items:center;gap:8px;transition:transform .15s ease;
+    display:flex;align-items:center;gap:8px;transition:filter .12s, transform .15s;
+    background-image:
+      radial-gradient(rgba(255,255,255,.18) 1px, transparent 1px),
+      radial-gradient(rgba(255,255,255,.18) 1px, transparent 1px);
+    background-size:12px 12px;background-position:0 0,6px 6px;
   }
-  .tram-game .opt:hover{transform:rotate(-1deg) scale(1.02);color:#fff}
-  .tram-game .opt.sel{background:#00381f;border-color:#0f0;box-shadow:0 0 10px #0f0 inset;color:#0f0}
+  .tram-game .opt:hover{ filter:brightness(1.5);transform:rotate(-1deg) scale(1.02);color:#fff; }
+  .tram-game .opt.sel{ background:#3a006a;border:2px solid var(--cal-magenta);box-shadow:0 0 10px var(--cal-magenta);color:#fff; }
   .tram-game .opt .box{font-weight:bold}
   .tram-game .rule{border:0;border-top:2px dashed #ff00ff;margin:14px 0}
 
-  .tram-game .receipt{background:#000;border:2px solid #00ffff;box-shadow:0 0 8px #00ffff inset;padding:12px}
+  .tram-game .receipt{
+    background:#000;border:2px solid #00ffff;box-shadow:0 0 8px #00ffff inset;padding:12px;
+    background-image:
+      radial-gradient(rgba(255,255,255,.3) 1px, transparent 1px),
+      radial-gradient(rgba(255,255,255,.3) 1px, transparent 1px);
+    background-size:16px 16px;background-position:0 0,8px 8px;
+  }
   .tram-game .receipt .line{display:flex;justify-content:space-between;border-bottom:1px dotted #245;padding:4px 0;font-size:13px}
   .tram-game .receipt .line:last-child{border-bottom:0}
   .tram-game .receipt .k{color:#9fb0d8}
   .tram-game .receipt .v{font-weight:bold;text-align:right;color:#0f0;text-shadow:0 0 4px #0f0}
   .tram-game .stars{color:#ffd700;letter-spacing:2px;text-shadow:0 0 5px #ffd700}
 
-  /* leaderboard */
   .tram-game .lb{margin-top:14px}
-  .tram-game .lb h3{font-family:"Courier New","Arial Black",sans-serif;font-size:12px;letter-spacing:1px;text-transform:uppercase;margin:0 0 6px;color:#00ffff;text-shadow:0 0 6px #00ffff}
+  .tram-game .lb h3{
+    font-family:"Courier New","Arial Black",sans-serif;font-size:13px;letter-spacing:1px;text-transform:uppercase;margin:0 0 8px;
+    background:linear-gradient(90deg,#ff0000,#ff9900,#ffee00,#33ff00,#00ffee,#3300ff,#ff00ee);
+    background-size:200% auto;
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    filter:drop-shadow(0 0 4px rgba(255,255,255,.35));
+    animation:tgRainbow 6s linear infinite;
+  }
   .tram-game .lb ol{margin:0;padding:0;list-style:none;counter-reset:r}
-  .tram-game .lb li{counter-increment:r;display:flex;justify-content:space-between;align-items:center;background:#000;border:2px solid #00ffff;box-shadow:0 0 6px #00ffff inset;padding:6px 10px;margin-bottom:5px;font-size:13px;color:#c8ffd8}
+  .tram-game .lb li{
+    counter-increment:r;display:flex;justify-content:space-between;align-items:center;
+    background:#000;border:2px solid #00ffff;box-shadow:0 0 6px #00ffff inset;
+    padding:6px 10px;margin-bottom:5px;font-size:13px;color:#c8ffd8;
+  }
   .tram-game .lb li::before{content:counter(r) ".";font-weight:bold;margin-right:8px;color:#ffd700}
   .tram-game .lb li .nm{flex:1;display:flex;flex-direction:column;gap:1px}
   .tram-game .lb li .sub{opacity:.7;font-size:11px;font-weight:normal;color:#9fb0d8}
   .tram-game .lb li .tm{font-weight:bold;color:#0f0;text-shadow:0 0 4px #0f0}
   .tram-game .lb li.you{background:#2a1500;border-color:#ffb000;box-shadow:0 0 10px #ffb000 inset}
   .tram-game .lb li.you .tm{color:#ffb000;text-shadow:0 0 5px #ffb000}
-  .tram-game .nameform{display:flex;gap:6px;margin-top:8px}
-  .tram-game .nameform input{flex:1;font-family:"Courier New",monospace;font-size:13px;padding:8px;border:2px solid #00ffff;background:#000;color:#0f0;min-width:0}
+  .tram-game .nameform{display:flex;gap:6px;margin-top:8px;align-items:stretch}
+  .tram-game .nameform input{flex:1;font-family:"Courier New",monospace;font-size:13px;padding:8px;border:2px inset #00ffff;background:#000;color:#0f0;min-width:0}
   .tram-game .nameform input::placeholder{color:#567}
+  .tram-game .nameform button{white-space:nowrap}
+
+  @media (max-width:640px){
+    .tram-game .actions{ grid-template-columns:1fr; }
+    .tram-game .board .svc{ font-size:14px; }
+    .tram-game .board .eta{ font-size:17px; }
+    .tram-game .board{ padding:9px 11px; }
+    .tram-game .screen{ height:52vh; }
+    .tram-game .stat .k{ font-size:8px; }
+  }
 </style>
 </head>
 <body>
@@ -164,10 +230,12 @@
         <div class="status" id="status">
           <div class="stat"><div class="k">waited</div><div class="v" id="stWait">0:00</div></div>
           <div class="stat"><div class="k">phone battery</div><div class="v" id="stBat">100%</div></div>
+          <div class="stat"><div class="k">wallet</div><div class="v" id="stCash">$25.00</div></div>
           <div class="stat"><div class="k">patience</div><div class="v" id="stPat">okay</div></div>
           <div class="stat"><div class="k">awareness</div><div class="v" id="stAwr">sharp</div></div>
         </div>
 
+        
         <div class="screen" id="screen"></div>
 
         <div id="stage"></div>
@@ -187,29 +255,36 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script>
-(function(){
+(function() {
   "use strict";
-
-  /* -------------------- */
   const $ = id => document.getElementById(id);
-  const rnd = (a,b) => Math.floor(Math.random()*(b-a+1))+a;
-  const pick = arr => arr[Math.floor(Math.random()*arr.length)];
-  const _bags = new Map();
-  function bagShuffle(){ _bags.clear(); }
-  function bagPick(arr){
-    if(!arr || !arr.length) return undefined;
-    if(arr.length === 1) return arr[0];
+  const rnd = (a, b) => Math.floor(Math.random() * (b - a + 1)) + a;
+  const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+  const _bags = new Map;
+  function bagShuffle() {
+    _bags.clear();
+  }
+  function bagPick(arr) {
+    if (!arr || !arr.length) {
+      return undefined;
+    }
+    if (arr.length === 1) {
+      return arr[0];
+    }
     let bag = _bags.get(arr);
-    if(!bag || !bag.length){
-      bag = arr.map((_,i)=>i);
-      for(let i=bag.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [bag[i],bag[j]]=[bag[j],bag[i]]; }
+    if (!bag || !bag.length) {
+      bag = arr.map((_, i) => i);
+      for (let i = bag.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [bag[i], bag[j]] = [ bag[j], bag[i] ];
+      }
       _bags.set(arr, bag);
     }
     return arr[bag.pop()];
   }
   const chance = p => Math.random() < p;
-  const clamp = (n,a,b) => Math.max(a,Math.min(b,n));
-  const fmt = s => Math.floor(s/60) + ":" + String(s%60).padStart(2,"0");
+  const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
+  const fmt = s => Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
   const firebaseConfig = {
     apiKey: "AIzaSyA25PaWUE39RuX-huMHoziQVUPy_pNFXUE",
     authDomain: "dot-com-44502.firebaseapp.com",
@@ -220,828 +295,1695 @@
     measurementId: "G-HPF4E6G5YW"
   };
   const COLL = "tramLeaderboard";
-  const FS = { ready:false, db:null, unsub:null, top:[], myId:null };
-
-  function initFirebase(){
-    try{
-      if(typeof firebase==="undefined") return;
-      if(!firebaseConfig.apiKey || firebaseConfig.apiKey.indexOf("PASTE")>-1) return;
-      const app = (firebase.apps && firebase.apps.length) ? firebase.app() : firebase.initializeApp(firebaseConfig);
+  const FS = {
+    ready: false,
+    db: null,
+    unsub: null,
+    top: [],
+    myId: null
+  };
+  function initFirebase() {
+    try {
+      if (typeof firebase === "undefined") {
+        return;
+      }
+      if (!firebaseConfig.apiKey || firebaseConfig.apiKey.indexOf("PASTE") > -1) {
+        return;
+      }
+      const app = firebase.apps && firebase.apps.length ? firebase.app() : firebase.initializeApp(firebaseConfig);
       FS.db = firebase.firestore();
       FS.ready = true;
-    }catch(e){ FS.ready=false; }
-  }
-
-  function subscribeLB(){
-    if(!FS.ready || FS.unsub) return;
-    try{
-      FS.unsub = FS.db.collection(COLL).orderBy("s","desc").limit(5).onSnapshot(
-        snap=>{
-          FS.top = snap.docs.map(d=>({id:d.id, name:d.data().name, s:d.data().s, route:d.data().route, dest:d.data().dest}));
-          if($("lbArea")) renderLeaderboard();
-        },
-        err=>{ FS.ready=false; if($("lbArea")) renderLeaderboard(); }
-      );
-    }catch(e){ FS.ready=false; }
-  }
-  /* ---- local fallback board (no Firebase / offline / preview) ---- */
-  const LB_KEY = "tram-sim-leaderboard-v2";
-  const SEED = [
-    {name:"lilywakefield.com.au", s:2842, route:"96", dest:"out and about"},  // 47:22
-    {name:"Anonymous Loser",      s:2350, route:"86", dest:"uni"},            // 39:10
-    {name:"Ned Bennett",          s:2045, route:"11", dest:"home"}            // 34:05
-  ];
-  let memLB = null, localMyKey = null;
-  function loadLocal(){
-    try{ const r = localStorage.getItem(LB_KEY); if(r) return JSON.parse(r); }catch(e){}
-    return memLB ? memLB.slice() : SEED.slice();
-  }
-  function saveLocalEntry(entry){
-    let l = loadLocal(); l.push(entry);
-    l.sort((a,b)=>b.s-a.s); l = l.slice(0,5);
-    memLB = l.slice(); localMyKey = entry.name+"|"+entry.s;
-    try{ localStorage.setItem(LB_KEY, JSON.stringify(l)); }catch(e){}
-  }
-
-  /* ---------- time of day ---------- */
-  function isTramNight(){
-    const p = window.TIME_OF_DAY && window.TIME_OF_DAY.period;
-    if(p) return p === "latenight" || p === "night";
-    const h = new Date().getHours();
-    return h >= 21 || h < 5;
-  }
-
-  /* ---------- game state ---------- */
-  let S;
-  function fresh(){
-    return {
-      phase:"setup",        // 
-      dest:null, route:null,
-      wait:0,               // seconds waited
-      battery:100,
-      patience:80,          // 
-      awareness:100,        // 
-      complaints:0,
-      productivity:0,
-      progress:0,           // 
-      eta: isTramNight() ? rnd(9,16) : rnd(4,8),  // night service is sparser
-      wxIdx:0,              // 
-      mykiBroken:false,
-      phoneDead:false,
-      boardedBus:false,
-      lbSubmitted:false,
-      cast:{},              // 
-      gone:{}               // who has already left this run
-    };
-  }
-
-  const WX = ["sunny","cloudy","rainy","windy","stormy"];
-  function shiftWeather(){
-    const r = Math.random();
-    if(r < 0.45) S.wxIdx = 0;        
-    else if(r < 0.62) S.wxIdx = 1;   
-    else if(r < 0.80) S.wxIdx = 2;   
-    else if(r < 0.93) S.wxIdx = 3;  
-    else S.wxIdx = 4;                
-  }
-  function changeWeather(force){
-    const before = S.wxIdx;
-    do { shiftWeather(); } while(force && S.wxIdx===before);
-    if(S.wxIdx !== before){
-      log('The weather turns '+WX[S.wxIdx]+'.', 'sys');
-      if(S.wxIdx===4) log('When will this tram come?.', 'dim');
+    } catch (e) {
+      FS.ready = false;
     }
   }
-  function mood(){ return S.patience>66 ? 'high' : S.patience>33 ? 'mid' : 'low'; }
-  function moodLine(bank){ const arr = bank[mood()] || bank.mid; return bagPick(arr); }
-
-  const ROUTES = [
-    {n:"86",  d:"Bundoora – Docklands"},
-    {n:"96",  d:"East Brunswick – St Kilda"},
-    {n:"109", d:"Port Melbourne – Box Hill"},
-    {n:"19",  d:"North Coburg – City"},
-    {n:"11",  d:"Docklands – West Preston"}
-  ];
-  const DESTS = ["uni","work","home","out and about"];
-
-  /* ---------- render: board + status ---------- */
-  function paint(){
-    const r = S.route;
-    $("boardSvc").textContent = r ? ("★ "+r.n+"  "+r.d) : "NO SERVICE SELECTED";
-    $("boardEta").textContent = (S.phase==="approach") ? "NOW" :
-                                 (r ? S.eta+" min" : "-- min");
-    $("stWait").textContent = fmt(S.wait);
-    $("stBat").textContent  = S.battery+"%";
-    $("stPat").textContent  = S.patience>66?"okay":S.patience>33?"thin":"gone";
-    $("stAwr").textContent  = S.awareness>66?"sharp":S.awareness>33?"hazy":"gone";
+  function subscribeLB() {
+    if (!FS.ready || FS.unsub) {
+      return;
+    }
+    try {
+      FS.unsub = FS.db.collection(COLL).orderBy("s", "desc").limit(5).onSnapshot(snap => {
+        FS.top = snap.docs.map(d => ({
+          id: d.id,
+          name: d.data().name,
+          s: d.data().s,
+          route: d.data().route,
+          dest: d.data().dest
+        }));
+        if ($("lbArea")) {
+          renderLeaderboard();
+        }
+      }, err => {
+        FS.ready = false;
+        if ($("lbArea")) {
+          renderLeaderboard();
+        }
+      });
+    } catch (e) {
+      FS.ready = false;
+    }
   }
-
-  /* ---------- log ---------- */
-  function log(text, cls){
+  const LB_KEY = "tram-sim-leaderboard-v2";
+  const SEED = [ {
+    name: "lilywakefield.com.au",
+    s: 2842,
+    route: "96",
+    dest: "out and about"
+  }, {
+    name: "Anonymous Loser",
+    s: 2350,
+    route: "86",
+    dest: "uni"
+  }, {
+    name: "Ned Bennett",
+    s: 2045,
+    route: "11",
+    dest: "home"
+  } ];
+  let memLB = null, localMyKey = null;
+  function loadLocal() {
+    try {
+      const r = localStorage.getItem(LB_KEY);
+      if (r) {
+        return JSON.parse(r);
+      }
+    } catch (e) {}
+    return memLB ? memLB.slice() : SEED.slice();
+  }
+  function saveLocalEntry(entry) {
+    let l = loadLocal();
+    l.push(entry);
+    l.sort((a, b) => b.s - a.s);
+    l = l.slice(0, 5);
+    memLB = l.slice();
+    localMyKey = entry.name + "|" + entry.s;
+    try {
+      localStorage.setItem(LB_KEY, JSON.stringify(l));
+    } catch (e) {}
+  }
+  function isTramNight() {
+    const p = window.TIME_OF_DAY && window.TIME_OF_DAY.period;
+    if (p) {
+      return p === "latenight" || p === "night";
+    }
+    const h = (new Date).getHours();
+    return h >= 21 || h < 5;
+  }
+  let S;
+  function fresh() {
+    return {
+      phase: "setup",
+      dest: null,
+      route: null,
+      wait: 0,
+      battery: 100,
+      patience: 80,
+      awareness: 100,
+      money: 25,
+      hunger: 0,
+      thirst: 0,
+      mode: null,
+      complaints: 0,
+      productivity: 0,
+      progress: 0,
+      eta: isTramNight() ? rnd(9, 16) : rnd(4, 8),
+      etaText: null,
+      wxIdx: 0,
+      mykiBroken: false,
+      phoneDead: false,
+      boardedBus: false,
+      lbSubmitted: false,
+      cast: {},
+      gone: {},
+      battShown: {},
+      relFired: {}
+    };
+  }
+  const WX = [ "sunny", "cloudy", "rainy", "windy", "stormy" ];
+  function shiftWeather() {
+    const r = Math.random();
+    if (r < .45) {
+      S.wxIdx = 0;
+    } else if (r < .62) {
+      S.wxIdx = 1;
+    } else if (r < .8) {
+      S.wxIdx = 2;
+    } else if (r < .93) {
+      S.wxIdx = 3;
+    } else {
+      S.wxIdx = 4;
+    }
+  }
+  function changeWeather(force) {
+    const before = S.wxIdx;
+    do {
+      shiftWeather();
+    } while (force && S.wxIdx === before);
+    if (S.wxIdx !== before) {
+      log("The weather turns " + WX[S.wxIdx] + ".", "sys");
+      if (S.wxIdx === 4) {
+        log("When will this tram come?.", "dim");
+      }
+    }
+  }
+  function mood() {
+    return S.patience > 66 ? "high" : S.patience > 33 ? "mid" : "low";
+  }
+  function moodLine(bank) {
+    const arr = bank[mood()] || bank.mid;
+    return bagPick(arr);
+  }
+  const ROUTES = [ {
+    n: "86",
+    d: "Bundoora – Docklands"
+  }, {
+    n: "96",
+    d: "East Brunswick – St Kilda"
+  }, {
+    n: "109",
+    d: "Port Melbourne – Box Hill"
+  }, {
+    n: "19",
+    d: "North Coburg – City"
+  }, {
+    n: "11",
+    d: "Docklands – West Preston"
+  } ];
+  const DESTS = [ "uni", "work", "home", "out and about" ];
+  const OUT_SPOTS = [ "Yochi", "Cinema Nova", "the Fitzroy bowls club", "Naked for Satan", "Section 8", "a warehouse party in Brunswick", "Lygon Street", "the NGV", "the end of the tram line", "a friend's housewarming", "the MCG", "YahYah's" ];
+  const OPERATIONAL = [ "SIGNALLING ISSUE", "SERVICE REGULATION", "TRAM REPOSITIONING", "NETWORK CONDITIONS", "PASSENGER MANAGEMENT", "OPERATIONAL CONSIDERATIONS", "UNFORESEEN CIRCUMSTANCES", "SERVICE RECOVERY", "DRIVER CHANGE", "OPERATIONAL REQUIREMENTS" ];
+  function paint() {
+    const r = S.route;
+    $("boardSvc").textContent = r ? "★ " + r.n + "  " + r.d : "NO SERVICE SELECTED";
+    $("boardEta").textContent = S.phase === "approach" ? "NOW" : S.etaText ? S.etaText : r ? S.eta + " min" : "-- min";
+    $("stWait").textContent = fmt(S.wait);
+    $("stBat").textContent = S.battery + "%";
+    $("stPat").textContent = S.patience > 66 ? "okay" : S.patience > 33 ? "thin" : "gone";
+    $("stAwr").textContent = S.awareness > 66 ? "sharp" : S.awareness > 33 ? "hazy" : "gone";
+    const _c = $("stCash");
+    if (_c) {
+      _c.textContent = "$" + (S.money || 0).toFixed(2);
+    }
+  }
+  function log(text, cls) {
     const p = document.createElement("p");
-    if(cls) p.className = cls;
+    if (cls) {
+      p.className = cls;
+    }
     p.innerHTML = text;
     const sc = $("screen");
     sc.appendChild(p);
     sc.scrollTop = sc.scrollHeight;
   }
-  function clearLog(){ $("screen").innerHTML = ""; }
-
-  function passingTram(){
-    const el = $("passer");
-    el.classList.remove("go"); void el.offsetWidth; el.classList.add("go");
-    setTimeout(()=>el.classList.remove("go"), 1500);
+  function clearLog() {
+    $("screen").innerHTML = "";
   }
-
-  /* ---------- SETUP screen ---------- */
-  function renderSetup(){
+  function passingTram() {
+    const el = $("passer");
+    el.classList.remove("go");
+    void el.offsetWidth;
+    el.classList.add("go");
+    setTimeout(() => el.classList.remove("go"), 1500);
+  }
+  function renderSetup() {
     S = fresh();
-    bagShuffle();          // fresh shuffle of every deck for this wait
-    FS.myId = null; localMyKey = null;
+    bagShuffle();
+    FS.myId = null;
+    localMyKey = null;
     clearLog();
-    log('You are at the tram stop.', 'sys');
-    log('It is '+WX[S.wxIdx].toLowerCase()+'.', 'dim');
-    if(isTramNight()) log('The night network is running. Service is... reduced.', 'dim');
-    log('Where are you going? Which tram are you taking?', 'dim');
+    log("You are at the tram stop.", "sys");
+    log("It is " + WX[S.wxIdx].toLowerCase() + ".", "dim");
+    if (isTramNight()) {
+      log("The night network is running. Service is reduced!", "dim");
+    }
+    log("Where are you going? Which tram are you taking?", "dim");
     paint();
-
     const stage = $("stage");
-    stage.innerHTML = `
-      <div class="card">
-        <h2>your destination ???</h2>
-        <div class="opts" id="destOpts"></div>
-        <hr class="rule">
-        <h2>route options:</h2>
-        <div class="opts" id="routeOpts"></div>
-        <button class="wide go" id="beginBtn" disabled style="margin-top:14px">choose to begin</button>
-      </div>`;
-
+    stage.innerHTML = `\n      <div class="card">\n        <h2>your destination ???</h2>\n        <div class="opts" id="destOpts"></div>\n        <hr class="rule">\n        <h2>route options:</h2>\n        <div class="opts" id="routeOpts"></div>\n        <button class="wide go" id="beginBtn" disabled style="margin-top:14px">choose to begin</button>\n      </div>`;
     const dOpts = $("destOpts");
-    DESTS.forEach(d=>{
+    DESTS.forEach(d => {
       const el = document.createElement("div");
-      el.className="opt"; el.innerHTML='<span class="box">★</span>'+d;
-      el.onclick=()=>{ S.dest=d; [...dOpts.children].forEach(c=>{c.classList.remove("sel");c.querySelector(".box").textContent="★";}); el.classList.add("sel"); el.querySelector(".box").textContent="☑"; check(); };
+      el.className = "opt";
+      el.innerHTML = '<span class="box">★</span>' + d;
+      el.onclick = () => {
+        S.dest = d;
+        [ ...dOpts.children ].forEach(c => {
+          c.classList.remove("sel");
+          c.querySelector(".box").textContent = "★";
+        });
+        el.classList.add("sel");
+        el.querySelector(".box").textContent = "☑";
+        check();
+      };
       dOpts.appendChild(el);
     });
     const rOpts = $("routeOpts");
-    ROUTES.forEach(r=>{
+    ROUTES.forEach(r => {
       const el = document.createElement("div");
-      el.className="opt"; el.innerHTML='<span class="box">★</span><b>'+r.n+'</b>&nbsp;'+r.d;
-      el.onclick=()=>{ S.route=r; [...rOpts.children].forEach(c=>{c.classList.remove("sel");c.querySelector(".box").textContent="★";}); el.classList.add("sel"); el.querySelector(".box").textContent="☑"; paint(); check(); };
+      el.className = "opt";
+      el.innerHTML = '<span class="box">★</span><b>' + r.n + "</b>&nbsp;" + r.d;
+      el.onclick = () => {
+        S.route = r;
+        [ ...rOpts.children ].forEach(c => {
+          c.classList.remove("sel");
+          c.querySelector(".box").textContent = "★";
+        });
+        el.classList.add("sel");
+        el.querySelector(".box").textContent = "☑";
+        paint();
+        check();
+      };
       rOpts.appendChild(el);
     });
-    function check(){
-      const b=$("beginBtn");
-      if(S.dest&&S.route){ b.disabled=false; b.textContent="wait for the    "+S.route.n; }
-      else b.textContent="choose to begin";
+    function check() {
+      const b = $("beginBtn");
+      if (S.dest && S.route) {
+        b.disabled = false;
+        b.textContent = "wait for the    " + S.route.n;
+      } else {
+        b.textContent = "choose to begin";
+      }
     }
-    $("beginBtn").onclick=begin;
+    $("beginBtn").onclick = begin;
   }
-
-  function begin(){
-    S.phase="wait";
+  function begin() {
+    S.phase = "wait";
+    if (S.dest === "out and about") {
+      S.dest = pick(OUT_SPOTS);
+    }
     clearLog();
-    log('You are going to <b>'+S.dest.toLowerCase()+'</b> on the <b>'+S.route.n+'</b>.', 'sys');
-    log('The board says '+S.eta+' minutes.', 'amber');
-    $("boardStrip").textContent = (isTramNight() ? "◄ NIGHT NETWORK · " : "") + "Next: "+S.route.n+" to "+S.route.d.split("–")[1].trim();
+    log("You are going to <b>" + S.dest.toLowerCase() + "</b> on the <b>" + S.route.n + "</b>.", "sys");
+    log("The board says " + S.eta + " minutes.", "amber");
+    $("boardStrip").textContent = (isTramNight() ? "◄ NIGHT NETWORK · " : "") + "Next: " + S.route.n + " to " + S.route.d.split("–")[1].trim();
     paint();
     renderActions();
   }
-
-  /* ---------- ACTIONS ---------- */
-  function renderActions(){
-    $("stage").innerHTML = `
-      <div class="actions">
-        <button id="aPhone"> check phone</button>
-        <button id="aStudy"> study</button>
-        <button id="aObserve"> observe</button>
-        <button id="aWait"> just wait</button>
-        <button class="wide danger" id="aGiveUp">give up waiting and start walking.</button>
-      </div>`;
-    $("aPhone").onclick   = actPhone;
-    $("aStudy").onclick   = actStudy;
-    $("aObserve").onclick = actObserve;
-    $("aWait").onclick    = actWait;
-    $("aGiveUp").onclick  = endGiveUp;
-    if(S.phoneDead) $("aPhone").disabled = true;
-  }
-
-  // advance time, drift weather + eta, maybe fire an event, then check arrival
-  function tick(seconds, {progress=0, event=true}={}){
-    S.wait += seconds;
-    S.progress = clamp(S.progress + progress + rnd(2,7), 0, 999);
-    // ETA drifts: mostly refuses to go down
-    if(chance(0.18) && S.eta>1) S.eta -= 1; else if(chance(0.35)) S.eta += rnd(0,2);
-    if(chance(0.25)) changeWeather();
-    if(event && chance(0.72)) randomEvent();
-    paint();
-    if(S.phase==="wait" && S.progress>=100) arrivalOrMiss();
-  }
-
-  function actPhone(){
-    if(S.phoneDead) return;
-    S.battery   = clamp(S.battery-rnd(5,12),0,100);
-    S.awareness = clamp(S.awareness-rnd(5,12),0,100);
-    log('You check your phone.', 'dim');
-    log(bagPick(PHONE), 'amber');
-    if(S.battery<=0){ S.phoneDead=true; log('Your phone dies.', 'bad'); renderActions(); }
-    tick(rnd(90,210));
-  }
-  function actStudy(){
-    log('You open your notes.', 'dim');
-    if(chance(0.5)){
-      S.productivity += rnd(1,3);
-      log(bagPick(STUDY_GOOD), 'good');
-    } else {
-      log(bagPick(STUDY_BAD), 'dim');
+  const POCKET_NAME = {
+    coffee: "a coffee",
+    espresso: "an espresso",
+    croissant: "a croissant",
+    sausage: "a sausage roll",
+    banhmi: "a banh mi",
+    water: "a bottle of water",
+    choc: "a chocolate bar",
+    gum: "gum",
+    lighter: "a lighter",
+    headphones: "headphones",
+    umbrella: "an umbrella",
+    poncho: "a poncho",
+    scratchie: "a $2 scratchie"
+  };
+  const USE_ACTIONS = {
+    "a coffee": {
+      verb: "drink",
+      fn() {
+        S.thirst = 0;
+        S.awareness = clamp(S.awareness + rnd(12, 20), 0, 100);
+        log("You drink the coffee.", "good");
+        return true;
+      }
+    },
+    "an espresso": {
+      verb: "drink",
+      fn() {
+        S.thirst = 0;
+        S.awareness = clamp(S.awareness + rnd(14, 22), 0, 100);
+        log("You down the espresso in one go.", "good");
+        return true;
+      }
+    },
+    "a bottle of water": {
+      verb: "drink",
+      fn() {
+        S.thirst = clamp((S.thirst || 0) - 50, 0, 100);
+        log("You drink some of the water.", "good");
+        return true;
+      }
+    },
+    "a croissant": {
+      verb: "eat",
+      fn() {
+        S.hunger = 0;
+        S.patience = clamp(S.patience + rnd(10, 16), 0, 100);
+        log("You eat the croissant.", "good");
+        return true;
+      }
+    },
+    "a sausage roll": {
+      verb: "eat",
+      fn() {
+        S.hunger = 0;
+        S.patience = clamp(S.patience + rnd(10, 16), 0, 100);
+        log("You eat it. Hmmm.", "good");
+        return true;
+      }
+    },
+    "a banh mi": {
+      verb: "eat",
+      fn() {
+        S.hunger = 0;
+        S.patience = clamp(S.patience + rnd(16, 26), 0, 100);
+        log("You eat the banh mi.", "good");
+        return true;
+      }
+    },
+    "a chocolate bar": {
+      verb: "eat",
+      fn() {
+        S.patience = clamp(S.patience + rnd(4, 8), 0, 100);
+        log("You eat the chocolate.", "good");
+        return true;
+      }
+    },
+    gum: {
+      verb: "chew",
+      fn() {
+        log("You chew the gum. It loses all flavour immediately.", "dim");
+        return true;
+      }
+    },
+    "a $2 scratchie": {
+      verb: "scratch",
+      fn() {
+        const r = Math.random();
+        if (r < .7) {
+          log("You scratch it. Nothing. Of course.", "dim");
+        } else if (r < .95) {
+          const w = rnd(2, 10);
+          earn(w);
+          log("You scratch it. You win $" + w + ".00.", "good");
+        } else {
+          earn(50);
+          log("You scratch it. You win $50.00. You do not believe it.", "good");
+        }
+        return true;
+      }
+    },
+    "a poncho": {
+      verb: "put on",
+      fn() {
+        S.hasRainCover = true;
+        if (S.wxIdx === 2 || S.wxIdx === 4) {
+          S.patience = clamp(S.patience + rnd(8, 14), 0, 100);
+          log("You put on the poncho. You stay dry.", "good");
+        } else {
+          log("You put on the poncho. You do not need it as it is not raining.", "dim");
+        }
+        return false;
+      }
+    },
+    "an umbrella": {
+      verb: "open",
+      fn() {
+        S.hasRainCover = true;
+        if (S.wxIdx === 2 || S.wxIdx === 4) {
+          S.patience = clamp(S.patience + rnd(8, 14), 0, 100);
+          log("You open the umbrella. You stay dry.", "good");
+        } else {
+          log("You open the umbrella. It is not raining. You feel strange.", "dim");
+        }
+        return false;
+      }
+    },
+    headphones: {
+      verb: "put in",
+      fn() {
+        S.hasHeadphones = true;
+        if (castPresent("boomGuy")) {
+          S.patience = clamp(S.patience + rnd(8, 14), 0, 100);
+          log("You put them in. The UE Boom fades to nothing.", "good");
+        } else {
+          log("You put them in. The world goes quiet.", "dim");
+        }
+        return false;
+      }
+    },
+    "a lighter": {
+      verb: "flick",
+      fn() {
+        log("You flick the lighter. You flick it again.", "dim");
+        return false;
+      }
     }
-    S.awareness = clamp(S.awareness-rnd(15,25),0,100); // head down = miss the tram
-    tick(rnd(180,360));
+  };
+  function renderPockets() {
+    ensurePockets();
+    const items = S.pockets.slice();
+    let html = '<div class="card"><h2>pockets</h2><div class="opts">';
+    if (!items.length) {
+      html += '<div class="opt" style="opacity:.6"><span class="box">·</span>empty. somehow.</div>';
+    }
+    items.forEach((it, i) => {
+      const u = USE_ACTIONS[it];
+      const tag = u ? '<span style="opacity:.55;float:right">' + u.verb + "</span>" : "";
+      html += '<div class="opt" data-use="' + i + '"><span class="box">▸</span>' + it + tag + "</div>";
+    });
+    html += '<div class="opt" id="pocketDone"><span class="box">▸</span>done</div></div></div>';
+    $("stage").innerHTML = html;
+    [ ...document.querySelectorAll("[data-use]") ].forEach(el => el.onclick = () => usePocketItem(items[+el.getAttribute("data-use")]));
+    $("pocketDone").onclick = () => {
+      log("You put everything back.", "dim");
+      renderActions();
+    };
   }
-  function actObserve(){
-    log('You observe. You are paying attention!', 'dim');
-    S.awareness = clamp(S.awareness+rnd(8,14),0,100);
+  function usePocketItem(it) {
+    const u = USE_ACTIONS[it];
+    if (!u) {
+      log("You look at " + it + ". You put it back.", "dim");
+      renderPockets();
+      return;
+    }
+    const consumed = u.fn();
+    if (consumed) {
+      const i = S.pockets.indexOf(it);
+      if (i > -1) {
+        S.pockets.splice(i, 1);
+      }
+    }
+    paint();
+    renderPockets();
+  }
+  function actGroup(key) {
+    const groups = {
+      around: {
+        title: "look around",
+        items: [ [ "observe", actObserve ], [ "look in pockets", actPockets ], [ "eavesdrop", actEavesdrop ] ]
+      },
+      leave: {
+        title: "leave the stop",
+        items: [ [ "go to the shop", actShop ], [ "make some money", actHustle ] ]
+      }
+    };
+    const g = groups[key];
+    let html = '<div class="actions"><div class="submenu-title">' + g.title + "</div>";
+    g.items.forEach((it, i) => html += '<button data-g="' + i + '">' + it[0] + "</button>");
+    html += '<button class="wide back" id="aBack">◂ back</button></div>';
+    $("stage").innerHTML = html;
+    [ ...document.querySelectorAll("[data-g]") ].forEach(el => el.onclick = () => g.items[+el.getAttribute("data-g")][1]());
+    $("aBack").onclick = renderActions;
+  }
+  function renderActions() {
+    const uber = S.patience <= 25 ? '<button class="wide danger" id="aUber">call an uber ???</button>' : "";
+    $("stage").innerHTML = `\n      <div class="actions">\n        <button class="wide primary" id="aWait">just wait</button>\n        <button id="aPhone">check phone</button>\n        <button id="aAround">look around <span class="arrow">▸</span></button>\n        <button id="aStudy">study</button>\n        <button id="aLeave">leave the stop <span class="arrow">▸</span></button>\n        ${uber}\n        <button class="wide danger" id="aGiveUp">give up &amp; walk</button>\n      </div>`;
+    $("aWait").onclick = actWait;
+    $("aPhone").onclick = actPhone;
+    $("aStudy").onclick = actStudy;
+    $("aAround").onclick = () => actGroup("around");
+    $("aLeave").onclick = () => actGroup("leave");
+    $("aGiveUp").onclick = endGiveUp;
+    if (S.patience <= 25 && $("aUber")) {
+      $("aUber").onclick = tryUber;
+    }
+    if (S.phoneDead) {
+      $("aPhone").disabled = true;
+    }
+    setMoney(S.money || 0);
+  }
+  function evilTracker() {
+    S.etaText = null;
+    const r = Math.random();
+    if (r < .1) {
+      S.etaText = "DUE";
+      if (chance(.45)) {
+        log("The board says DUE.", "dim");
+      }
+    } else if (r < .16) {
+      S.etaText = "NOW";
+      if (chance(.4)) {
+        log("The board says NOW.", "dim");
+      }
+    } else if (r < .22) {
+      S.etaText = "-- min";
+    } else if (r < .3) {
+      S.eta = rnd(30, 59);
+      if (chance(.5)) {
+        log("The tracker jumps to " + S.eta + " minutes.", "dim");
+      }
+    } else if (r < .4) {
+      S.eta = rnd(1, 3);
+    } else if (r < .58) {} else if (r < .78) {
+      if (S.eta > 1) {
+        S.eta -= 1;
+      }
+    } else {
+      S.eta += rnd(0, 3);
+    }
+  }
+  function clockGag() {
+    const t = new Intl.DateTimeFormat("en-AU", {
+      timeZone: "Australia/Melbourne",
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: false
+    }).format(new Date);
+    log("You look at the clock.", "dim");
+    log("It is " + t + ".", "dim");
+    log("You look again.", "dim");
+    log("It is " + t + ".", "dim");
+  }
+  function weatherLie() {
+    const wet = S.wxIdx === 2 || S.wxIdx === 4;
+    log("You check the weather.", "dim");
+    if (wet) {
+      log("It says sunny.", "dim");
+      log("It is raining.", "dim");
+    } else {
+      log("It says rain.", "dim");
+      log("It is not raining.", "dim");
+    }
+  }
+  function crowdCensus() {
+    log("You count the people at the stop.", "dim");
+    [ "people sitting", "people standing", "people waiting near the edge", "people staring down the road", "people who know the tram is coming", "people who definitely do not" ].forEach(l => log(l + ": " + rnd(0, 9), "dim"));
+  }
+  function lookUp() {
+    log("Everyone looks up at the same time.", "sys");
+    log("You look up too.", "dim");
+    log("Nothing is happening.", "dim");
+    log("Five seconds later, everyone goes back to their phones.", "dim");
+  }
+  const GLOVE_STAGES = [ "There is a single glove on the bench.", "The glove is now on the ground.", "The glove is wet.", "The glove is gone." ];
+  function glove() {
+    const s = S.gloveStage || 0;
+    if (s >= GLOVE_STAGES.length) {
+      return;
+    }
+    log(GLOVE_STAGES[s], "dim");
+    S.gloveStage = s + 1;
+  }
+  function ptvAnnounce() {
+    if (S._lastPTV != null && S.wait - S._lastPTV < 600) {
+      return;
+    }
+    S._lastPTV = S.wait;
+    log("CUSTOMER INFORMATION", "big amber");
+    bagPick([ [ '"Due to an earlier incident, services may experience minor delays."', "No further information is provided." ], [ '"We apologise for any inconvenience caused by—"' ], [ '"Passengers are reminded to—"' ], [ '"Due to operational requirements, some services may—"' ], [ '"Thank you for your patience."', "Nobody feels thanked." ] ]).forEach(l => log(l, "amber"));
+  }
+  function screenTime() {
+    log("SCREEN TIME", "big sys");
+    log("Today: 7h 42m", "dim");
+    log("TikTok: 4h 13m", "dim");
+    log("Tram Tracker: 11m", "dim");
+    log("Settings: 2m", "dim");
+  }
+  function voiceMemo() {
+    log("[RECORD VOICE MEMO]", "sys");
+    log('"Okay so basically the tram—"', "dim");
+    log("You stop recording.", "dim");
+    log("Duration: 00:03.", "dim");
+  }
+  const MICRO2 = [ clockGag, weatherLie, crowdCensus, lookUp, glove, ptvAnnounce, "A receipt blows across the platform.", "A flyer is taped to the pole, curling at the edges.", "Someone has left an umbrella leaning against the bench.", "A cigarette butt sits by your shoe.", "An abandoned shopping bag drifts past and comes back.", "There is a bike chained to the railing. It has been there for years.", "A wet newspaper is stuck to the ground.", "A single leaf lands near your feet.", "A pigeon investigates something only it can see.", "A spider has built a web in the corner of the shelter.", "There is a mysterious object on the bench. You choose not to investigate." ];
+  function flindersAsk() {
+    log("Someone turns to you.", "sys");
+    log('"Does this tram go to Flinders?"', "amber");
+    log("You now have to answer.", "dim");
+    $("stage").innerHTML = `\n      <div class="card">\n        <h2>you have to answer</h2>\n        <div class="opts">\n          <div class="opt" data-ans="Yes."><span class="box">▸</span>"Yes."</div>\n          <div class="opt" data-ans="No."><span class="box">▸</span>"No."</div>\n          <div class="opt" data-ans="I have no idea."><span class="box">▸</span>"I have no idea."</div>\n          <div class="opt" data-ans="Probably."><span class="box">▸</span>"Probably."</div>\n        </div>\n      </div>`;
+    [ ...document.querySelectorAll("[data-ans]") ].forEach(el => {
+      el.onclick = () => flindersAnswer(el.getAttribute("data-ans"));
+    });
+  }
+  function flindersAnswer(ans) {
+    log('You say: "' + ans + '"', "dim");
+    if (chance(.25)) {
+      log(bagPick([ "They nod slowly, unconvinced.", '"...are you sure?"', "They thank you and immediately ask the person next to you the same thing.", "They do not believe you.", "They get on the next tram, which is not going to Flinders." ]), "dim");
+    } else {
+      log("They nod and look back down the tracks.", "dim");
+    }
+    renderActions();
+  }
+  const SHOP_ITEMS = [ {
+    id: "banhmi",
+    name: "banh mi",
+    price: 12.5,
+    kind: "food"
+  }, {
+    id: "iced latte",
+    name: "iced latte",
+    price: 4.5,
+    kind: "coffee"
+  }, {
+    id: "espresso",
+    name: "espresso",
+    price: 4.5,
+    kind: "coffee"
+  }, {
+    id: "croissant",
+    name: "ham and cheese croissant",
+    price: 5,
+    kind: "food"
+  }, {
+    id: "sausage",
+    name: "suspiciously warm sausage roll",
+    price: 5.5,
+    kind: "food"
+  }, {
+    id: "water",
+    name: "bottle of water",
+    price: 4.8,
+    kind: "drink"
+  }, {
+    id: "choc",
+    name: "chocolate bar",
+    price: 4,
+    kind: "treat"
+  }, {
+    id: "gum",
+    name: "gum",
+    price: 2.5,
+    kind: "flavour"
+  }, {
+    id: "lighter",
+    name: "lighter",
+    price: 3,
+    kind: "keep"
+  }, {
+    id: "headphones",
+    name: "cheap headphones",
+    price: 15,
+    kind: "headphones"
+  }, {
+    id: "umbrella",
+    name: "umbrella",
+    price: 12,
+    kind: "rain"
+  }, {
+    id: "poncho",
+    name: "disposable poncho",
+    price: 6,
+    kind: "rain"
+  }, {
+    id: "scratchie",
+    name: "$2 scratchie",
+    price: 2,
+    kind: "scratchie"
+  } ];
+  function buyShopItem(it) {
+    if (!canAfford(it.price)) {
+      log("You check your wallet.", "dim");
+      log("Not enough for " + it.name + ". You stay put.", "bad");
+      renderActions();
+      return;
+    }
+    spend(it.price);
+    if (it.id === "banhmi") {
+      log("Risk it for a Banh Mi.", "amber");
+    }
+    log("You leave the stop and walk to the shop.", "sys");
+    S.wait += rnd(4, 8) * 60;
+    const far = it.id === "banhmi" ? rnd(45, 70) : rnd(30, 55);
+    S.progress = clamp(S.progress + far, 0, 999);
+    ensurePockets();
+    if (S.progress >= 100) {
+      log("As you pay, you hear it.", "dim");
+      log("Your tram pulls in behind you and leaves. You are holding " + it.name + ".", "bad");
+      S.progress = rnd(45, 68);
+      S.patience = clamp(S.patience - 12, 0, 100);
+      S.complaints++;
+      S.pockets.push(POCKET_NAME[it.id] || it.name);
+      paint();
+      renderActions();
+      return;
+    }
+    log("You bought " + it.name + " for $" + it.price.toFixed(2) + ".", "good");
+    S.pockets.push(POCKET_NAME[it.id] || it.name);
+    log("You walk back to the stop. The tram has not come.", "dim");
+    paint();
+    renderActions();
+  }
+  function tick(seconds, {progress: progress = 0, event: event = true} = {}) {
+    S.wait += seconds;
+    S.progress = clamp(S.progress + progress + rnd(2, 7), 0, 999);
+    evilTracker();
+    if (chance(.25)) {
+      changeWeather();
+    }
+    let bigEvent = false;
+    if (event && chance(.72)) {
+      randomEvent();
+      bigEvent = true;
+    }
+    if (!bigEvent && chance(.7)) {
+      microEvent();
+    }
+    needsTick(seconds);
+    paint();
+    if (S.phase === "wait" && S.progress >= 100) {
+      arrivalOrMiss();
+      return;
+    }
+    if (!bigEvent && S.phase === "wait" && chance(.045)) {
+      flindersAsk();
+    }
+  }
+  const BATT_STAGES = [ {
+    v: 20,
+    line: "You turn the brightness down."
+  }, {
+    v: 10,
+    line: "You stop using TikTok."
+  }, {
+    v: 5,
+    line: "You begin calculating how long the battery will last."
+  }, {
+    v: 1,
+    line: "This is probably fine."
+  } ];
+  function phoneDescent() {
+    if (S.phoneDead) {
+      return;
+    }
+    BATT_STAGES.forEach(st => {
+      if (S.battery <= st.v && !S.battShown[st.v]) {
+        S.battShown[st.v] = true;
+        log("PHONE BATTERY: " + S.battery + "%", "amber");
+        log(st.line, "dim");
+      }
+    });
+    if (S.battery <= 0) {
+      S.phoneDead = true;
+      log("PHONE BATTERY: 0%", "bad");
+      log("Your phone dies.", "bad");
+      renderActions();
+    }
+  }
+  function actPhone() {
+    if (S.phoneDead) {
+      return;
+    }
+    S.battery = clamp(S.battery - rnd(5, 12), 0, 100);
+    S.awareness = clamp(S.awareness - rnd(5, 12), 0, 100);
+    log("You check your phone.", "dim");
+    const r = Math.random();
+    if (r < .14) {
+      screenTime();
+    } else if (r < .24) {
+      voiceMemo();
+    } else {
+      log(bagPick(PHONE), "amber");
+    }
+    phoneDescent();
+    tick(rnd(90, 210));
+  }
+  function actStudy() {
+    log("You open your notes.", "dim");
+    if (chance(.5)) {
+      S.productivity += rnd(1, 3);
+      log(bagPick(STUDY_GOOD), "good");
+    } else {
+      log(bagPick(STUDY_BAD), "dim");
+    }
+    S.awareness = clamp(S.awareness - rnd(15, 25), 0, 100);
+    tick(rnd(180, 360));
+  }
+  function actObserve() {
+    log("You observe. You are paying attention!", "dim");
+    S.awareness = clamp(S.awareness + rnd(8, 14), 0, 100);
     randomEvent(true);
-    tick(rnd(120,240), {event:false});
+    tick(rnd(120, 240), {
+      event: false
+    });
   }
-  function actWait(){
-    log(moodLine(VOID), 'dim');   // 
-    S.awareness = clamp(S.awareness+rnd(2,6),0,100);
-    tick(rnd(45,90), {progress:1});
+  function actWait() {
+    log(moodLine(VOID), "dim");
+    S.awareness = clamp(S.awareness + rnd(2, 6), 0, 100);
+    tick(rnd(45, 90), {
+      progress: 1
+    });
   }
-
-  /* ---------- content ---------- */
-  const PHONE = [
-    'PTV app: "Service update — minor delays on all routes."',
-    '67 unread messages.',
-    'Commbank: "A transaction of $3.00 was declined."',
-    'Commbank: "A suspicious transaction from "FitzroySmoke&Gift" of $54.00 was declined."',
-    'xXxShawarmaLoverxXx liked a photo of you from 2019.',
-    'BOM: "1000% Chance of rain."',
-    'xXxShawarmaLoverxXx reacted :D to your tiktok repost.',
-    '3 minutes ago: xXxShawarmaLoverxXx sent you a snapchat.',
-    'PTV app: "Service update — major delays on all routes."',
-    'Your housemate texts you: "did you take the bins out?". You did not.',
-    'You refresh the tram tracker. It refreshes and nothing changes.',
-    'A text from YahYahs tells you they have $5 entry tonight.',
-    '"Are you still coming out tonight?" You forgot there were plans tonight.',
-    'Commbank: "$300 was withdrawn from an ATM on Gertrude Street".',
-    'A text from your ex tells you they threw away your favourite hoodie and to please stop calling them.',
-    'Duolingo: "These reminders don\'t seem to be working."',
-    'A Facebook Marketplace seller replies "still available" four days after you asked.',
-    'Commbank: "You spent $67 on UberEats this month."'
-  ];
-  const STUDY_GOOD = [
-    'You read one paragraph and understand it !!! Maybe you will pass this semester.',
-    'You highlight something to feel more productive.',
-    'You read three lines of notes. You will now probably graduate with distinction.',
-    'You finally understand the concepts assigned this semester. The tram does not come any faster and neither does the end of your degree.',
-    'You watch the lecture at regular speed.'  
-];
-  const STUDY_BAD = [
-    'You reread the same sentence nine times.',
-    'You open the court document. You close the court document.',
-    'You convince yourself this reading can wait until next week.',
-    'You open Canvas. That was enough studying for today.',
-    'A pigeon walks past and it is more interesting than the assigned reading.',
-    'You think about studying, which is not the same as studying.',
-    'You realise the reading was optional and you panicked for nothing.',
-    'You highlight the entire page. Now nothing is highlighted.',
-    'You watch the lecture at 2x speed.'
-  ];
+  const PHONE = [ 'PTV app: "Service update — minor delays on all routes."', "SYSTEM MESSAGE:  Your iPhone has detected an AirTag travelling with you.", "67 unread messages.", 'Commbank: "A transaction of $3.00 was declined."', 'Commbank: "A suspicious transaction from "FitzroySmoke&Gift" of $54.00 was declined."', "xXxShawarmaLoverxXx liked a photo of you from 2019.", 'BOM: "1000% Chance of rain."', "xXxShawarmaLoverxXx reacted :D to your tiktok repost.", "3 minutes ago: xXxShawarmaLoverxXx sent you a snapchat.", 'PTV app: "Service update — major delays on all routes."', 'Your housemate texts you: "did you take the bins out?". You did not.', "You refresh the tram tracker. It refreshes and nothing changes.", "A text from YahYahs tells you they have $5 entry tonight.", '"Are you still coming out tonight?" You forgot there were plans tonight.', 'Commbank: "$300 was withdrawn from an ATM on Gertrude Street".', "A text from your ex tells you they threw away your favourite hoodie and to please stop calling them.", 'Duolingo: "These reminders don\'t seem to be working."', 'A Facebook Marketplace seller replies "still available" four days after you asked.', 'Commbank: "You spent $67 on UberEats this month."', "Your phone asks if you want to enable Low Power Mode.", "Your phone asks if you want to enable Low Power Mode again.", "You open Instagram and immediately close Instagram.", 'You open TikTok "for a minute".', 'Someone sends you a message containing only "HAHAHAHA".' ];
+  const STUDY_GOOD = [ "You read one paragraph and understand it !!! Maybe you will pass this semester.", "You highlight something to feel more productive.", "You read three lines of notes. You will now probably graduate with distinction.", "You finally understand the concepts assigned this semester. The tram does not come any faster and neither does the end of your degree.", "You watch the lecture at regular speed." ];
+  const STUDY_BAD = [ "You reread the same sentence nine times.", "You open the court document. You close the court document.", "You convince yourself this reading can wait until next week.", "You open Canvas. That was enough studying for today.", "A pigeon walks past and it is more interesting than the assigned reading.", "You think about studying, which is not the same as studying.", "You realise the reading was optional and you panicked for nothing.", "You highlight the entire page. Now nothing is highlighted.", "You watch the lecture at 2x speed." ];
   const VOID = {
-    mid: [
-      'You consider your relationship to public transport, and the greater implications of public funding.',
-      'Time passes. Someone hums 24K Magic by Bruno Mars.',
-      'Time passes. Someone hums Be The One by Dua Lipa.',
-      'Time passes. Someone hums Fame is A Gun by Addison Rae.',
-      'Time passes. Someone hums and it really annoys you.',
-      'Time passes. Someone hums a jingle from a betting ad.',
-      'You wonder whether every tram driver secretly knows each other.',
-      'You wonder how many hours of your life have been spent waiting.',
-      'You wonder if the tram knows you are waiting.',
-      'You wonder who the Premier of Victoria is at the moment.',
-      'You wonder if the Southern Rail Loop will ever truely exist.',
-      'You wonder if a train to the aiport was just a dream you had once.'
-    ],
-    low: [
-      'You probably could have walked by now.',
-      'Time passes. Someone hums and it really annoys you.',
-      'You no longer have faith in PTV.',
-      'You lock eyes with a man holding a half-eaten kebab. He takes this as an invitation to tell you about his crypto portfolio.'
-    
-    ],
-    high: [
-      'You look at the sand on the tram tracks.',
-      'The tram will come when it comes.',
-      'Somewhere the tram is doing its best.',
-      'You could be anywhere but here you are at the tram stop. Maybe you should invest in a bike.'
-    ]
+    mid: [ "You consider your relationship to public transport, and the greater implications of public funding.", "Time passes. Someone hums 24K Magic by Bruno Mars.", "Time passes. Someone hums Be The One by Dua Lipa.", "Time passes. Someone hums Fame is A Gun by Addison Rae.", "Time passes. Someone hums and it really annoys you.", "Time passes. Someone hums a jingle from a betting ad.", "You wonder whether every tram driver secretly knows each other.", "You wonder how many hours of your life have been spent waiting.", "You wonder if the tram knows you are waiting.", "You wonder who the Premier of Victoria is at the moment.", "You wonder if the Southern Rail Loop will ever truely exist.", "You wonder if a train to the aiport was just a dream you had once." ],
+    low: [ "You probably could have walked by now.", "Time passes. Someone hums and it really annoys you.", "You no longer have faith in PTV.", "You lock eyes with a man holding a half-eaten kebab. He takes this as an invitation to tell you about his crypto portfolio." ],
+    high: [ "You look at the sand on the tram tracks.", "The tram will come when it comes.", "Somewhere the tram is doing its best.", "You could be anywhere but here you are at the tram stop. Maybe you should invest in a bike." ]
   };
-  const MISS_LINES = [
-    'You were looking at your phone. The tram came and went without you :(',
-    'You blinked, the tram arrived, opened its doors, and left.',
-    'You were deep in your notes. The tram came and did not wait for you.',
-    'You glanced up a second too late. The tram has been and gone.'
-  ];
-  // 
+  const MISS_LINES = [ "You were looking at your phone. The tram came and went without you :(", "You blinked, the tram arrived, opened its doors, and left.", "You were deep in your notes. The tram came and did not wait for you.", "You glanced up a second too late. The tram has been and gone." ];
   const PASS = {
-    mid:  ['It is not.', 'It was not yours.', 'It keeps going. Not yours.'],
-    low:  ['Of course it was not yours.', 'Not yours. Obviously not yours.', 'It is not. It is never yours.'],
-    high: ['It is not yours.', 'Not yours. Maybe the next one, then.', 'It is not. That is alright. It will come.']
+    mid: [ "It is not.", "It was not yours.", "It keeps going. Not yours." ],
+    low: [ "Of course it was not yours.", "Not yours. Obviously not yours.", "It is not. It is never yours." ],
+    high: [ "It is not yours.", "Not yours. Maybe the next one, then.", "It is not. That is alright. It will come." ]
   };
-  // 
   const LATE = {
-    low:  ['Okay.', 'You are not even surprised anymore.', 'The board lies.'],
-    high: ['That is okay.', 'You do not mind too much.', 'The tram will come. It always eventually comes.']
+    low: [ "Okay.", "You are not even surprised anymore !!", "The board lies." ],
+    high: [ "That is okay.", "You do not mind too much.", "The tram will come. It always eventually comes." ]
   };
-
-  /* ----------  ---------- */
-  const SAGAS = [
-    { mins:3, beats:[
-      ['Someone asks the group:', 'sys'],
-      ['"Is this still the free tram zone?"', 'amber'],
-      ['...', 'dim'],
-      ['Nobody answers.', 'amber']
-    ]},
-    { mins:2, pat:-5, beats:[
-      ['Authorised Officers appear.', 'amber'],
-      ['Everyone looks at the ground.', 'dim']
-    ]},
-    { mins:2, beats:[
-      ['A tradie drinks an entire dare iced coffee in one go.', 'sys'],
-    ]},
-    { mins:2, beats:[
-      ['A man wearing sunglasses after sunset gets to the stop, visibly annoyed that all the seats under the shelter are taken.', 'sys'],
-      ['You assume he has been awake since Friday.', 'dim']
-    ]},
-    { mins:3, pat:-4, complaint:1, beats:[
-      ['A short man in a Nike tech fleece arrives with a UE Boom.', 'sys'],
-      ['...', 'dim'],
-      ['Now playing: Moonbeam Ice Cream by Benson Boone.', 'amber']
-    ]},
-    { mins:2, beats:[
-      ['A cyclist rolls up to the tram stop.', 'sys'],
-      ['...', 'dim'],
-      ['"Technically I\'m allowed on this tram if I fold my bike up."', 'amber']
-    ]},
-    { mins:3, pat:-3, complaint:1, beats:[
-      ['Two tourists are arguing with each other.', 'sys'],
-      ['"I am pretty sure this IS the free tram zone Sharon."', 'dim'],
-      ['It is not.', 'bad']
-    ]},
-     { mins:5, beats:[
-      ['A first date is clearly happening at the stop.', 'sys'],
-        ['...', 'dim'],
-      ['She has mentioned her ex twice. It is not going well.', 'amber'],
-        ]},
-    { mins:3, complaint:1, beats:[
-      ['A man vapes directly under the NO SMOKING sign.', 'sys'],
-      ['...', 'dim'],
-      ['The cloud smells like blue raspberry.', 'dim']
-    ]},
-  ];
-
-  const DRIVER_BREAK = { mins:12, prog:-30, pat:-6, beats:[
-    ['A tram rolls up and stops short of the platform.', 'dim'],
-    ['Instead of trying again, the driver continues on like the stop was never there.', 'dim'],
-    ['Your wait continues.', 'dim']
-  ]};
-
-  function runSaga(s){
-    s.beats.forEach(b=> log(b[0], b[1]||'dim'));
-    S.wait += (s.mins||3)*60;
-    if(s.prog) S.progress = clamp(S.progress + s.prog, 0, 999);
-    if(typeof s.pat === "number") S.patience = clamp(S.patience + s.pat, 0, 100);
-    if(s.complaint) S.complaints += s.complaint;
+  const MICRO_EVENTS = [ "A car drives past.", "Someone coughs.", "A pedestrian checks their watch.", "A bird lands on the power line.", "The pedestrian signal changes.", "Someone adjusts their backpack.", "A tram bell rings somewhere nearby.", "A bus passes in the distance.", "Someone else checks their phone.", "A cyclist rings their bell.", "The traffic light changes.", "A dog barks somewhere down the street.", "Someone takes a sip of coffee.", "A leaf blows across the pavement.", "A passenger changes seats.", "A car horn sounds in the distance.", "The wind stops.", "The wind starts again.", "A bird flies overhead.", "Someone zips up their jacket.", "The shelter gets slightly quieter.", "The shelter gets slightly louder.", "A passenger checks the time.", "You check the time.", "Only 43 seconds have passed.", "A man walks past carrying an enormous framed photograph of himself.", [ "You hear a tram approaching.", "It is not your tram." ], [ "A tram passes.", "There is nobody inside it." ] ];
+  function microEvent() {
+    const m = bagPick(MICRO_EVENTS.concat(MICRO2));
+    if (typeof m === "function") {
+      m();
+    } else if (Array.isArray(m)) {
+      m.forEach(l => log(l, "dim"));
+    } else {
+      log(m, "dim");
+    }
   }
-
+  const SAGAS = [ ,,e21l{
+    mins: 3,
+    beats: [ [ "Someone asks the group:", "sys" ], [ '"Is this still the free tram zone?"', "amber" ], [ "...", "dim" ], [ "Nobody answers.", "amber" ] ]
+  }, {
+    mins: 2,
+    beats: [ [ "A woman arrives carrying six reusable Woolworths bags.", "amber" ], [ "She puts all six on the bench.", "sys" ], [ "She stands next to them.", "dim" ] ]
+  }, {
+    mins: 5,
+    complaint: 1,
+    pat: -6,
+    beats: [ [ "The electronic board flashes: ROUTE DIVERSION.", "bad" ], [ '"Trams are terminating early due to a derailment in Carlton."', "amber" ], [ "YOur ETA is starting to seem very questionable.", "bad" ] ]
+  }, {
+    mins: 2,
+    pat: -5,
+    beats: [ [ "Authorised Officers appear.", "amber" ], [ "Everyone looks at the ground.", "dim" ] ]
+  }, {
+    mins: 2,
+    beats: [ [ "A tradie drinks an entire dare iced coffee in one go.", "sys" ] ]
+  }, {
+    mins: 2,
+    beats: [ [ "A man wearing sunglasses after sunset gets to the stop, visibly annoyed that all the seats under the shelter are taken.", "sys" ], [ "You assume he has been awake since Friday.", "dim" ] ]
+  }, {
+    mins: 2,
+    complaint: 1,
+    pat: -3,
+    beats: [ [ "A tram approaches.", "sys" ], [ "Everyone gets ready.", "amber" ], [ "It is out of service.", "dim" ], [ "Nobody moves.", "dim" ] ]
+  }, {
+    mins: 2,
+    beats: [ [ "A cyclist rolls up to the tram stop.", "sys" ], [ "...", "dim" ], [ '"Technically I\'m allowed on this tram if I fold my bike up."', "amber" ] ]
+  }, {
+    mins: 3,
+    pat: -2,
+    beats: [ [ "Someone is watching a TikTok without headphones.", "sys" ] ]
+  }, {
+    mins: 3,
+    pat: -3,
+    complaint: 1,
+    beats: [ [ "Two tourists are arguing with each other.", "sys" ], [ '"I am pretty sure this IS the free tram zone Sharon."', "dim" ], [ "It is not.", "bad" ] ]
+  }, {
+    mins: 3,
+    beats: [ [ "Someone asks if this tram goes to Flinders Street.", "sys" ], [ "It does.", "good" ], [ "They look relieved.", "dim" ] ]
+  }, {
+    mins: 3,
+    beats: [ [ "Someone asks if this tram goes to Flinders Street.", "sys" ], [ "It does not.", "bad" ], [ "They board anyway.", "dim" ] ]
+  }, {
+    mins: 4,
+    pat: -3,
+    complaint: 1,
+    beats: [ [ "The 59 tram arrives.", "good" ], [ "The doors open.", "good" ], [ "Nobody gets off.", "dim" ], [ "Nobody gets on.", "dim" ], [ "The doors close.", "bad" ], [ "The tram leaves.", "bad" ] ]
+  }, {
+    mins: 4,
+    beats: [ [ "Someone has brought a camping chair to the tram stop.", "sys" ], [ "They unfold it.", "amber" ], [ "They sit down.", "good" ] ]
+  }, {
+    mins: 4,
+    pat: -2,
+    beats: [ [ "A passenger begins loudly FaceTiming someone.", "sys" ], [ "You now know their entire family situation.", "dim" ] ]
+  }, {
+    mins: 5,
+    pat: -2,
+    beats: [ [ "A man is loudly explaining cryptocurrency to his friend.", "sys" ], [ 'He says "blockchain" six times.', "dim" ], [ "You stop listening.", "dim" ], [ 'He says "blockchain" again.', "bad" ] ]
+  }, {
+    mins: 5,
+    beats: [ [ "A first date is clearly happening at the stop.", "sys" ], [ "...", "dim" ], [ "She has mentioned her ex twice. It is not going well.", "amber" ] ]
+  }, {
+    mins: 3,
+    complaint: 1,
+    beats: [ [ "A man vapes directly under the NO SMOKING sign.", "sys" ], [ "...", "dim" ], [ "The cloud smells like blue raspberry.", "dim" ] ]
+  } ];
+  const DRIVER_BREAK = {
+    mins: 12,
+    prog: -30,
+    pat: -6,
+    beats: [ [ "A tram rolls up and stops short of the platform.", "dim" ], [ "Instead of trying again, the driver continues on like the stop was never there.", "dim" ], [ "Your wait continues.", "dim" ] ]
+  };
+  function runSaga(s) {
+    s.beats.forEach(b => log(b[0], b[1] || "dim"));
+    S.wait += (s.mins || 3) * 60;
+    if (s.prog) {
+      S.progress = clamp(S.progress + s.prog, 0, 999);
+    }
+    if (typeof s.pat === "number") {
+      S.patience = clamp(S.patience + s.pat, 0, 100);
+    }
+    if (s.complaint) {
+      S.complaints += s.complaint;
+    }
+  }
   const CAST = {
-    knitter:{ mins:12, pat:-2,
-      bye:[['The knitting lady packs up all her scarves and boards a number 58 tram.','sys'],['The tram shelter feels a little colder without her.','dim']],
-      line(n){
-        if(n===1) return [['A nice old lady starts knitting.','sys']];
-        if(n===2) return [['The knitting lady has finished her scarf.','dim'],['She casts on another one.','dim']];
-        if(n===3) return [['The knitting lady is on her third scarf.','dim'],['You have produced nothing in the same amount of time.','dim']];
-        return [['The knitting lady is now on scarf number '+n+'.','dim'],['She could clothe the entire tram shelter by now.','dim']];
-      }},
-    tourist:{ mins:2,
-      bye:[['The tourist gets on a tram.','sys'],['You wave goodbye.','dim'],['You are still waiting.','dim']],
-      line(n){
-        if(n===1) return [['A tourist looks delighted.','sys'],['"Is this the famous tram?????"','amber']];
-        if(n===2) return [['The tourist is still here.','sys'],['"...does anyone know when the tram is coming?"','amber']];
-        return [['The tourist has stopped asking questions.','sys'],['They have accepted Melbourne as home now.','dim']];
-      }},
-    dealGuy:{ mins:3, pat:-1,
-      bye:[['The deal guy boards a number 16 tram mid-sentence.','sys'],['"...yeah I\'m getting a wriggle on, might drop out."','amber']],
-      line(n){
-        if(n===1) return [['A man is on speaker phone, loudly closing a deal.','sys'],['"Yeah mate, circle back, touch base, EOD. No worries mate."','amber']];
-        if(n===2) return [['The deal guy has circled back.','sys'],['"Nah totally, let\'s take it offline."','amber']];
-        if(n===3) return [['The deal guy has circled back for the third time.','sys'],['The deal is not closing.','dim']];
-        return [['The deal guy circles back yet again.','dim'],['"Alright mate I\'m catching what you\'re throwing."','amber']];
-      }},
-    oldMan:{ mins:8, pat:-3,
-      bye:[['The elderly man\'s tram arrives.','sys'],['You hope he has a nice day.','dim']],
-      line(n){
-        if(n===1) return [['An elderly man shakes his head.','sys'],['"They\'re never on time."','amber']];
-        if(n===2) return [['The elderly man is now explaining tram privatisation.','amber'],['You have learned three things you did not want to know.','dim']];
-        return [['The elderly man has reached the 1990s in his lecture.','amber'],['There is no sign he intends to stop and there is no sign of the tram.','sys']];
-      }},
-    teen:{ mins:6, pat:-2,
-      bye:[['The teenager leaves, catching the 6 to Melbourne University.','sys'],['You realise you will never know how the situationship ended.','dim']],
-      line(n){
-        if(n===1) return [['A teenager arrives.','sys'],['"I\'m only going two stops."','amber']];
-        if(n===2) return [['The teenager is still here.','sys'],['They are telling you about their situationship now.','dim']];
-        return [['You and the teenager are at this point, friends.','amber'],['You know their star sign and you also know their ex\'s name.','dim']];
-      }}
+    knitter: {
+      mins: 12,
+      pat: -2,
+      bye: [ [ "The knitting lady packs up all her scarves and boards a number 58 tram.", "sys" ], [ "The tram shelter feels a little colder without her.", "dim" ] ],
+      line(n) {
+        if (n === 1) {
+          return [ [ "A nice old lady starts knitting.", "sys" ] ];
+        }
+        if (n === 2) {
+          return [ [ "The knitting lady has finished her scarf.", "dim" ], [ "She casts on another one.", "dim" ] ];
+        }
+        if (n === 3) {
+          return [ [ "The knitting lady is on her third scarf.", "dim" ], [ "You have produced nothing in the same amount of time.", "dim" ] ];
+        }
+        return [ [ "The knitting lady is now on scarf number " + n + ".", "dim" ], [ "She could clothe the entire tram shelter by now.", "dim" ] ];
+      }
+    },
+    tourist: {
+      mins: 2,
+      bye: [ [ "The tourist gets on a tram.", "sys" ], [ "You wave goodbye.", "dim" ], [ "You are still waiting.", "dim" ] ],
+      line(n) {
+        if (n === 1) {
+          return [ [ "A tourist looks delighted.", "sys" ], [ '"Is this the famous tram?????"', "amber" ] ];
+        }
+        if (n === 2) {
+          return [ [ "The tourist is still here.", "sys" ], [ '"...does anyone know when the tram is coming?"', "amber" ] ];
+        }
+        return [ [ "The tourist has stopped asking questions.", "sys" ], [ "They have accepted Melbourne as home now.", "dim" ] ];
+      }
+    },
+    dealGuy: {
+      mins: 3,
+      pat: -1,
+      bye: [ [ "The deal guy boards a number 16 tram mid-sentence.", "sys" ], [ '"...yeah I\'m getting a wriggle on, might drop out."', "amber" ] ],
+      line(n) {
+        if (n === 1) {
+          return [ [ "A man is on speaker phone, loudly closing a deal.", "sys" ], [ '"Yeah mate, circle back, touch base, EOD. No worries mate."', "amber" ] ];
+        }
+        if (n === 2) {
+          return [ [ "The deal guy has circled back.", "sys" ], [ '"Nah totally, let\'s take it offline."', "amber" ] ];
+        }
+        if (n === 3) {
+          return [ [ "The deal guy has circled back for the third time.", "sys" ], [ "The deal is not closing.", "dim" ] ];
+        }
+        return [ [ "The deal guy circles back yet again.", "dim" ], [ "\"Alright mate I'm catching what you're throwing.\"", "amber" ] ];
+      }
+    },
+    oldMan: {
+      mins: 6,
+      pat: -3,
+      bye: [ [ "The elderly man's tram arrives.", "sys" ], [ "You hope he has a nice day.", "dim" ] ],
+      line(n) {
+        if (n === 1) {
+          return [ [ "An elderly man shakes his head.", "sys" ], [ '"They\'re never on time."', "amber" ] ];
+        }
+        if (n === 2) {
+          return [ [ "The elderly man is now explaining tram privatisation.", "amber" ], [ "You have learned three things you did not want to know.", "dim" ] ];
+        }
+        return [ [ "The elderly man has reached the 1990s in his lecture.", "amber" ], [ "There is no sign he intends to stop and there is no sign of the tram.", "sys" ] ];
+      }
+    },
+    teen: {
+      mins: 6,
+      pat: -2,
+      bye: [ [ "The teenager leaves, catching the 6 to Melbourne University.", "sys" ], [ "You realise you will never know how their situationship ended.", "dim" ] ],
+      line(n) {
+        if (n === 1) {
+          return [ [ "A teenager arrives.", "sys" ], [ '"I\'m only going two stops."', "amber" ] ];
+        }
+        if (n === 2) {
+          return [ [ "The teenager is still here.", "sys" ], [ "They are telling you about their situationship now.", "dim" ] ];
+        }
+        return [ [ "You and the teenager are at this point, friends.", "amber" ], [ "You know their star sign and you also know their ex's name.", "dim" ] ];
+      }
+    },
+    boomGuy: {
+      mins: 3,
+      pat: -3,
+      bye: [ [ "The UE Boom guy boards a tram, music still going.", "sys" ], [ "The stop is suddenly, blessedly quiet.", "good" ] ],
+      line(n) {
+        if (n === 1) {
+          return [ [ "A short man in a Nike tech fleece arrives with a UE Boom.", "sys" ], [ "Now playing: Moonbeam Ice Cream by Benson Boone.", "amber" ] ];
+        }
+        if (n === 2) {
+          return [ [ "The UE Boom guy changes the song.", "dim" ], [ "It is somehow louder.", "dim" ] ];
+        }
+        return [ [ "The UE Boom guy is now taking requests.", "amber" ] ];
+      }
+    },
+    reseller: {
+      mins: 3,
+      pat: -1,
+      bye: [ [ "The vintage reseller loads six IKEA bags onto a tram.", "sys" ], [ "He is gone. Fitzroy is quieter.", "dim" ] ],
+      line(n) {
+        if (n === 1) {
+          return [ [ "A man sits beside you with three enormous blue IKEA bags of leather jackets.", "sys" ] ];
+        }
+        if (n === 2) {
+          return [ [ "The vintage reseller has acquired another IKEA bag.", "dim" ], [ 'He calls a single corduroy hat "special".', "amber" ] ];
+        }
+        return [ [ "The vintage reseller offers you a corduroy hat for $45.", "amber" ], [ "You do not particularly want it.", "dim" ] ];
+      }
+    }
   };
-
-  function runCast(id){
+  function runCast(id) {
     const c = CAST[id];
-    S.cast[id] = (S.cast[id]||0) + 1;
-    c.line(S.cast[id]).forEach(b=> log(b[0], b[1]||'dim'));
-    S.wait += (c.mins||3)*60;
-    if(typeof c.pat === "number") S.patience = clamp(S.patience + c.pat, 0, 100);
+    S.cast[id] = (S.cast[id] || 0) + 1;
+    c.line(S.cast[id]).forEach(b => log(b[0], b[1] || "dim"));
+    S.wait += (c.mins || 3) * 60;
+    if (typeof c.pat === "number") {
+      S.patience = clamp(S.patience + c.pat, 0, 100);
+    }
+    maybeRelate(id);
   }
-  function pickCastId(){
-    const ids = Object.keys(CAST).filter(id=>!S.gone[id]);
-    if(!ids.length) return null;
-    const seen = ids.filter(id=>S.cast[id]);
-    if(seen.length && chance(0.6)) return pick(seen);         //
-    const unseen = ids.filter(id=>!S.cast[id]);
-    return pick(unseen.length ? unseen : ids);                // 
+  const RELATIONS = [ {
+    a: "tourist",
+    b: "knitter",
+    lines: [ [ "The tourist asks the knitting lady when the tram is coming.", "sys" ], [ 'She does not look up. "It comes when it comes."', "amber" ] ]
+  }, {
+    a: "teen",
+    b: "tourist",
+    lines: [ [ "The teenager and the tourist realise they know each other.", "sys" ] ]
+  }, {
+    a: "oldMan",
+    b: "dealGuy",
+    lines: [ [ "The old man squints at the deal guy.", "sys" ], [ '"I know your father." The deal guy goes very quiet.', "amber" ] ]
+  }, {
+    a: "reseller",
+    b: "boomGuy",
+    lines: [ [ "The vintage reseller glares at the UE Boom guy.", "sys" ], [ '"Mate. MATE. Turn it down."', "amber" ] ]
+  }, {
+    a: "knitter",
+    b: "oldMan",
+    lines: [ [ "The knitting lady and the old man nod at each other.", "dim" ] ]
+  }, {
+    a: "boomGuy",
+    b: "dealGuy",
+    lines: [ [ "The deal guy raises his voice over the UE Boom.", "dim" ] ]
+  } ];
+  function castPresent(id) {
+    return S.cast[id] && !S.gone[id];
   }
-  // 
-  function maybeDepart(){
+  function maybeRelate(justArrived) {
+    if (!chance(.55)) {
+      return;
+    }
+    for (const rel of RELATIONS) {
+      const other = rel.a === justArrived ? rel.b : rel.b === justArrived ? rel.a : null;
+      if (!other) {
+        continue;
+      }
+      const key = [ rel.a, rel.b ].sort().join("|");
+      if (castPresent(rel.a) && castPresent(rel.b) && !S.relFired[key]) {
+        S.relFired[key] = true;
+        rel.lines.forEach(l => log(l[0], l[1] || "dim"));
+        return;
+      }
+    }
+  }
+  function pickCastId() {
+    const ids = Object.keys(CAST).filter(id => !S.gone[id]);
+    if (!ids.length) {
+      return null;
+    }
+    const seen = ids.filter(id => S.cast[id]);
+    if (seen.length && chance(.6)) {
+      return pick(seen);
+    }
+    const unseen = ids.filter(id => !S.cast[id]);
+    return pick(unseen.length ? unseen : ids);
+  }
+  function maybeDepart() {
     const leavers = Object.keys(CAST).filter(id => S.cast[id] && !S.gone[id] && CAST[id].bye);
-    if(!leavers.length || !chance(0.45)) return;
+    if (!leavers.length || !chance(.45)) {
+      return;
+    }
     const id = pick(leavers);
-    CAST[id].bye.forEach(b=> log(b[0], b[1]||'dim'));
+    CAST[id].bye.forEach(b => log(b[0], b[1] || "dim"));
     S.gone[id] = true;
   }
-
-  /* ---------- random events ---------- */
-  function randomEvent(forced){
+  function randomEvent(forced) {
     const roll = Math.random();
-    if(roll < 0.14){ // tram late
-      S.eta += rnd(1,3);
-      $("boardStrip").textContent = 'Delayed. Please listen for announcements.';
-      log('The board updates. It now says '+S.eta+' min.', 'amber');
-      if(mood()!=='mid') log(moodLine(LATE), 'dim');
-      S.patience = clamp(S.patience-4,0,100);
-    } else if(roll < 0.24){ // a tram passes, not yours
+    if (roll < .14) {
+      S.eta += rnd(1, 3);
+      $("boardStrip").textContent = "Delayed. Please listen for announcements.";
+      log("The board updates. It now says " + S.eta + " min.", "amber");
+      if (mood() !== "mid") {
+        log(moodLine(LATE), "dim");
+      }
+      S.patience = clamp(S.patience - 4, 0, 100);
+    } else if (roll < .24) {
       passingTram();
-      log('A tram passes.', 'sys');
-      log('You think it could be yours.', 'dim');
-      log('...', 'dim');
-      log(moodLine(PASS), 'bad');
-      S.patience = clamp(S.patience-5,0,100); S.complaints++;
-      maybeDepart(); //
-    } else if(roll < 0.50){ // someone shows up
-      if(chance(0.80)){ const id = pickCastId(); if(id) runCast(id); else runSaga(bagPick(SAGAS)); }
-      else runSaga(bagPick(SAGAS));
-    } else if(roll < 0.57){ // timetable starer
-      const m = rnd(4,9);
-      log('A passenger studies the timetable.', 'sys');
-      log('They have been looking at it for '+m+' minutes.', 'dim');
-      log('Nothing happens.', 'dim');
-    } else if(roll < 0.63){ // info button
-      log('Someone presses the information button.', 'sys');
-      log('"For more information, visit ptv-dot-vic-dot-gov-dot-au."', 'sys');
-      log('They press it again.', 'dim');
-      log('"For more information, visit ptv-dot-vic-dot-gov-dot-au."', 'amber');
-      S.patience = clamp(S.patience-3,0,100); S.complaints++;
-    } else if(roll < 0.69){ // it's not working
-      log('Someone presses something.', 'sys');
-      log('"It\'s not working," they announce, to no one.', 'amber');
-    } else if(roll < 0.75){ // weather shift
+      log("A tram passes.", "sys");
+      log("You think it could be yours.", "dim");
+      log("...", "dim");
+      log(moodLine(PASS), "bad");
+      S.patience = clamp(S.patience - 5, 0, 100);
+      S.complaints++;
+      maybeDepart();
+    } else if (roll < .5) {
+      if (chance(.8)) {
+        const id = pickCastId();
+        if (id) {
+          runCast(id);
+        } else {
+          runSaga(bagPick(SAGAS));
+        }
+      } else {
+        runSaga(bagPick(SAGAS));
+      }
+    } else if (roll < .57) {
+      const m = rnd(4, 9);
+      log("A passenger studies the timetable.", "sys");
+      log("They have been looking at it for " + m + " minutes.", "dim");
+      log("Nothing happens.", "dim");
+    } else if (roll < .67) {
+      const m = rnd(4, 9);
+      log("A tram passes in the opposite direction.", "sys");
+      log("It is extremely loud!!!", "amber");
+    } else if (roll < .63) {
+      log("Someone presses the information button.", "sys");
+      log('"For more information, visit ptv-dot-vic-dot-gov-dot-au."', "sys");
+      log("They press it again.", "dim");
+      log('"For more information, visit ptv-dot-vic-dot-gov-dot-au."', "amber");
+      S.patience = clamp(S.patience - 3, 0, 100);
+      S.complaints++;
+    } else if (roll < .69) {
+      log("Someone presses something.", "sys");
+      log('"It\'s not working," they announce, to no one.', "amber");
+    } else if (roll < .75) {
       changeWeather(true);
-    } else if(roll < 0.81){ // progress reducer
-      S.progress = clamp(S.progress-6,0,999);
-      log('The board flashes: DRIVER CHANGE.', 'amber');
-    } else if(roll < 0.86){ // progress reducer
-      S.progress = clamp(S.progress-6,0,999);
-      log('The board flashes: OPERATIONAL REQUIREMENTS.', 'amber');
-      log('Whatever that means ???', 'dim');
-    } else if(roll < 0.90){ // driver break 
+    } else if (roll < .81) {
+      S.progress = clamp(S.progress - 6, 0, 999);
+      log("The board flashes: " + bagPick(OPERATIONAL) + ".", "amber");
+    } else if (roll < .86) {
+      S.progress = clamp(S.progress - 6, 0, 999);
+      log("The board flashes: " + bagPick(OPERATIONAL) + ".", "amber");
+      log("Whatever that means ???", "dim");
+    } else if (roll < .9) {
       runSaga(DRIVER_BREAK);
-    } else if(roll < 0.94){ // driver waves 
-      S.progress += rnd(6,12); S.patience = clamp(S.patience+6,0,100);
-      log('A tram driver passing through the opposite route waves and dings the bell.', 'good');
-      log('You feel better.', 'dim');
-    } else if(roll < 0.965){ // replacement bus
+    } else if (roll < .94) {
+      S.progress += rnd(6, 12);
+      S.patience = clamp(S.patience + 6, 0, 100);
+      log("A tram driver passing through the opposite route waves and dings the bell.", "good");
+      log("You feel better.", "dim");
+    } else if (roll < .965) {
       replacementBus();
       return;
-    } else { // rare: tram arrives immediately
+    } else {
       S.progress = 100;
-      log('Is that ... my tram ???', 'good');
-      log('It is a tram and it is YOUR tram.', 'good');
+      log("Is that ... my tram ???", "good");
+      log("It is a tram and it is YOUR tram.", "good");
     }
-    // fake-out headlights
-    if(forced && chance(0.4) && S.phase==="wait"){
-      log('You see headlights.', 'sys');
-      log('Is it a tram?', 'dim');
-      log('...', 'dim');
-      log(chance(0.85) ? 'No. It was a car.' : 'Yes. But it is an out-of-service tram.', 'bad');
+    if (forced && chance(.4) && S.phase === "wait") {
+      log("You see headlights.", "sys");
+      log("Is it a tram?", "dim");
+      log("...", "dim");
+      log(chance(.85) ? "No. It was a car." : "Yes. But it is an out-of-service tram.", "bad");
     }
   }
-
-  /* ---------- replacement bus decision ---------- */
-  function replacementBus(){
-    S.phase="over"; paint();
-    $("boardStrip").textContent = 'SERVICE ALTERATION';
-    log('The display flashes.', 'sys');
-    log('SERVICE ALTERATION', 'big amber');
-    log('...', 'dim');
-    log('...', 'dim');
-    log('Replacement buses.', 'bad');
-    log('Oh no !!!', 'dim');
-    $("stage").innerHTML = `
-      <div class="card">
-        <h2>Would you like to continue?</h2>
-        <div class="opts">
-          <div class="opt" id="busYes"><span class="box">▸</span>Yes, fine, whatever</div>
-          <div class="opt" id="busNo"><span class="box">▸</span>No, I have standards !!!</div>
-        </div>
-      </div>`;
-    $("busYes").onclick = ()=>{ S.boardedBus=true; endBus(); };
-    $("busNo").onclick  = endStandards;
+  function replacementBus() {
+    S.phase = "over";
+    paint();
+    $("boardStrip").textContent = "SERVICE ALTERATION";
+    log("The display flashes.", "sys");
+    log("SERVICE ALTERATION", "big amber");
+    log("...", "dim");
+    log("...", "dim");
+    log("Replacement buses.", "bad");
+    log("Oh no !!!", "dim");
+    $("stage").innerHTML = `\n      <div class="card">\n        <h2>Would you like to continue?</h2>\n        <div class="opts">\n          <div class="opt" id="busYes"><span class="box">▸</span>Yes, fine, whatever</div>\n          <div class="opt" id="busNo"><span class="box">▸</span>No, I have standards !!!</div>\n        </div>\n      </div>`;
+    $("busYes").onclick = () => {
+      S.boardedBus = true;
+      endBus();
+    };
+    $("busNo").onclick = endStandards;
   }
-
-  /* -------------------- */
-  function arrivalOrMiss(){
-    const missChance = clamp((100 - S.awareness)/200, 0, 0.55);
-    if(chance(missChance)){
-      log(bagPick(MISS_LINES), 'bad');
-      S.progress = rnd(45,70);
-      S.patience = clamp(S.patience-10,0,100);
+  function arrivalOrMiss() {
+    const missChance = clamp((100 - S.awareness) / 200, 0, .55);
+    if (chance(missChance)) {
+      log(bagPick(MISS_LINES), "bad");
+      S.progress = rnd(45, 70);
+      S.patience = clamp(S.patience - 10, 0, 100);
       S.complaints++;
       paint();
     } else {
-      approach();
+      if (chance(.3)) {
+        crowdedApproach();
+      } else {
+        approach();
+      }
     }
   }
-
-  function approach(){
-    S.phase="approach"; paint();
-    $("boardStrip").textContent = 'ARRIVING NOW — board at the door';
-    log('━━━━━━━━━━━━━━', 'dim');
-    log('TRAM APPROACHING', 'big good');
-    log('Doors: <b>OPEN</b>', 'good');
-    $("stage").innerHTML = `
-      <div class="actions">
-        <button class="wide go" id="tapOn">▶ TAP ON &amp; BOARD</button>
-        <button class="wide" id="waitBoard">Hesitate</button>
-      </div>`;
+  function crowdedApproach() {
+    S.phase = "approach";
+    paint();
+    $("boardStrip").textContent = "ARRIVING NOW — but it is PACKED";
+    log("━━━━━━━━━━━━━━", "dim");
+    log("TRAM APPROACHING", "big good");
+    log("It is absolutely packed.", "amber");
+    log("Faces are pressed against the glass.", "dim");
+    $("stage").innerHTML = `\n      <div class="card">\n        <h2>the ${S.route.n} is packed</h2>\n        <div class="opts">\n          <div class="opt" id="cramOn"><span class="box">▸</span>cram on anyway</div>\n          <div class="opt" id="letGo"><span class="box">▸</span>let it go (wait for a less crowded one)</div>\n        </div>\n      </div>`;
+    $("cramOn").onclick = boardCrowded;
+    $("letGo").onclick = letItGo;
+  }
+  function letItGo() {
+    S.phase = "wait";
+    S.progress = 20;
+    S.eta = isTramNight() ? rnd(10, 18) : rnd(5, 10);
+    S.patience = clamp(S.patience - 10, 0, 100);
+    log("You decide not to board. The tram departs without you in it.", "dim");
+    log("You watch it leave. The board resets to " + S.eta + " minutes.", "amber");
+    paint();
+    renderActions();
+  }
+  function boardCrowded() {
+    log("You wedge yourself into the crush.", "sys");
+    log("...", "dim");
+    if (chance(.5)) {
+      log("You cannot reach the Myki reader through the crowd.", "amber");
+      log("You ride without tapping on.", "dim");
+      if (chance(.45)) {
+        return endInspector();
+      }
+      log("No inspectors today. You got away with it.", "good");
+      return endPeakHour();
+    }
+    let decline = .14 + (S.mykiBroken ? .22 : 0) + (100 - S.patience) / 320;
+    if (chance(decline)) {
+      log("Card declined — and you are pinned in place.", "bad");
+      log("You spot Authorised Officers boarding at the rear.", "bad");
+      return endInspector();
+    }
+    log("Beep beep! You are good bro.", "good");
+    endPeakHour();
+  }
+  function approach() {
+    S.phase = "approach";
+    paint();
+    $("boardStrip").textContent = "ARRIVING NOW — board at the door";
+    log("━━━━━━━━━━━━━━", "dim");
+    log("TRAM APPROACHING", "big good");
+    log("Doors: <b>OPEN</b>", "good");
+    $("stage").innerHTML = `\n      <div class="actions">\n        <button class="wide go" id="tapOn">▶ TAP ON &amp; BOARD</button>\n        <button class="wide" id="waitBoard">Hesitate</button>\n      </div>`;
     $("tapOn").onclick = tapOn;
-    $("waitBoard").onclick = ()=>{
-      log('You take one last hit of your vape before getting on.', 'dim');
-      if(chance(0.5)){ log('The doors close. The tram leaves without you.', 'bad'); S.progress=rnd(55,75); S.phase="wait"; S.complaints++; S.patience=clamp(S.patience-8,0,100); paint(); renderActions(); }
-      else { log('The tram waits. Board now.', 'amber'); }
+    $("waitBoard").onclick = () => {
+      log("You take one last hit of your vape before getting on.", "dim");
+      if (chance(.5)) {
+        log("The doors close. The tram leaves without you.", "bad");
+        S.progress = rnd(55, 75);
+        S.phase = "wait";
+        S.complaints++;
+        S.patience = clamp(S.patience - 8, 0, 100);
+        paint();
+        renderActions();
+      } else {
+        log("The tram waits. Board now.", "amber");
+      }
     };
   }
-
-  function tapOn(){
-    log('You tap on.', 'sys');
-    log('...', 'dim');
-    log('PLEASE WAIT', 'amber');
-    log('...', 'dim');
-    let decline = 0.14 + (S.mykiBroken?0.22:0) + (100-S.patience)/320;
-    if(chance(decline)){
-      S.patience = clamp(S.patience-18,0,100); paint();
-      log('Card declined. You spot Authorised Officers in the rear of the tram and they spot you.', 'bad');
-      log('Your patience has decreased.', 'dim');
-      if(chance(0.55)){
-        log('You step off. The doors close. It leaves. You watch it go.', 'bad');
-        S.progress = rnd(50,72); S.phase="wait"; S.complaints++; paint(); renderActions();
+  function tapOn() {
+    log("You tap on.", "sys");
+    log("...", "dim");
+    log("PLEASE WAIT", "amber");
+    log("...", "dim");
+    let decline = .14 + (S.mykiBroken ? .22 : 0) + (100 - S.patience) / 320;
+    if (chance(decline)) {
+      S.patience = clamp(S.patience - 18, 0, 100);
+      paint();
+      log("Card declined. You spot Authorised Officers in the rear of the tram and they spot you.", "bad");
+      if (chance(.55)) {
+        log("You step off. The doors close. It leaves. You watch it go.", "bad");
+        S.progress = rnd(50, 72);
+        S.phase = "wait";
+        S.complaints++;
+        paint();
+        renderActions();
       } else {
-        log('The driver waits. Try again.', 'amber');
+        log("The driver waits. Try again.", "amber");
       }
     } else {
-      log('Beep beep! You are good bro.', 'good');
+      log("Beep beep! You are good bro.", "good");
       boardOutcome();
     }
   }
-
-  // which "you made it" do you actually get?
-  function boardOutcome(){
-    const wrongChance = 0.07 + (100-S.awareness)/500; // head down -> wrong tram
-    if(chance(wrongChance)) return endWrongTram();
-    if(chance(0.30)) return endPeakHour();
+  function setMoney(v) {
+    S.money = Math.max(0, Math.round(v * 100) / 100);
+    const el = $("stCash");
+    if (el) {
+      el.textContent = "$" + S.money.toFixed(2);
+    }
+  }
+  function spend(n) {
+    setMoney((S.money || 0) - n);
+  }
+  function earn(n) {
+    setMoney((S.money || 0) + n);
+  }
+  function canAfford(n) {
+    return (S.money || 0) >= n;
+  }
+  const POCKET_BASE = [ "Myki", "iPhone", "keys", "wallet", "lip balm", "one receipt", "half a mint", "your airpods" ];
+  const POCKET_FINDS = [ "a button", "a hair tie", "an old receipt", "a bottle cap", "a JetStar boarding pass from 2019", "a mystery key", "old gum", "a ticket stub", "a receipt from a shop you have never visited", "a key that opens nothing", "a photo of a dog you do not recognise", "a business card for a business that does not exist", "a single earring, not yours" ];
+  const POCKET_LOSABLE = [ "lip balm", "one receipt", "half a mint", "a button", "a hair tie", "an old receipt", "a wrapped mint", "a bottle cap", "a ticket stub", "old gum", "a receipt from a shop you have never visited", "a key that opens nothing", "a photo of a dog you do not recognise", "a business card for a business that does not exist", "a single earring, not yours" ];
+  function ensurePockets() {
+    if (!S.pockets) {
+      S.pockets = POCKET_BASE.slice();
+    }
+  }
+  function pocketEvent() {
+    ensurePockets();
+    const roll = Math.random();
+    if (roll < .28) {
+      const it = pick([ "keys", "phone", "Myki", "wallet" ]);
+      const plural = it === "keys";
+      log("You reach into your pocket for your " + it + ".", "dim");
+      log(plural ? "They are not there." : "It is not there.", "bad");
+      log("You begin to panic.", "bad");
+      log("...", "dim");
+      log(plural ? "You find them in your other pocket." : "You find it in your other pocket.", "good");
+      S.patience = clamp(S.patience - 1, 0, 100);
+      return;
+    }
+    if (roll < .44) {
+      const coins = pick([ .05, .1, .5, 1, 2 ]);
+      log("You find a coin in your pocket!!!", "dim");
+      log("$" + coins.toFixed(2) + ". You have no idea when you put it there.", "good");
+      earn(coins);
+      return;
+    }
+    if (roll < .62) {
+      const it = bagPick(POCKET_FINDS);
+      if (S.pockets.indexOf(it) === -1) {
+        S.pockets.push(it);
+        log(bagPick([ "There is " + it + " in your pocket.", "You have " + it + ".", "Your pocket now contains " + it + "." ]), "amber");
+        log(bagPick([ "You do not remember picking it up.", "You have never seen it before.", "It was not there a moment ago.", "You choose not to think about it." ]), "dim");
+      }
+      return;
+    }
+    if (roll < .78) {
+      const present = S.pockets.filter(x => POCKET_LOSABLE.indexOf(x) > -1);
+      if (present.length) {
+        const it = pick(present);
+        S.pockets = S.pockets.filter(x => x !== it);
+        log("Your " + it + " is gone.", "dim");
+        log("You have no idea when you lost it :(", "dim");
+      }
+      return;
+    }
+    if (roll < .86 && (S.money || 0) >= .5) {
+      log("A coin slips out of your pocket and rolls onto the tracks.", "dim");
+      log("You watch it go.", "dim");
+      spend(.5);
+      return;
+    }
+    log("Everything is where it should be.", "dim");
+  }
+  const EAVESDROP_LINES = [ 'Two people next to you are intensely debating whether Thornbury is officially "the new Northcote".', 'Someone whispers on speakerphone: "No, but like, he is cute when he has the hat on I swear!!"', 'A couple is arguing about whether a 20-minute walk to Lygon Street counts as "basically Carlton".', 'You overhear someone say: "I told my landlord that legally they can not ask me if I have a cat."' ];
+  function actEavesdrop() {
+    log("You subtly tilt your head to listen to the people near you...", "dim");
+    log('"' + bagPick(EAVESDROP_LINES) + '"', "amber");
+    S.awareness = clamp(S.awareness + rnd(4, 10), 0, 100);
+    tick(rnd(60, 120));
+  }
+  function actPockets() {
+    ensurePockets();
+    log("You go through your pockets.", "dim");
+    S.wait += rnd(20, 45);
+    if (chance(.55)) {
+      pocketEvent();
+    }
+    renderPockets();
+  }
+  const THIRST_LINES = [ "You are feeling tired. A coffee would fix this.", "There is a cafe on the corner. You think about getting a coffee.", "You think about a coffee." ];
+  const HUNGER_LINES = [ "You are very hungry.", "Your stomach growls really loudly and everyone turns to look at you.", "You could get something to eat while you wait. The cafe is right there.", "You are really hungry." ];
+  function needs(sec) {
+    const m = sec / 60;
+    S.thirst = clamp((S.thirst || 0) + m * rnd(2, 4), 0, 100);
+    S.hunger = clamp((S.hunger || 0) + m * rnd(1, 3), 0, 100);
+    if (S.thirst >= 60 && chance(.25)) {
+      log(bagPick(THIRST_LINES), "dim");
+    }
+    if (S.hunger >= 60 && chance(.22)) {
+      log(bagPick(HUNGER_LINES), "dim");
+    }
+    if (S.thirst >= 80 || S.hunger >= 80) {
+      S.patience = clamp(S.patience - 1, 0, 100);
+    }
+  }
+  function needsTick(sec) {
+    if (S.phase !== "wait") {
+      return;
+    }
+    needs(sec);
+    maybePayday();
+    const has = !!$("aUber");
+    const want = S.patience <= 25;
+    if (has !== want && document.querySelector(".tram-game .actions")) {
+      renderActions();
+    }
+  }
+  function actShop() {
+    let opts = SHOP_ITEMS.map((it, i) => '<div class="opt" data-shop="' + i + '"><span class="box">▸</span>' + it.name + "&nbsp;&nbsp;$" + it.price.toFixed(2) + "</div>").join("");
+    opts += '<div class="opt" id="shopNone"><span class="box">▸</span>never mind. stay put.</div>';
+    $("stage").innerHTML = '<div class="card"><h2>the shop on the corner</h2>' + '<p style="font-size:12px;opacity:.75;margin:0 0 8px">you have to leave the stop. the tram does not wait for you.</p>' + '<div class="opts">' + opts + "</div></div>";
+    [ ...document.querySelectorAll("[data-shop]") ].forEach(el => {
+      el.onclick = () => buyShopItem(SHOP_ITEMS[+el.getAttribute("data-shop")]);
+    });
+    $("shopNone").onclick = () => {
+      log("You decide against it.", "dim");
+      renderActions();
+    };
+  }
+  const PAYDAY_SINKS = [ "Your rent money just came out.", "Afterpay lets you know it has taken its cut.", "Also every subscription you have renews at once.", "You owe your housemate for the internet.", "A direct debit you completely forgot about." ];
+  function actHustle() {
+    ensurePockets();
+    const NOT_SELLABLE = [ "Myki", "iPhone", "keys", "wallet" ];
+    const junk = S.pockets.filter(x => NOT_SELLABLE.indexOf(x) === -1);
+    if (!junk.length) {
+      log("You go through your pockets for something to sell.", "dim");
+      log("There is nothing here anyone would want xx", "dim");
+      renderActions();
+      return;
+    }
+    sellMenu(junk);
+  }
+  function sellMenu(junk) {
+    let opts = junk.map((it, i) => '<div class="opt" data-sell="' + i + '"><span class="box">▸</span>' + it + "</div>").join("");
+    opts += `<div class="opt" id="sNone"><span class="box">▸</span>keep everything.</div>`;
+    $("stage").innerHTML = `<div class="card"><h2>sell what ?</h2><div class="opts">${opts}</div></div>`;
+    [ ...document.querySelectorAll("[data-sell]") ].forEach(el => {
+      el.onclick = () => sellJunk(junk[+el.getAttribute("data-sell")]);
+    });
+    $("sNone").onclick = () => {
+      log("You keep your stuff.", "dim");
+      renderActions();
+    };
+  }
+  function sellJunk(item) {
+    if (S.pockets.indexOf(item) === -1) {
+      renderActions();
+      return;
+    }
+    const price = rnd(1, 5);
+    S.pockets.splice(S.pockets.indexOf(item), 1);
+    earn(price);
+    log("A stranger gives you $" + price + ".00 for " + item + ".", "good");
+    log(bagPick([ "You do not ask why they want it.", "They seem pleased.", "Probably a fair price.", "Neither of you speaks of it again." ]), "dim");
+    const NOT_SELLABLE = [ "Myki", "iPhone", "keys", "wallet" ];
+    const left = S.pockets.filter(x => NOT_SELLABLE.indexOf(x) === -1);
+    if (left.length) {
+      sellMenu(left);
+    } else {
+      renderActions();
+    }
+  }
+  function maybePayday() {
+    if (S.paydayDone || !chance(.02)) {
+      return;
+    }
+    S.paydayDone = true;
+    const pay = rnd(9e3, 16e3) / 100;
+    log("Your phone buzzes.", "sys");
+    log("PAYDAY — your pay has cleared. +$" + pay.toFixed(2) + ".", "good");
+    earn(pay);
+    log("...", "dim");
+    const keep = rnd(2, 9);
+    log(bagPick(PAYDAY_SINKS), "bad");
+    spend(pay - keep);
+    log("$" + (S.money || 0).toFixed(2) + " left. That was fast.", "dim");
+  }
+  function tryUber() {
+    const fare = rnd(28, 55);
+    $("stage").innerHTML = `\n      <div class="card">\n        <h2>call an uber?</h2>\n        <div class="opts">\n          <div class="opt" id="uYes"><span class="box">▸</span>surge price $${fare}</div>\n          <div class="opt" id="uNo"><span class="box">▸</span>no. keep waiting.</div>\n        </div>\n      </div>`;
+    $("uYes").onclick = () => {
+      if (!canAfford(fare)) {
+        log("You open the app. Your card declines.", "bad");
+        log("You are not getting an uber anywhere.", "dim");
+        renderActions();
+        return;
+      }
+      spend(fare);
+      S.uberFare = fare;
+      S.mode = "uber";
+      endUber();
+    };
+    $("uNo").onclick = () => {
+      log("You put your phone away.", "dim");
+      log("You are still at the stop.", "dim");
+      renderActions();
+    };
+  }
+  function endUber() {
+    log("━━━━━━━━━━━━━━", "dim");
+    log("YOU CALLED AN UBER", "big bad");
+    log("The tram is now 2 minutes away.", "dim");
+    endScreen('<h2 style="color:var(--maroon)">You Ubered</h2>', [ [ "waited", fmt(S.wait) ], [ "then gave up", "yes" ], [ "uber fare", "$" + (S.uberFare || 0) ], [ "destination", S.dest ], [ "the tram", "arrived the moment you left" ], [ "Melbourne rating", '<span class="stars">' + stars(1) + "</span>" ] ]);
+  }
+  function boardOutcome() {
+    const wrongChance = .07 + (100 - S.awareness) / 500;
+    if (chance(wrongChance)) {
+      return endWrongTram();
+    }
+    if (chance(.3)) {
+      return endPeakHour();
+    }
     return endMadeIt();
   }
-
-  /* ---------- endings ---------- */
-  function stars(n){ return '★★★★★☆☆☆☆☆'.slice(5-n,10-n); }
-
-  function receipt(rows){
-    return '<div class="receipt">'+rows.map(r=>
-      '<div class="line"><span class="k">'+r[0]+'</span><span class="v">'+r[1]+'</span></div>'
-    ).join('')+'</div>';
+  function stars(n) {
+    return "★★★★★☆☆☆☆☆".slice(5 - n, 10 - n);
   }
-
-  function endScreen(titleHTML, rows, note){
-    S.phase="over"; paint();
-    let html = '<div class="card">'+titleHTML+receipt(rows);
-    if(note) html += '<p style="font-size:12px;opacity:.75;margin-top:8px">'+note+'</p>';
+  function receipt(rows) {
+    return '<div class="receipt">' + rows.map(r => '<div class="line"><span class="k">' + r[0] + '</span><span class="v">' + r[1] + "</span></div>").join("") + "</div>";
+  }
+  function endScreen(titleHTML, rows, note) {
+    rows = rows.concat([ [ "money left", "$" + (S.money || 0).toFixed(2) ] ]);
+    S.phase = "over";
+    paint();
+    let html = '<div class="card">' + titleHTML + receipt(rows);
+    if (note) {
+      html += '<p style="font-size:12px;opacity:.75;margin-top:8px">' + note + "</p>";
+    }
     html += '</div><div id="lbArea"></div>';
     html += '<button class="wide go" id="again" style="margin-top:12px">wait again ... ?</button>';
     $("stage").innerHTML = html;
     $("again").onclick = renderSetup;
     renderLeaderboard();
   }
-
-  function endMadeIt(){
-    const km = (rnd(21,58)/10).toFixed(1);
-    const seat = chance(0.35);
-    log('━━━━━━━━━━━━━━', 'dim');
-    log('YOU MADE IT', 'big good');
-    endScreen(
-      '<h2 style="color:var(--tram-green-dk)">You made it</h2>',
-      [
-        ['tram route', S.route.n],
-        ['minutes waited', fmt(S.wait)],
-        ['seat available?', seat?'yes (!)':'no :('],
-        ['have to stand', seat?'no':'yes !!!'],
-        ['windows', pick(['dirty','filthy','foggy'])],
-        ['distance', km+' km'],
-        ['study productivity', String(S.productivity)],
-        ['internal complaints', String(S.complaints)],
-        ['Melbourne rating', '<span class="stars">'+stars(seat?5:4)+'</span>']
-      ]
-    );
+  function endMadeIt() {
+    const km = (rnd(21, 58) / 10).toFixed(1);
+    const seat = chance(.35);
+    log("━━━━━━━━━━━━━━", "dim");
+    log("YOU MADE IT", "big good");
+    endScreen('<h2 style="color:var(--tram-green-dk)">You made it</h2>', [ [ "tram route", S.route.n ], [ "minutes waited", fmt(S.wait) ], [ "seat available?", seat ? "yes (!)" : "no :(" ], [ "have to stand", seat ? "no" : "yes !!!" ], [ "windows", pick([ "dirty", "filthy", "foggy" ]) ], [ "distance", km + " km" ], [ "study productivity", String(S.productivity) ], [ "internal complaints", String(S.complaints) ], [ "Melbourne rating", '<span class="stars">' + stars(seat ? 5 : 4) + "</span>" ] ]);
   }
-
-  function endPeakHour(){
-    log('━━━━━━━━━━━━━━', 'dim');
-    log('YOU MADE IT (technically)', 'big good');
-    endScreen(
-      '<h2 style="color:var(--tram-green-dk)">Peak Hour</h2>',
-      [
-        ['route', S.route.n],
-        ['waited', fmt(S.wait)],
-        ['passengers already aboard', '196'],
-        ['your feet', 'never touch the floor'],
-        ['personal space', '0 cm'],
-        ['Melbourne rating', '<span class="stars">'+stars(3)+'</span>']
-      ],
-      'Nice and warm and sweaty !!! Have funnnnnnn.'
-    );
+  function endPeakHour() {
+    log("━━━━━━━━━━━━━━", "dim");
+    log("YOU MADE IT (technically)", "big good");
+    endScreen('<h2 style="color:var(--tram-green-dk)">Peak Hour</h2>', [ [ "route", S.route.n ], [ "waited", fmt(S.wait) ], [ "passengers already aboard", "196" ], [ "your feet", "never touch the floor" ], [ "personal space", "0 cm" ], [ "Melbourne rating", '<span class="stars">' + stars(3) + "</span>" ] ], "Nice and warm and sweaty !!! Have funnnnnnn.");
   }
-
-  function endWrongTram(){
-    const wrong = pick(ROUTES.filter(r=>r.n!==S.route.n));
-    log('You board. You sit down.', 'sys');
-    log('Three stops later...', 'dim');
-    log('This is Route '+wrong.n+'.', 'bad');
-    log('You needed Route '+S.route.n+'.', 'bad');
-    endScreen(
-      '<h2 style="color:var(--maroon)">Wrong Tram</h2>',
-      [
-        ['you boarded', wrong.n+'  '+wrong.d],
-        ['you needed', S.route.n],
-        ['minutes waited', fmt(S.wait)],
-        ['stops until you noticed', '3'],
-        ['Melbourne rating', '<span class="stars">'+stars(2)+'</span>']
-      ],
-      'Get off at the next stop. begin again.'
-    );
+  function endWrongTram() {
+    const wrong = pick(ROUTES.filter(r => r.n !== S.route.n));
+    log("You board. You sit down.", "sys");
+    log("Three stops later...", "dim");
+    log("This is Route " + wrong.n + ".", "bad");
+    log("You needed Route " + S.route.n + ".", "bad");
+    endScreen('<h2 style="color:var(--maroon)">Wrong Tram :(</h2>', [ [ "you boarded", wrong.n + "  " + wrong.d ], [ "you needed", S.route.n ], [ "minutes waited", fmt(S.wait) ], [ "stops until you noticed", "3" ], [ "Melbourne rating", '<span class="stars">' + stars(2) + "</span>" ] ], "Get off at the next stop. begin again.");
   }
-
-  function endInspector(){
-    log('━━━━━━━━━━━━━━', 'dim');
-    log('You realise you never tapped on.', 'sys');
-    log('The inspectors arrive.', 'bad');
-    log('You sprint.', 'dim');
-    log('They catch you anyway.', 'dim');
-    endScreen(
-      '<h2 style="color:var(--maroon)">Fare Evasion</h2>',
-      [
-        ['tram route', S.route.n],
-        ['waited', fmt(S.wait)],
-        ['tapped on ??', 'No'],
-        ['infringement', '$356' + (rnd(9,20)*10)],
-        ['Melbourne rating', '<span class="stars">'+stars(1)+'</span>']
-      ],
-      'You receive your fine in the mail.'
-    );
+  function endInspector() {
+    log("━━━━━━━━━━━━━━", "dim");
+    log("You realise you never tapped on.", "sys");
+    log("The inspectors arrive.", "bad");
+    log("You sprint.", "dim");
+    log("They catch you anyway.", "dim");
+    endScreen('<h2 style="color:var(--maroon)">Fare Evasion</h2>', [ [ "tram route", S.route.n ], [ "waited", fmt(S.wait) ], [ "tapped on ??", "No" ], [ "infringement", "$356" + rnd(9, 20) * 10 ], [ "Melbourne rating", '<span class="stars">' + stars(1) + "</span>" ] ], "You receive your fine in the mail.");
   }
-
-  function endBus(){
-    log('You board the bus.', 'bad');
-    endScreen(
-      '<h2>You boarded the bus</h2>',
-      [
-        ['tram route', S.route.n+' (bus replacement)'],
-        ['waited', fmt(S.wait)],
-        ['dignity', 'none'],
-        ['seat', 'yes, but at what cost'],
-        ['Melbourne rating', '<span class="stars">'+stars(2)+'</span>']
-      ],
-      'Ew.'
-    );
+  function endBus() {
+    S.mode = "bus";
+    log("You board the bus.", "bad");
+    endScreen("<h2>You boarded the bus</h2>", [ [ "tram route", S.route.n + " (bus replacement)" ], [ "waited", fmt(S.wait) ], [ "dignity", "none" ], [ "seat", "yes, but at what cost" ], [ "Melbourne rating", '<span class="stars">' + stars(2) + "</span>" ] ], "Ew.");
   }
-
-  function endStandards(){
-    log('You do not board the bus.', 'sys');
-    log('You have standards.', 'good');
-    endScreen(
-      '<h2 style="color:var(--maroon)">The Stand</h2>',
-      [
-        ['tram route', 'None'],
-        ['minutes waited', fmt(S.wait)],
-        ['buses boarded', '0'],
-        ['standards', 'intact'],
-        ['Melbourne rating', '<span class="stars">'+stars(3)+'</span>']
-      ],
-      'You are still at the stop. And the tram may never come.'
-    );
+  function endStandards() {
+    log("You do not board the bus.", "sys");
+    log("You have standards.", "good");
+    endScreen('<h2 style="color:var(--maroon)">fuck the bus</h2>', [ [ "tram route", "None" ], [ "minutes waited", fmt(S.wait) ], [ "buses boarded", "0" ], [ "standards", "intact" ], [ "Melbourne rating", '<span class="stars">' + stars(3) + "</span>" ] ], "You are still at the stop. And the tram may never come.");
   }
-
-  function endGiveUp(){
-    S.phase="over";
-    log('You decide to walk.', 'sys');
-    log('It is '+WX[S.wxIdx].toLowerCase()+'.', 'dim');
-    const km=(rnd(18,44)/10).toFixed(1);
-    endScreen(
-      '<h2 style="color:var(--maroon)">You walked instead !!!</h2>',
-      [
-        ['destination', S.dest],
-        ['waited first', fmt(S.wait)],
-        ['then walked', km+' km'],
-        ['regret', chance(0.5)?'immediate':'delayed'],
-        ['the tram', 'arrived 90 seconds after you left'],
-        ['Melbourne rating', '<span class="stars">'+stars(3)+'</span>']
-      ],
-      'It always arrives 90 seconds after you leave. Try again next time :('
-    );
+  function endGiveUp() {
+    S.phase = "over";
+    log("You decide to walk.", "sys");
+    log("It is " + WX[S.wxIdx].toLowerCase() + ".", "dim");
+    const km = (rnd(18, 44) / 10).toFixed(1);
+    endScreen('<h2 style="color:var(--maroon)">You walked instead !!!</h2>', [ [ "destination", S.dest ], [ "waited first", fmt(S.wait) ], [ "then walked", km + " km" ], [ "regret", chance(.5) ? "immediate" : "delayed" ], [ "the tram", "arrived 90 seconds after you left" ], [ "Melbourne rating", '<span class="stars">' + stars(3) + "</span>" ] ], "It always arrives 90 seconds after you leave. Try again next time :(");
   }
-
-  /* ---------- leaderboard render + submit ---------- */
-  function currentTop(){
-    if(FS.ready) return FS.top.slice();
-    return loadLocal().slice().sort((a,b)=>b.s-a.s).slice(0,5);
+  function currentTop() {
+    if (FS.ready) {
+      return FS.top.slice();
+    }
+    return loadLocal().slice().sort((a, b) => b.s - a.s).slice(0, 5);
   }
-  function qualifies(sec, list){ return list.length<5 || sec > list[list.length-1].s; }
-  function isYou(e){
-    return (FS.ready && FS.myId && e.id===FS.myId) ||
-           (!FS.ready && localMyKey && (e.name+"|"+e.s)===localMyKey);
+  function qualifies(sec, list) {
+    return list.length < 5 || sec > list[list.length - 1].s;
   }
-
-  function renderLeaderboard(){
-    const area = $("lbArea"); if(!area) return;
+  function isYou(e) {
+    return FS.ready && FS.myId && e.id === FS.myId || !FS.ready && localMyKey && e.name + "|" + e.s === localMyKey;
+  }
+  function renderLeaderboard() {
+    const area = $("lbArea");
+    if (!area) {
+      return;
+    }
     const list = currentTop();
-    const canSubmit = (S.wait>0) && !S.lbSubmitted && qualifies(S.wait,list);
-    const draft = (document.getElementById("lbName")||{}).value || "";
-    const live = FS.ready ? ' · live' : '';
-
-    let html = '<div class="lb"><h3>Longest Tram Wait'+live+'</h3><ol>';
-    if(list.length===0){
+    const canSubmit = S.wait > 0 && !S.lbSubmitted && qualifies(S.wait, list);
+    const draft = (document.getElementById("lbName") || {}).value || "";
+    const live = FS.ready ? " · live" : "";
+    let html = '<div class="lb"><h3>Longest Tram Wait' + live + "</h3><ol>";
+    if (list.length === 0) {
       html += '<li style="opacity:.6"><span class="nm">No one has waited yet ...</span></li>';
     }
-    list.forEach(e=>{
-      const sub = e.route ? '<span class="sub">'+esc(e.route)+(e.dest?' · '+esc(e.dest):'')+'</span>' : '';
-      html += '<li'+(isYou(e)?' class="you"':'')+'>'
-            + '<span class="nm">'+esc(e.name)+sub+'</span>'
-            + '<span class="tm">'+fmt(e.s)+'</span></li>';
+    list.forEach(e => {
+      const sub = e.route ? '<span class="sub">' + esc(e.route) + (e.dest ? " · " + esc(e.dest) : "") + "</span>" : "";
+      html += "<li" + (isYou(e) ? ' class="you"' : "") + ">" + '<span class="nm">' + esc(e.name) + sub + "</span>" + '<span class="tm">' + fmt(e.s) + "</span></li>";
     });
-    html += '</ol>';
-
-    if(canSubmit){
-      html += '<p style="font-size:12px;opacity:.8;margin:6px 0 0">You waited '+fmt(S.wait)+' for the '+esc(S.route.n)+' to '+esc(S.dest)+':</p>'+
-              '<div class="nameform"><input id="lbName" maxlength="16" placeholder="your name ??? " value="'+esc(draft)+'"><button id="lbSave">SAVE</button></div>';
-    } else if(S.lbSubmitted && FS.ready && !FS.myId){
+    html += "</ol>";
+    if (canSubmit) {
+      html += '<p style="font-size:12px;opacity:.8;margin:6px 0 0">You waited ' + fmt(S.wait) + " for the " + esc(S.route.n) + " to " + esc(S.dest) + ":</p>" + '<div class="nameform"><input id="lbName" maxlength="16" placeholder="your name ??? " value="' + esc(draft) + '"><button id="lbSave">SAVE</button></div>';
+    } else if (S.lbSubmitted && FS.ready && !FS.myId) {
       html += '<p style="font-size:12px;opacity:.7;margin:6px 0 0">Saving…</p>';
     }
-    html += '</div>';
+    html += "</div>";
     area.innerHTML = html;
-
-    if(canSubmit){
-      $("lbSave").onclick = ()=>{
-        const nm = ($("lbName").value.trim() || "Anonymous Loser").slice(0,16);
+    if (canSubmit) {
+      $("lbSave").onclick = () => {
+        const nm = ($("lbName").value.trim() || "Anonymous Loser").slice(0, 16);
         S.lbSubmitted = true;
         submitScore(nm);
         renderLeaderboard();
       };
     }
   }
-
-  function submitScore(name){
-    const entry = {name:name, s:S.wait, route:S.route.n, dest:S.dest};
-    if(FS.ready){
+  function submitScore(name) {
+    const rt = S.mode || S.route.n;
+    const entry = {
+      name: name,
+      s: S.wait,
+      route: rt,
+      dest: S.dest
+    };
+    if (FS.ready) {
       FS.db.collection(COLL).add({
-        name: name, s: S.wait, route: S.route.n, dest: S.dest,
+        name: name,
+        s: S.wait,
+        route: rt,
+        dest: S.dest,
         ts: firebase.firestore.FieldValue.serverTimestamp()
-      }).then(ref=>{ FS.myId = ref.id; if($("lbArea")) renderLeaderboard(); })
-        .catch(e=>{ saveLocalEntry(entry); if($("lbArea")) renderLeaderboard(); });
+      }).then(ref => {
+        FS.myId = ref.id;
+        if ($("lbArea")) {
+          renderLeaderboard();
+        }
+      }).catch(e => {
+        saveLocalEntry(entry);
+        if ($("lbArea")) {
+          renderLeaderboard();
+        }
+      });
     } else {
       saveLocalEntry(entry);
     }
   }
-
-  function esc(s){ return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
-
-  /* ---------- boot ---------- */
+  function esc(s) {
+    return String(s).replace(/[&<>"]/g, c => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;"
+    }[c]));
+  }
   initFirebase();
   subscribeLB();
   renderSetup();
