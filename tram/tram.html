@@ -1891,7 +1891,7 @@
   }
   function endPeakHour() {
     log("━━━━━━━━━━━━━━", "dim");
-    log("YOU MADE IT (technically)", "big good");
+    log("YOU MADE IT ", "big good");
     endScreen('<h2 style="color:var(--tram-green-dk)">Peak Hour</h2>', [ [ "route", S.route.n ], [ "waited", fmt(S.wait) ], [ "passengers already aboard", "196" ], [ "your feet", "never touch the floor" ], [ "personal space", "0 cm" ], [ "Melbourne rating", '<span class="stars">' + stars(3) + "</span>" ] ], "Nice and warm and sweaty !!! Have funnnnnnn.");
   }
   function endWrongTram() {
@@ -1947,7 +1947,7 @@
     const list = currentTop();
     const canSubmit = S.wait > 0 && !S.lbSubmitted && qualifies(S.wait, list);
     const draft = (document.getElementById("lbName") || {}).value || "";
-    const live = FS.ready ? " · live" : "";
+    const live = FS.ready ? " ·" : "";
     let html = '<div class="lb"><h3>Longest Tram Wait' + live + "</h3><ol>";
     if (list.length === 0) {
       html += '<li style="opacity:.6"><span class="nm">No one has waited yet ...</span></li>';
@@ -2019,6 +2019,6 @@
 <script src="../js/nav.js"></script>
 <script src="../js/effects.js"></script>
 <script src="../js/daynight.js"></script>
-<script src="js/vibeclock.js"></script>
+<script src="../js/vibeclock.js"></script>
 </body>
 </html>
