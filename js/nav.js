@@ -24,10 +24,17 @@ const NAV_TREE = [
 
         ]
       },
+             {
+        label: "other  ",
+        children: [
+          
       { label: "orb", href: "/orb/orb.html"},
       { label: "tram simulator", href: "/tram/tram.html"},
       { label: "the wall", href: "/wall.html" },
-      { label: "wheel of indecision", href: "/wheel.html" },
+      { label: "the wheel", href: "/wheel.html" },
+
+        ]
+      },
     ]
   },
     { 
