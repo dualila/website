@@ -25,7 +25,7 @@ const NAV_TREE = [
         ]
       },
              {
-        label: "other  ",
+        label: "more stuff  ",
         children: [
           
       { label: "the orb", href: "/orb/orb.html"},
