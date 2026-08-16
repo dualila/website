@@ -88,28 +88,26 @@ async function showDay(ds){
 
     <div class="day-facts">
       <div>
-        <span>sunrise</span>
+        <span>sunrise:</span>
         <strong id="sunrise">loading...</strong>
       </div>
 
       <div>
-        <span>sunset</span>
+        <span>sunset:</span>
         <strong id="sunset">loading...</strong>
       </div>
 
       <div>
-        <span>moon</span>
+        <span>moon:</span>
         <strong id="moon">loading...</strong>
       </div>
     </div>
 
-    <div class="history-section">
-      <h3>on this day</h3>
-      <div id="history">loading...</div>
+    <div> <br>
     </div>
 
     <div class="calendar-events">
-      <h3>what's happening</h3>
+      <h2>what's happening ??? </h2>
       <div id="events"></div>
     </div>
 
