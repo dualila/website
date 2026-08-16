@@ -13,6 +13,7 @@ const NAV_TREE = [
       { label: "cool links", href: "/coollinks.html" },
       { label: "radio", href: "/radio.html" },
       { label: "calendar", href: "/whatdayisit.html" },
+      { label: "nothing", href: "/nothing.html"},
             {
         label: "now  ",
         href: "/now/now.html", // new
