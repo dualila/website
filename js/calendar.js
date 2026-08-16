@@ -70,20 +70,269 @@ function render(){
   }
 }
 
-function showDay(ds){
+async function showDay(ds){
   if(!dayPanel) return;
-  const list = byDate[ds] || [];
+
   dayPanel.hidden = false;
+
   const n = new Date(ds + 'T00:00:00');
-  let html = `<h2>${DOW[(n.getDay()+6)%7]} ${n.getDate()} ${MONTHS[n.getMonth()]}</h2>`;
+  const day = n.getDate();
+  const month = n.getMonth();
+  const year = n.getFullYear();
+
+  const dateTitle =
+    `${DOW[(n.getDay()+6)%7]} ${day} ${MONTHS[month]} ${year}`;
+
+  dayPanel.innerHTML = `
+    <h2>${dateTitle}</h2>
+
+    <div class="day-facts">
+      <div>
+        <span>sunrise</span>
+        <strong id="sunrise">loading...</strong>
+      </div>
+
+      <div>
+        <span>sunset</span>
+        <strong id="sunset">loading...</strong>
+      </div>
+
+      <div>
+        <span>moon</span>
+        <strong id="moon">loading...</strong>
+      </div>
+    </div>
+
+    <div class="history-section">
+      <h3>on this day</h3>
+      <div id="history">loading...</div>
+    </div>
+
+    <div class="calendar-events">
+      <h3>what's happening</h3>
+      <div id="events"></div>
+    </div>
+
+    <div class="day-nav">
+      <button id="prev-day">◄ ${previousDateLabel(ds)}</button>
+      <button id="next-day">${nextDateLabel(ds)} ►</button>
+    </div>
+  `;
+
+  // Your submitted calendar events
+  const list = byDate[ds] || [];
+  const eventsEl = $('events');
+
   if(!list.length){
-    html += `<p style="color:var(--cal-dim)">nothing on this day (yet !!!)</p>`;
+    eventsEl.innerHTML =
+      `<p style="color:var(--cal-dim)">nothing on this day (yet !!!)</p>`;
   } else {
-    html += list.map(e => `<div class="ev"><strong>${esc(e.title)}</strong>${e.time?` · ${esc(e.time)}`:''}` +
-      `${e.desc?`<div class="ev-desc">${esc(e.desc)}</div>`:''}` +
-      `${e.submittedBy?`<div class="ev-by">— ${esc(e.submittedBy)}</div>`:''}</div>`).join('');
+    eventsEl.innerHTML = list.map(e =>
+      `<div class="ev">
+        <strong>${esc(e.title)}</strong>
+        ${e.time ? ` · ${esc(e.time)}` : ''}
+        ${e.desc ? `<div class="ev-desc">${esc(e.desc)}</div>` : ''}
+        ${e.submittedBy ? `<div class="ev-by">— ${esc(e.submittedBy)}</div>` : ''}
+      </div>`
+    ).join('');
   }
-  dayPanel.innerHTML = html;
+
+  // Astronomy
+  loadSunTimes(ds);
+  showMoonPhase(ds);
+
+  // Historical information
+  loadHistory(month + 1, day);
+
+  // Previous / next day
+  $('prev-day').onclick = () => {
+    const d = new Date(ds + 'T00:00:00');
+    d.setDate(d.getDate() - 1);
+
+    const newDate = fmt(
+      d.getFullYear(),
+      d.getMonth(),
+      d.getDate()
+    );
+
+    selected = newDate;
+
+    // Change month automatically when crossing month boundaries
+    view = new Date(d.getFullYear(), d.getMonth(), 1);
+
+    render();
+    showDay(newDate);
+  };
+
+  $('next-day').onclick = () => {
+    const d = new Date(ds + 'T00:00:00');
+    d.setDate(d.getDate() + 1);
+
+    const newDate = fmt(
+      d.getFullYear(),
+      d.getMonth(),
+      d.getDate()
+    );
+
+    selected = newDate;
+    view = new Date(d.getFullYear(), d.getMonth(), 1);
+
+    render();
+    showDay(newDate);
+  };
+}
+function previousDateLabel(ds){
+  const d = new Date(ds + 'T00:00:00');
+  d.setDate(d.getDate() - 1);
+
+  return `${d.getDate()} ${MONTHS[d.getMonth()]}`;
+}
+
+function nextDateLabel(ds){
+  const d = new Date(ds + 'T00:00:00');
+  d.setDate(d.getDate() + 1);
+
+  return `${d.getDate()} ${MONTHS[d.getMonth()]}`;
+}
+
+// sunrise / sunset
+
+const MELBOURNE_LAT = -37.8136;
+const MELBOURNE_LON = 144.9631;
+async function loadSunTimes(ds){
+  const sunriseEl = $('sunrise');
+  const sunsetEl = $('sunset');
+
+  try {
+    const url =
+      `https://api.sunrise-sunset.org/json` +
+      `?lat=${MELBOURNE_LAT}` +
+      `&lng=${MELBOURNE_LON}` +
+      `&date=${ds}` +
+      `&formatted=0`;
+
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if(data.status !== 'OK') throw new Error('sun API failed');
+
+    const sunrise = new Date(data.results.sunrise);
+    const sunset = new Date(data.results.sunset);
+
+    sunriseEl.textContent = sunrise.toLocaleTimeString('en-AU', {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+      timeZone: 'Australia/Melbourne'
+    });
+
+    sunsetEl.textContent = sunset.toLocaleTimeString('en-AU', {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+      timeZone: 'Australia/Melbourne'
+    });
+
+  } catch(err) {
+    console.error(err);
+    sunriseEl.textContent = 'unavailable';
+    sunsetEl.textContent = 'unavailable';
+  }
+}
+// moon phase
+function showMoonPhase(ds){
+  const el = $('moon');
+  if(!el) return;
+
+  const date = new Date(ds + 'T00:00:00');
+
+  // Known new moon: 2000-01-06
+  const knownNewMoon = new Date('2000-01-06T18:14:00Z');
+
+  const days =
+    (date.getTime() - knownNewMoon.getTime()) /
+    (1000 * 60 * 60 * 24);
+
+  const cycle = 29.53058867;
+  const age = ((days % cycle) + cycle) % cycle;
+
+  let phase;
+
+  if(age < 1.85){
+    phase = 'new moon';
+  } else if(age < 7.38){
+    phase = 'waxing crescent';
+  } else if(age < 9.23){
+    phase = 'first quarter';
+  } else if(age < 14.77){
+    phase = 'waxing gibbous';
+  } else if(age < 16.61){
+    phase = 'full moon';
+  } else if(age < 22.15){
+    phase = 'waning gibbous';
+  } else if(age < 23.99){
+    phase = 'last quarter';
+  } else {
+    phase = 'waning crescent';
+  }
+
+  el.textContent = phase;
+}
+//wikipedia
+async function loadHistory(month, day){
+  const historyEl = $('history');
+
+  if(!historyEl) return;
+
+  historyEl.innerHTML = 'loading history...';
+
+  const mm = pad(month);
+  const dd = pad(day);
+
+  try {
+    const url =
+      `https://api.wikimedia.org/feed/v1/wikipedia/en/onthisday/all/${mm}/${dd}.json`;
+
+    const response = await fetch(url);
+
+    if(!response.ok){
+      throw new Error(`Wikipedia request failed: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    const events = data.events || [];
+
+    if(!events.length){
+      historyEl.innerHTML =
+        `<p style="color:var(--cal-dim)">nothing particularly happened. apparently.</p>`;
+      return;
+    }
+
+    // Pick a manageable number rather than dumping 100 events
+    const interesting = events
+      .filter(e => e.text)
+      .slice(0, 8);
+
+    historyEl.innerHTML = interesting.map(e => {
+      const year = e.year || '';
+
+      return `
+        <div class="history-event">
+          <span class="history-year">${esc(String(year))}</span>
+          <span class="history-text">${esc(e.text)}</span>
+        </div>
+      `;
+    }).join('');
+
+  } catch(err) {
+    console.error(err);
+
+    historyEl.innerHTML =
+      `<p style="color:var(--cal-dim)">
+        couldn't retrieve the history right now !!!
+      </p>`;
+  }
 }
 
 // live  events
@@ -97,6 +346,23 @@ onSnapshot(query(eventsCol, where('status','==','approved')), snap => {
 
 if($('prev')) $('prev').onclick = () => { view.setMonth(view.getMonth()-1); render(); };
 if($('next')) $('next').onclick = () => { view.setMonth(view.getMonth()+1); render(); };
+
+if($('today')) {
+  $('today').onclick = () => {
+    const now = new Date();
+
+    view = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      1
+    );
+
+    selected = todayStr();
+
+    render();
+    showDay(selected);
+  };
+}
 
 // ── suggest form ────────────────────────────────────────────
 if($('s-send')){

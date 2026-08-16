@@ -783,7 +783,7 @@
   }
   function renderActions() {
     const uber = S.patience <= 25 ? '<button class="wide danger" id="aUber">call an uber ???</button>' : "";
-    $("stage").innerHTML = `\n      <div class="actions">\n        <button class="wide primary" id="aWait">just wait</button>\n        <button id="aPhone">check phone</button>\n        <button id="aAround">look around <span class="arrow">▸</span></button>\n        <button id="aStudy">study</button>\n        <button id="aLeave">leave the stop <span class="arrow">▸</span></button>\n        ${uber}\n        <button class="wide danger" id="aGiveUp">give up &amp; walk</button>\n      </div>`;
+    $("stage").innerHTML = `\n      <div class="actions">\n        <button id="aWait">just wait</button>\n        <button id="aPhone">check phone</button>\n        <button id="aAround">look around <span class="arrow">▸</span></button>\n        <button id="aStudy">study</button>\n        <button id="aLeave">leave the stop <span class="arrow">▸</span></button>\n        ${uber}\n        <button id="aGiveUp">give up &amp; walk</button>\n      </div>`;
     $("aWait").onclick = actWait;
     $("aPhone").onclick = actPhone;
     $("aStudy").onclick = actStudy;
