@@ -85,16 +85,16 @@ async function fetchWeather() {
     const code  = c.weather_code;
 
     // look up the exact description + icon
-    let [icon, condition] = WMO[code] || ["✨", "vibing"];
+    let [icon, condition] = WMO[code] || ["✨", "✨✨"];
 
-    // after dark, a clear sky isn't "clear" — it's just dark, obviously
+    // after dark, a clear sky isn't "clear" — it's just dark, 
     const hr = new Date().getHours();
     const isNight = (window.TIME_OF_DAY &&
         (window.TIME_OF_DAY.period === "night" || window.TIME_OF_DAY.period === "latenight"))
       || (c.is_day === 0)
       || hr >= 21 || hr < 5;
     if (isNight) {
-      if (code === 0) { icon = "🌙"; condition = "dark. obviously"; }
+      if (code === 0) { icon = "🌙"; condition = "dark. "; }
       else if ([1, 2].includes(code)) { icon = "🌙"; condition = "dark, mostly clear"; }
       else if (code === 3) { icon = "🌙"; condition = "dark & overcast"; }
       else if ([45, 48].includes(code)) { icon = "🌫️"; condition = "dark & foggy"; }
