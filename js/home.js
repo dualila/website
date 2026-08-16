@@ -94,7 +94,7 @@ async function fetchWeather() {
       || (c.is_day === 0)
       || hr >= 21 || hr < 5;
     if (isNight) {
-      if (code === 0) { icon = "🌙"; condition = "dark. "; }
+      if (code === 0) { icon = "🌙"; condition = "dark "; }
       else if ([1, 2].includes(code)) { icon = "🌙"; condition = "dark, mostly clear"; }
       else if (code === 3) { icon = "🌙"; condition = "dark & overcast"; }
       else if ([45, 48].includes(code)) { icon = "🌫️"; condition = "dark & foggy"; }
