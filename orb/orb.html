@@ -404,11 +404,15 @@
 
         <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
 
-        <div class="log-title">who's been touching the orb ???</div>
-        
+        <div class="log-title">who's been touching the orb ???</div>        
         <div class="log-box" id="logBox">
           <div class="log-empty">loading !!!.</div>
         </div>
+        <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
+        <div class="log-title">✧ people who love the orb the most ✧</div>
+<ol class="orb-leaderboard" id="leaderboardBox">
+  <li class="lb-empty">counting...</li>
+</ol>
   </div>
 
       <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
@@ -430,7 +434,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import {
   getFirestore, doc, getDoc, setDoc, updateDoc,
   collection, addDoc, query, orderBy, limit, onSnapshot,
-  serverTimestamp, Timestamp
+  serverTimestamp, Timestamp, increment
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -449,12 +453,14 @@ const PET_DOC = "pets/theblob";
 const LOG_COLLECTION = "petLog";
 const STARTING_STAT = 80;
 const DECAY_PER_HOUR = 8;
-const FEED_BOOST = { hunger: 30, happiness: 5, pets: 0 };
-const PLAY_BOOST = { hunger: -4, happiness: 28, pets: 0 };
-const COMFORT_BOOST = { hunger: 0, happiness: 10, pets: 25 };
+const FEED_BOOST = { hunger: 50, happiness: 15, pets: 0 };
+const PLAY_BOOST = { hunger: -20, happiness: 20, pets: 0 };
+const COMFORT_BOOST = { hunger: -5, happiness: 10, pets: 35 };
 const ACTION_COOLDOWN_MS = 3 * 60 * 1000;
-const DEATH_GRACE_MS = 8 * 60 * 60 * 1000;
+const DEATH_GRACE_MS = 10 * 60 * 60 * 1000;
 const LOG_LIMIT = 3000;
+const SCORES_COLLECTION = "petScores";
+const LEADERBOARD_LIMIT = 10;
 
 let myName = localStorage.getItem("orbVisitorName") || "";
 
@@ -554,6 +560,19 @@ async function logEvent(type, text) {
     text,
     createdAt: serverTimestamp()
   });
+}
+// 
+function scoreKey(name) {
+  return (name || "").trim().toLowerCase().replace(/\//g, "_").slice(0, 60) || "anon";
+}
+
+async function bumpScore() {
+  const ref = doc(db, SCORES_COLLECTION, scoreKey(myName));
+  await setDoc(ref, {
+    name: myName,
+    count: increment(1),
+    lastAction: serverTimestamp()
+  }, { merge: true });
 }
 
 function getCooldownRemaining() {
@@ -755,6 +774,7 @@ async function performAction(boost, verb) {
 
   await updateDoc(ref, updated);
   await logEvent("care", `${myName} ${verb} the orb`);
+  await bumpScore();  
 }
 
 feedBtn.addEventListener("click", () => performAction(FEED_BOOST, "fed"));
@@ -779,6 +799,7 @@ hatchBtn.addEventListener("click", async () => {
   });
 
   await logEvent("birth", `${myName} hatched generation ${newGen}`);
+  await bumpScore(); 
 });
 
 function renderLog(entries) {
@@ -793,7 +814,25 @@ function renderLog(entries) {
     return `<div class="log-entry ${cls}">${escapeHtml(e.text)} · ${when}</div>`;
   }).join("");
 }
-
+function renderLeaderboard(rows) {
+  const box = document.getElementById("leaderboardBox");
+  if (!rows.length) {
+    box.innerHTML = `<li class="lb-empty">nobody's touched the orb yet ???</li>`;
+    return;
+  }
+  const myKey = scoreKey(myName);
+  box.innerHTML = rows.map((r, i) => {
+    const medal = i === 0 ? "👑" : i === 1 ? "🩷" : i === 2 ? "😊" : `${i + 1}.`;
+    const mine = scoreKey(r.name) === myKey ? " lb-me" : "";
+    const n = r.count || 0;
+    const times = n === 1 ? "1 time" : `${n} times`;
+    return `<li class="lb-row${mine}">
+      <span class="lb-rank">${medal}</span>
+      <span class="lb-name">${escapeHtml(r.name || "anon")}</span>
+      <span class="lb-count">${times}</span>
+    </li>`;
+  }).join("");
+}
 function timeAgo(date) {
   const secs = Math.floor((Date.now() - date.getTime()) / 1000);
   if (secs < 60) return "just now";
@@ -832,6 +871,14 @@ async function init() {
     renderLog(entries);
   });
 }
+  const lbQuery = query(
+    collection(db, SCORES_COLLECTION),
+    orderBy("count", "desc"),
+    limit(LEADERBOARD_LIMIT)
+  );
+  onSnapshot(lbQuery, (snap) => {
+    renderLeaderboard(snap.docs.map(d => d.data()));
+  });
 
 init().catch(err => {
   console.error("orb init failed:", err);
@@ -845,6 +892,7 @@ setInterval(() => {
 <script src="../js/nav.js"></script>
 <script src="../js/effects.js"></script>
 <script src="../js/daynight.js"></script>
+<script src="../js/settings.js"></script>
 <script src="../js/vibeclock.js"></script>
 
 </body>
