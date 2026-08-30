@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>orb l</title>
+<style>
+
+</style>
+</head>
+<body>
+  <button id="runBtn">run backfill</button>
+  <div id="out">waiting…</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getFirestore, collection, query, orderBy, getDocs,
+  doc, setDoc, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+// same
+const firebaseConfig = {
+  apiKey: "AIzaSyA25PaWUE39RuX-huMHoziQVUPy_pNFXUE",
+  authDomain: "dot-com-44502.firebaseapp.com",
+  projectId: "dot-com-44502",
+  storageBucket: "dot-com-44502.firebasestorage.app",
+  messagingSenderId: "124684406308",
+  appId: "1:124684406308:web:146706a03bb4bd451552b1",
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const LOG_COLLECTION = "petLog";
+const SCORES_COLLECTION = "petScores";
+
+// 
+const CARE_SUFFIXES = [
+  " fed the orb",
+  " played with the orb",
+  " gave a pat to the orb",
+  " petted the orb"   
+];
+
+// identical 
+function scoreKey(name) {
+  return (name || "").trim().toLowerCase().replace(/\//g, "_").slice(0, 60) || "anon";
+}
+
+function nameFromCareText(text) {
+  for (const suffix of CARE_SUFFIXES) {
+    if (text.endsWith(suffix)) return text.slice(0, -suffix.length).trim();
+  }
+  return null; // not a care interaction
+}
+
+function nameFromHatchText(text) {
+  const m = text.match(/^(.*) hatched generation \d+$/);
+  return m ? m[1].trim() : null;
+}
+
+const out = document.getElementById("out");
+const runBtn = document.getElementById("runBtn");
+function log(line) { out.textContent += "\n" + line; }
+
+async function backfill() {
+  out.textContent = "reading log…";
+
+  // order by time so the most recent casing of a name wins as the display name
+  const snap = await getDocs(
+    query(collection(db, LOG_COLLECTION), orderBy("createdAt", "asc"))
+  );
+  log(`read ${snap.size} log entries`);
+
+  const tally = new Map(); // key -> { name, count }
+  let matched = 0, skipped = 0;
+
+  snap.forEach(d => {
+    const data = d.data();
+    const text = data.text || "";
+
+    let name = null;
+    if (!data.type || data.type === "care") name = nameFromCareText(text);
+    else if (data.type === "birth") name = nameFromHatchText(text);
+
+    if (!name) { skipped++; return; }
+
+    const key = scoreKey(name);
+    const row = tally.get(key) || { name, count: 0 };
+    row.count += 1;
+    row.name = name; // 
+    tally.set(key, row);
+    matched++;
+  });
+
+  log(`matched ${matched} interactions across ${tally.size} people (skipped ${skipped})`);
+  log("writing scores…");
+
+  // sort
+  const rows = [...tally.entries()].sort((a, b) => b[1].count - a[1].count);
+  for (const [key, { name, count }] of rows) {
+    await setDoc(doc(db, SCORES_COLLECTION, key), {
+      name,
+      count,
+      lastAction: serverTimestamp()
+    }, { merge: true });
+    log(`  ${name}: ${count}`);
+  }
+
+  log("\n✧ backfill complete — reload ");
+}
+
+runBtn.addEventListener("click", async () => {
+  runBtn.disabled = true;
+  try {
+    await backfill();
+  } catch (err) {
+    log("\n✗ backfill failed: " + (err?.message || err));
+    console.error(err);
+    runBtn.disabled = false;
+  }
+});
+</script>
+</body>
+</html>
