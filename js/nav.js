@@ -5,48 +5,36 @@
 const NAV_TREE = [
   { label: "home", href: "/index.html" },
   { label: "chatroom", href: "/chatroom.html" },
-  {
-    label: "stuff",
+  { label: "nothing", href: "/nothing.html"},
+  {    label: "stuff",
     children: [
       { label: "about", href: "/about.html" },
+      { label: "now  ", href: "/now/now.html",
+        children: [
+          { label: "now  ", href: "/now/now.html" },
+          { label: "then  ", href: "/now/then.html"},
+        ]
+      },
       { label: "downloads", href: "/downloads.html" },
       { label: "cool links", href: "/coollinks.html" },
       { label: "radio", href: "/radio.html" },
       { label: "calendar", href: "/whatdayisit.html" },
       { label: "directory", href: "/photo%20directory/directory.html" },
-      { label: "nothing", href: "/nothing.html"},
-            {
-        label: "now  ",
-        href: "/now/now.html", // new
-        children: [
-          { label: "now  ", href: "/now/now.html" },
-          {
-            label: "then  ",
-            href: "/now/then.html", // old
-          },
-
-        ]
-      },
-             {
-        label: "more stuff  ",
-        children: [
-          
-      { label: "the orb", href: "/orb/orb.html"},
-      { label: "tram simulator", href: "/tram/tram.html"},
-      { label: "the wall", href: "/wall.html" },
-      { label: "the wheel", href: "/wheel.html" },
-
-        ]
-      },
     ]
   },
-    { 
-    label: "coming soon ", 
-    children: [
-      { label: "coming soon", href: "/comingsoon.html" },
-      { label: "working title", href: "/movie.html" },
-    ]
-  },
+       { label: "more stuff  ",
+               children: [
+               { label: "the orb", href: "/orb/orb.html"},
+               { label: "tram simulator  ", href: "/tram/tram.html",
+                  children: [
+                    { label: "simulator  ", href: "/tram/tram.html" },
+                    { label: "leaderboard  ", href: "/tram/tramhighscores.html",},
+                    ]
+                    },
+                { label: "the wall", href: "/wall.html" },
+                { label: "the wheel", href: "/wheel.html" },
+        ]
+      },
 ];
 
 function currentPath() {
