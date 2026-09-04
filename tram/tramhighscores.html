@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+  <link rel="stylesheet" href="../css/site.css">
+  <title>tram hall of fame</title>
+  <meta property="og:title" content="tram hall of fame">
+  <meta property="og:description" content="all-time tram stop rankings">
+  <meta property="og:type" content="website">
+<style>
+  :root{
+    --tram-green-dk:#00ff88;
+    --maroon:#5c77ff;
+    --tg-cyan:#00ffff;
+    --tg-gold:#ffd700;
+    --cal-magenta:#ff3df0;
+    --shame-red:#ff5c8a;
+    --blessed-gold:#ffd700;
+  }
+
+  .halls{ max-width:640px; margin:0 auto; font-family:"Courier New",monospace; color:#c8ffd8; }
+  .halls *{ box-sizing:border-box; }
+
+  @keyframes hofRainbow{ to{ background-position:200% center; } }
+
+  .halls .status-line{
+    display:flex; justify-content:space-between; align-items:center;
+    font-size:11px; letter-spacing:1px; color:#7fb8c9; margin:0 2px 4px;
+    text-transform:uppercase;
+  }
+  .halls .status-line .pill{
+    border:1px solid rgba(0,255,255,.45); padding:2px 8px; color:#0f0;
+    text-shadow:0 0 5px #0f0; background:rgba(0,0,0,.5);
+  }
+  .halls .status-line .pill.cached{ color:#e69f00; text-shadow:none; border-color:#5c3f00; }
+
+  .halls .hall{ margin:20px 0; }
+  .halls .hall > h2{
+    background:linear-gradient(90deg,#ff0000,#ff9900,#ffee00,#33ff00,#00ffee,#3300ff,#ff00ee);
+    background-size:200% auto;
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    filter:drop-shadow(0 0 5px rgba(255,255,255,.35));
+    animation:hofRainbow 6s linear infinite;
+    font-family:"Courier New","Arial Black",sans-serif;
+    font-size:18px; letter-spacing:1px; text-transform:uppercase; margin:0 0 4px;
+  }
+  .halls .hall > .blurb{ font-size:12px; color:#8a93c4; margin:0 2px 12px; }
+
+  .halls .hsboard{ margin:14px 0; }
+  .halls .hsboard h3{
+    font-family:"Courier New","Arial Black",sans-serif; font-size:13px;
+    letter-spacing:1px; text-transform:uppercase; margin:0 0 8px; color:var(--tg-cyan);
+    text-shadow:0 0 6px rgba(0,255,255,.4);
+  }
+  .halls .shame .hsboard h3{ color:var(--shame-red); text-shadow:0 0 6px rgba(255,92,138,.4); }
+  .halls .blessed .hsboard h3{ color:var(--blessed-gold); text-shadow:0 0 6px rgba(255,215,0,.4); }
+
+  .halls ol{ margin:0; padding:0; list-style:none; counter-reset:r; }
+  .halls li{
+    counter-increment:r; display:flex; justify-content:space-between; align-items:center;
+    background:#000; border:2px solid var(--tg-cyan); box-shadow:0 0 6px var(--tg-cyan) inset;
+    padding:6px 10px; margin-bottom:5px; font-size:13px; color:#c8ffd8;
+  }
+  .halls li::before{ content:counter(r) "."; font-weight:bold; margin-right:8px; color:var(--tg-gold); }
+  .halls li .nm{ flex:1; display:flex; flex-direction:column; gap:1px; min-width:0; }
+  .halls li .nm > span:first-child{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .halls li .sub{ opacity:.7; font-size:11px; font-weight:normal; color:#9fb0d8; }
+  .halls li .tm{ font-weight:bold; color:#0f0; text-shadow:0 0 4px #0f0; white-space:nowrap; padding-left:8px; }
+
+  .halls .shame li{ border-color:var(--shame-red); box-shadow:0 0 6px rgba(255,92,138,.35) inset; }
+  .halls .shame li::before{ color:var(--shame-red); }
+  .halls .shame li .tm{ color:var(--shame-red); text-shadow:0 0 4px rgba(255,92,138,.6); }
+
+  .halls .blessed li{ border-color:var(--blessed-gold); box-shadow:0 0 6px rgba(255,215,0,.3) inset; }
+  .halls .blessed li::before{ color:var(--blessed-gold); }
+  .halls .blessed li .tm{ color:var(--blessed-gold); text-shadow:0 0 5px rgba(255,215,0,.5); }
+  .halls .empty{
+    border:2px dashed #2a3450; padding:12px; font-size:12px; color:#8a93c4;
+    background:rgba(0,0,0,.35);
+  }
+  .halls .league{ width:100%; border-collapse:collapse; font-size:13px; }
+  .halls .league th, .halls .league td{ padding:6px 8px; text-align:right; border-bottom:1px dotted #234; }
+  .halls .league th{ color:#7fb8c9; font-size:10px; letter-spacing:1px; text-transform:uppercase; font-weight:normal; }
+  .halls .league td.rt, .halls .league th.rt{ text-align:left; }
+  .halls .league .badge{
+    display:inline-block; min-width:34px; text-align:center; font-weight:bold; color:#0a0022;
+    background:linear-gradient(to right,#ff00ff,#00ffff); border:1px solid #fff; padding:1px 6px; margin-right:6px;
+  }
+  .halls .league tr.top td{ color:#0f0; text-shadow:0 0 4px #0f0; }
+  .halls .league tr.nodata td{ opacity:.45; }
+  .halls .league .desc{ color:#9fb0d8; font-size:11px; }
+
+  .halls .champ-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:8px; }
+  .halls .champ{
+    background:#000; border:2px solid var(--cal-magenta); box-shadow:0 0 8px var(--cal-magenta) inset;
+    padding:9px 11px;
+    background-image:
+      radial-gradient(rgba(255,255,255,.18) 1px, transparent 1px),
+      radial-gradient(rgba(255,255,255,.18) 1px, transparent 1px);
+    background-size:12px 12px; background-position:0 0,6px 6px;
+  }
+  .halls .champ .rt{
+    font-family:"Courier New","Arial Black",sans-serif; font-weight:bold; font-size:15px; color:#fff;
+    background:linear-gradient(to right,#ff00ff,#00ffff); display:inline-block; padding:1px 8px; border:1px solid #fff;
+  }
+  .halls .champ .who{ margin-top:7px; font-weight:bold; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .halls .champ .tm{ color:#0f0; text-shadow:0 0 4px #0f0; font-weight:bold; }
+  .halls .champ .dst{ color:#9fb0d8; font-size:11px; margin-top:2px; }
+  .halls .champ.vacant{ border-color:#2a3450; box-shadow:none; opacity:.6; }
+  .halls .champ.vacant .rt{ background:#1a2238; color:#7fb8c9; border-color:#2a3450; }
+
+  .halls .fill-note{
+    border-left:3px solid var(--tg-gold); padding:8px 12px; margin:10px 2px;
+    font-size:12px; color:#c9b98a; background:rgba(255,215,0,.05);
+  }
+
+  .halls .backlink{ display:inline-block; margin:8px 2px 0; font-size:13px; color:var(--cal-magenta); text-decoration:none; }
+  .halls .backlink:hover{ text-decoration:underline; color:#fff; }
+
+  .halls .loading{ text-align:center; padding:30px; color:var(--tg-cyan); letter-spacing:2px; }
+
+  @media (max-width:640px){
+    .halls .hall > h2{ font-size:16px; }
+    .halls .champ-grid{ grid-template-columns:1fr; }
+  }
+  
+  .halls::before{
+    background:repeating-linear-gradient(45deg,
+      rgba(255,0,255,.06) 0 12px,
+      transparent        12px 24px,
+      rgba(0,255,255,.06) 24px 36px,
+      transparent        36px 48px);
+    background-size:200% 200%;
+  }
+    .halls::after{
+    background-image:
+      radial-gradient(rgba(0,255,255,.16) 1px, transparent 1px),
+      radial-gradient(rgba(255,0,255,.16) 1px, transparent 1px);
+    background-size:22px 22px; background-position:0 0, 11px 11px;
+  }
+   .halls li,
+  .halls .empty,{
+    background-image:
+      radial-gradient(rgba(0,255,255,.14) 1px, transparent 1px),
+      radial-gradient(rgba(255,0,255,.14) 1px, transparent 1px);
+    background-size:12px 12px; background-position:0 0, 6px 6px;
+  }
+  .halls .empty{ background-color:rgba(0,0,0,.35); }
+
+  .halls li{ position:relative; overflow:hidden; }
+  .halls li::after{
+    content:""; position:absolute; inset:0; z-index:0; pointer-events:none;
+    background:linear-gradient(115deg,
+      transparent 18%,
+      rgba(255,0,0,.12), rgba(255,153,0,.12), rgba(255,238,0,.12),
+      rgba(51,255,0,.12), rgba(0,255,238,.12), rgba(51,0,255,.12), rgba(255,0,238,.12),
+      transparent 82%);
+    background-size:280% 100%; background-position:140% 0;
+    mix-blend-mode:screen;
+  }
+  .halls li::before,
+  .halls li .nm,
+  .halls li .tm{ position:relative; z-index:1; } 
+  
+ .halls .league .badge,
+  .halls .champ .rt{
+    background:linear-gradient(90deg,#ff0000,#ff9900,#ffee00,#33ff00,#00ffee,#3300ff,#ff00ee);
+    background-size:200% auto; color:#0a0022;
+  }
+
+  @media (prefers-reduced-motion: no-preference){
+    .halls::before{ animation:hofStripes 9s linear infinite; }
+    .halls::after{ animation:hofDrift 16s linear infinite; }
+    .halls li,
+    .halls .empty,
+    .halls .league{ animation:hofDots 7s linear infinite; }
+    .halls li::after{ animation:hofSweep 5.5s linear infinite; }
+    .halls .hall:not(.shame):not(.blessed) .hsboard h3,
+    .halls .hall > h3{ animation:hofRainbow 6s linear infinite; }
+    .halls .league .badge,
+    .halls .champ .rt{ animation:hofRainbow 4s linear infinite; }
+    .halls .champ{ animation:hofDots 8s linear infinite, hofFloat 6s ease-in-out infinite; }
+    .halls .empty{ animation:hofDots 7s linear infinite, hofBorder 8s linear infinite; }
+  }
+
+  @keyframes hofStripes{ to{ background-position:96px 96px; } }
+  @keyframes hofDrift{ to{ background-position:22px 22px, 33px 33px; } }
+  @keyframes hofDots{ to{ background-position:12px 12px, 18px 18px; } }
+  @keyframes hofSweep{ to{ background-position:-140% 0; } }
+  @keyframes hofFloat{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-3px); } }
+  @keyframes hofBorder{
+    0%,100%{ border-color:var(--shame-red); }
+    33%{ border-color:var(--tg-gold); }
+    66%{ border-color:var(--tg-cyan); }
+  }
+</style>
+</head>
+<body>
+
+  <div class="ticker"><span>✦ thanks for waiting for the tram ✦</span></div>
+
+  <div class="layout">
+    <div class="sidebar" id="sidebar"></div>
+
+    <div class="frame">
+
+      <div class="hero">
+        <h1>tram high scores</h1>
+        <div class="subtitle">who waited for the tram ???</div>
+      </div>
+
+      <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
+
+      <div class="halls">
+        <div class="status-line">
+          <a class="backlink" href="./tram.html">◂ go back to the tram stop </a>
+          <span class="pill" id="dataPill">loading</span>
+        </div>
+
+        <div id="content">
+          <div class="loading" id="loading">checking the departure records ...</div>
+        </div>
+      </div>
+
+      <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
+
+      <footer>
+        ★ ° ☆ ° ★ ° ☆ ° ★ 2026 lily wakefield ★ ° ☆ ° ★ ° ☆ ° ★<br>
+        <img src="/images/favicon.ico" alt="site icon" width="24" height="24">
+        best experienced with an open heart
+      </footer>
+
+    </div>
+  </div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- helpers ---------- */
+  const $ = id => document.getElementById(id);
+  const fmt = s => Math.floor(s/60) + ":" + String(Math.floor(s%60)).padStart(2,"0");
+  const esc = s => String(s==null?"":s).replace(/[&<>"]/g,c=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
+  const num = v => typeof v === "number" && isFinite(v);
+  const mean = a => a.length ? a.reduce((x,y)=>x+y,0)/a.length : 0;
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyA25PaWUE39RuX-huMHoziQVUPy_pNFXUE",
+    authDomain: "dot-com-44502.firebaseapp.com",
+    projectId: "dot-com-44502",
+    storageBucket: "dot-com-44502.firebasestorage.app",
+    messagingSenderId: "124684406308",
+    appId: "1:124684406308:web:146706a03bb4bd451552b1",
+    measurementId: "G-HPF4E6G5YW"
+  };
+  const COLL = "tramLeaderboard";
+
+  const ROUTES = [
+    { n:"86",  d:"Bundoora – Docklands" },
+    { n:"96",  d:"East Brunswick – St Kilda" },
+    { n:"109", d:"Port Melbourne – Box Hill" },
+    { n:"19",  d:"North Coburg – City" },
+    { n:"11",  d:"Docklands – West Preston" }
+  ];
+  const ROUTE_NUMS = ROUTES.map(r=>r.n);
+  const ROUTE_DESC = Object.fromEntries(ROUTES.map(r=>[r.n, r.d]));
+
+  const LB_KEY = "tram-sim-leaderboard-v2";
+  const SEED = [
+    { name:"lilywakefield.com.au", s:2842, route:"96", dest:"out and about" },
+    { name:"anonymous loser",      s:2350, route:"86", dest:"uni" },
+    { name:"Ned Bennett",          s:2045, route:"11", dest:"home" }
+  ];
+  function loadLocal(){
+    try{ const r = localStorage.getItem(LB_KEY); if(r) return JSON.parse(r); }catch(e){}
+    return SEED.slice();
+  }
+        
+  const isBus  = e => e.ending==="bus"  || e.mode==="bus"  || e.route==="bus";
+  const isUber = e => e.ending==="uber" || e.mode==="uber" || e.route==="uber";
+  const boarded = e => !isBus(e) && !isUber(e);   // made it onto an actual tram
+
+  async function fetchRuns(){
+    if(typeof firebase !== "undefined" && firebaseConfig.apiKey){
+      try{
+        const app = (firebase.apps && firebase.apps.length) ? firebase.app() : firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const snap = await db.collection(COLL).orderBy("s","desc").limit(1000).get();
+        return { rows: snap.docs.map(d => Object.assign({ id:d.id }, d.data())), live:true };
+      }catch(e){ /* fall through to local */ }
+    }
+    return { rows: loadLocal(), live:false };
+  }
+
+  function lbList(rows, valueFn, subFn, emptyMsg){
+    if(!rows.length) return `<div class="empty">${esc(emptyMsg)}</div>`;
+    return "<ol>" + rows.map(e =>
+      `<li><span class="nm"><span>${esc(e.name || "anonymous loser")}</span>` +
+      (subFn ? `<span class="sub">${subFn(e)}</span>` : "") +
+      `</span><span class="tm">${valueFn(e)}</span></li>`
+    ).join("") + "</ol>";
+  }
+  function routeStats(rows){
+    const by = {};
+    ROUTE_NUMS.forEach(n => by[n] = { n, waits:[], champ:null });
+    rows.forEach(e => {
+      if(!ROUTE_NUMS.includes(e.route) || !num(e.s)) return;  
+      const b = by[e.route];
+      b.waits.push(e.s);
+      if(!b.champ || e.s > b.champ.s) b.champ = e;
+    });
+    return ROUTE_NUMS.map(n => {
+      const b = by[n];
+      return { n, count:b.waits.length, avg:mean(b.waits), max:b.waits.length?Math.max(...b.waits):0, champ:b.champ };
+    });
+  }
+
+  function renderLeague(stats){
+    const withData = stats.filter(s=>s.count>0).sort((a,b)=>b.avg-a.avg);
+    const noData   = stats.filter(s=>s.count===0);
+    if(!withData.length){
+      return `<div class="hsboard"><h3></h3><div class="empty">if you can see this ask lily to fix the leaderboard</div></div>`;
+    }
+    let body = withData.map((s,i)=>
+      `<tr class="${i===0?"top":""}"><td class="rt"><span class="badge">${esc(s.n)}</span><span class="desc">${esc(ROUTE_DESC[s.n]||"")}</span></td>`+
+      `<td>${fmt(s.avg)}</td><td>${fmt(s.max)}</td><td>${s.count}</td></tr>`
+    ).join("");
+    body += noData.map(s=>
+      `<tr class="nodata"><td class="rt"><span class="badge">${esc(s.n)}</span><span class="desc">${esc(ROUTE_DESC[s.n]||"")}</span></td>`+
+      `<td>—</td><td>—</td><td>0</td></tr>`
+    ).join("");
+    return `<div class="hsboard"><h3></h3>`+
+      `<table class="league"><thead><tr><th class="rt">route</th><th>avg wait</th><th>worst</th><th>runs</th></tr></thead>`+
+      `<tbody>${body}</tbody></table></div>`;
+  }
+
+  function renderChampions(stats){
+    const cards = stats.map(s=>{
+      if(!s.champ){
+        return `<div class="champ vacant"><span class="rt">${esc(s.n)}</span>`+
+          `<div class="who">no champion yet</div><div class="dst">if you can see this ask lily to fix the leaderboard</div></div>`;
+      }
+      const c = s.champ;
+      return `<div class="champ"><span class="rt">${esc(s.n)}</span>`+
+        `<div class="who">${esc(c.name||"Anonymous Loser")}</div>`+
+        `<div class="tm">${fmt(c.s)}</div>`+
+        `<div class="dst">${c.dest?("to "+esc(c.dest)):ROUTE_DESC[s.n]?esc(ROUTE_DESC[s.n]):""}</div></div>`;
+    }).join("");
+    return `<div class="hall"><h3>longest wait per tram line</h3><div class="champ-grid">${cards}</div></div>`;
+  }
+
+  /* ---------- render everything ---------- */
+  function render(rows){
+    const stats = routeStats(rows);
+    const longest = rows.slice().sort((a,b)=>b.s-a.s).slice(0, 4);
+    const longestHall =
+      `<div class="hall"><h2>who waited the longest all time</h2>`+
+      `<div class="hsboard">`+
+        lbList(longest, e=>fmt(e.s),
+          e=>(e.route?("the "+esc(e.route)):"")+(e.dest?(" · "+esc(e.dest)):""),
+          "if you can see this ask lily to fix the leaderboard") +
+      `</div></div>`;
+
+    const rivalries =
+      `<div class="hall"><h2>waiting times per tram route</h2>`+
+      renderLeague(stats) + renderChampions(stats) + `</div>`;
+
+    const bus  = rows.filter(isBus).sort((a,b)=>b.s-a.s).slice(0,4);   
+    const uber = rows.filter(isUber).sort((a,b)=>a.s-b.s).slice(0,4);       
+    const shame =
+      `<div class="hall shame"><h2>alternative transport arrangements</h2>`+
+      `<p class="blurb"></p>`+
+      `<div class="hsboard"><h3>caught the replacement bus</h3>`+
+        lbList(bus, e=>fmt(e.s),
+          e=>"waited "+fmt(e.s)+" · then boarded the bus" + (e.dest?(" · "+esc(e.dest)):""),
+          "if you can see this ask lily to fix the leaderboard") +
+      `</div>`+
+      `<div class="hsboard"><h3>ordered an uber</h3>`+
+        lbList(uber, e=> num(e.fare) ? ("$"+e.fare) : fmt(e.s),
+          e=>"cracked at "+fmt(e.s) + (num(e.fare)?(" · $"+e.fare+" surge"):"") + (e.dest?(" · "+esc(e.dest)):""),
+          "if you can see this ask lily to fix the leaderboard") +
+      `</div></div>`;
+
+    const productive = rows.filter(e=>num(e.productivity) && e.productivity>0).sort((a,b)=>b.productivity-a.productivity).slice(0,4);
+    const rich       = rows.filter(e=>num(e.money) && boarded(e)).sort((a,b)=>b.money-a.money).slice(0,4);
+    const seated     = rows.filter(e=>e.seat===true).sort((a,b)=>a.s-b.s).slice(0,4);
+    const blessed =
+      `<div class="hall blessed"><h2>who made the most of their time</h2>`+
+      `<div class="hsboard"><h3>studied the most</h3>`+
+        `<p class="blurb"></p>`+
+        lbList(productive, e=>String(e.productivity)+" mini study sessions ",
+          e=>"on the "+esc(e.route)+(e.dest?(" · "+esc(e.dest)):""),
+          "if you can see this ask lily to fix the leaderboard") +
+      `</div>`+
+      `<div class="hsboard"><h3>scrooge mcduck had the most cash</h3>`+
+        `<p class="blurb"></p>`+
+        lbList(rich, e=>"$"+Number(e.money).toFixed(2),
+          e=>"boarded the "+esc(e.route)+(e.dest?(" · "+esc(e.dest)):""),
+          "if you can see this ask lily to fix the leaderboard") +
+      `</div>`+
+      `<div class="hsboard"><h3>Got a Seat</h3>`+
+        lbList(seated, e=>fmt(e.s),
+          e=>"seated after "+fmt(e.s)+" on the "+esc(e.route),
+          "if you can see this ask lily to fix the leaderboard") +
+      `</div></div>`;
+
+    const anyNew = rows.some(e => "ending" in e || "seat" in e || num(e.productivity) || num(e.money));
+    const fillNote = anyNew ? "" :
+      `<div class="fill-note">if you can see this ask lily to fix the leaderboard</div>`;
+
+    $("content").innerHTML = rivalries + shame + blessed + fillNote + longestHall;
+  }
+
+  /* ---------- go ---------- */
+  fetchRuns().then(({rows, live}) => {
+    const pill = $("dataPill");
+    if(pill){
+      pill.textContent = live ? "Next Tram 2 mins away" : "cached";
+      pill.className = "pill" + (live ? "" : " cached");
+    }
+    render(rows);
+  }).catch(() => {
+    $("content").innerHTML = `<div class="empty">if you can see this ask lily to fix the leaderboard</div>`;
+    const pill = $("dataPill"); if(pill){ pill.textContent="offline"; pill.className="pill cached"; }
+  });
+})();
+</script>
+<script src="../js/nav.js"></script>
+<script src="../js/effects.js"></script>
+<script src="../js/daynight.js"></script>
+<script src="../js/vibeclock.js"></script>
+</body>
+</html>

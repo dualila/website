@@ -197,6 +197,22 @@
     .tram-game .screen{ height:52vh; }
     .tram-game .stat .k{ font-size:8px; }
   }
+    .tram-game .pk-row{ justify-content:space-between; }
+  .tram-game .pk-row:hover{ filter:none; transform:none; }
+  .tram-game .pk-name{ flex:1; text-align:left; }
+  .tram-game .pk-acts{ display:flex; gap:6px; flex:0 0 auto; }
+  .tram-game .pk-act{
+    font-family:"Courier New",monospace; font-weight:normal; font-size:11px;
+    letter-spacing:.5px; padding:2px 9px; cursor:pointer;
+    background:transparent; background-image:none; box-shadow:none;
+    border:1px solid rgba(0,255,255,.3); color:#9fd8d8;
+    transition:border-color .12s, color .12s, background .12s;}
+  .tram-game .pk-act:hover{
+    filter:none; transform:none; color:#fff;
+    border-color:var(--tg-cyan); background:rgba(0,255,255,.08);}
+  .tram-game .pk-sell{ border-color:rgba(0,255,170,.28); color:#8fd8bf; }
+  .tram-game .pk-sell:hover{ border-color:#00ffaa; background:rgba(0,255,170,.08); }
+  .tram-game .pk-inert{ opacity:.55; }
 </style>
 </head>
 <body>
@@ -209,7 +225,7 @@
     <div class="frame">
 
       <div class="hero">
-        <h1>waiting for the tram</h1>
+        <h1> waiting for the tram</h1>
         <div class="subtitle">you are waiting for the tram but maybe it's waiting for you</div>
       </div>
 
@@ -294,6 +310,7 @@
     measurementId: "G-HPF4E6G5YW"
   };
   const COLL = "tramLeaderboard";
+  const RECORD_FLOOR = 30;
   const FS = {
     ready: false,
     db: null,
@@ -469,7 +486,7 @@
     d: "Docklands – West Preston"
   } ];
   const DESTS = [ "uni", "work", "home", "out and about" ];
-  const OUT_SPOTS = [ "Yochi", "Cinema Nova", "the Fitzroy bowls club", "Naked for Satan", "Section 8", "a warehouse party in Brunswick", "Lygon Street", "the NGV", "the end of the tram line", "a friend's housewarming", "the MCG", "YahYah's" ];
+  const OUT_SPOTS = [ "Yochi", "a job interview", "Cinema Nova", "the Fitzroy bowls club", "Naked for Satan", "Section 8", "a warehouse party in Brunswick", "Lygon Street", "the NGV", "the end of the tram line", "a friend's housewarming", "the MCG", "YahYah's", "the laundromat", "a Hinge date" ];
   const OPERATIONAL = [ "SIGNALLING ISSUE", "SERVICE REGULATION", "TRAM REPOSITIONING", "NETWORK CONDITIONS", "PASSENGER MANAGEMENT", "OPERATIONAL CONSIDERATIONS", "UNFORESEEN CIRCUMSTANCES", "SERVICE RECOVERY", "DRIVER CHANGE", "OPERATIONAL REQUIREMENTS" ];
   function paint() {
     const r = S.route;
@@ -518,7 +535,19 @@
     log("Where are you going? Which tram are you taking?", "dim");
     paint();
     const stage = $("stage");
-    stage.innerHTML = `\n      <div class="card">\n        <h2>your destination ???</h2>\n        <div class="opts" id="destOpts"></div>\n        <hr class="rule">\n        <h2>route options:</h2>\n        <div class="opts" id="routeOpts"></div>\n        <button class="wide go" id="beginBtn" disabled style="margin-top:14px">choose to begin</button>\n      </div>`;
+    stage.innerHTML = `
+    <div class="card">
+   
+    <h2>who are you ???</h2>
+    <div class="nameform" style="margin:0 0 10px">
+      <input id="setupName" maxlength="16" placeholder="your name ???">
+    </div>
+    <h2>your destination ???</h2>         <div class="opts" id="destOpts"></div>
+        <hr class="rule">
+        <h2>route options:</h2>
+        <div class="opts" id="routeOpts"></div>
+        <button class="wide go" id="beginBtn" disabled style="margin-top:14px">choose to begin</button>
+      </div>`;
     const dOpts = $("destOpts");
     DESTS.forEach(d => {
       const el = document.createElement("div");
@@ -566,7 +595,9 @@
     $("beginBtn").onclick = begin;
   }
   function begin() {
-    S.phase = "wait";
+  const _nm = document.getElementById("setupName");
+  S.playerName = ((_nm && _nm.value.trim()) || "anonymous loser").slice(0, 16);
+  S.phase = "wait";
     if (S.dest === "out and about") {
       S.dest = pick(OUT_SPOTS);
     }
@@ -577,8 +608,9 @@
     paint();
     renderActions();
   }
-  const POCKET_NAME = {
+   const POCKET_NAME = {
     coffee: "a coffee",
+    "iced latte": "an iced latte",
     espresso: "an espresso",
     croissant: "a croissant",
     sausage: "a sausage roll",
@@ -587,6 +619,7 @@
     choc: "a chocolate bar",
     gum: "gum",
     lighter: "a lighter",
+    stub: "a ticket stub",
     headphones: "headphones",
     umbrella: "an umbrella",
     poncho: "a poncho",
@@ -599,6 +632,15 @@
         S.thirst = 0;
         S.awareness = clamp(S.awareness + rnd(12, 20), 0, 100);
         log("You drink the coffee.", "good");
+        return true;
+      }
+    },
+    "an iced latte": {
+      verb: "drink",
+      fn() {
+        S.thirst = 0;
+        S.awareness = clamp(S.awareness + rnd(12, 20), 0, 100);
+        log("You drink the iced latte.", "good");
         return true;
       }
     },
@@ -704,7 +746,7 @@
         return false;
       }
     },
-    headphones: {
+    "headphones": {
       verb: "put in",
       fn() {
         S.hasHeadphones = true;
@@ -717,13 +759,96 @@
         return false;
       }
     },
+        "your airpods": {
+      verb: "put in",
+      fn() {
+        S.hasHeadphones = true;
+        if (castPresent("boomGuy")) {
+          S.patience = clamp(S.patience + rnd(8, 14), 0, 100);
+          log("You put them in. The UE Boom noise disappears!!!", "good");
+        } else {
+          log("You put them in. One is at 3%. The world goes sorta half quiet.", "dim");
+        }
+        return false;
+      }
+    },
+    "lip balm": {
+      verb: "apply",
+      fn() {
+        const windy = S.wxIdx === 3 || S.wxIdx === 4;
+        S.patience = clamp(S.patience + (windy ? rnd(4, 8) : rnd(1, 3)), 0, 100);
+        log(windy ? "You apply lip balm." : "You apply lip balm. Your lips feel better.", "good");
+        return false;
+      }
+    },
+    "half a mint": {
+      verb: "eat",
+      fn() {
+        S.patience = clamp(S.patience + rnd(1, 3), 0, 100);
+        log("You eat the other half of the mint. It is a bit fluffy.", "dim");
+        return true;
+      }
+    },
+    "a scarf": {
+      verb: "put on",
+      fn() {
+        S.hasScarf = true;
+        const cold = S.wxIdx === 3 || S.wxIdx === 4 || isTramNight();
+        S.patience = clamp(S.patience + (cold ? rnd(8, 14) : rnd(2, 5)), 0, 100);
+        log(cold ? "You put the scarf on." : "You put the scarf on. You do not need it, but it feels really nice.", "good");
+        return false;
+      }
+    },
+    "a photo of a dog you do not recognise": {
+      verb: "ask around",
+      fn() {
+        log("You hold up the photo. \"Anyone know this dog?\"", "sys");
+        log("...", "dim");
+        if (chance(.4)) {
+          log("A woman gasps. \"That's Kevin! He went missing off the 96 in 2021!\"", "amber");
+          log("You hand it over. She nearly cries. You feel good about this.", "good");
+          S.patience = clamp(S.patience + rnd(12, 20), 0, 100);
+          earn(rnd(5, 15));
+          log("She presses some cash into your hand and boards her tram.", "good");
+          return true;
+        }
+        log(bagPick([ "Nobody knows the dog.", "Someone says \"cute\" and looks away.", "A man studies it for a long time, then shrugs." ]), "dim");
+        return false;
+      }
+    },
+    "a JetStar boarding pass from 2019": {
+      verb: "read",
+      fn() {
+        log("MEL → SYD, 6:05am, seat 14C.", "dim");
+        return false;
+      }
+    },
+    "a business card": {
+      verb: "read",
+      fn() {
+        log(bagPick([ "\"DERRICK'S sandwiches.\" No address, no number.", "\"CONSULTANT.\" That is the entire card.", "It is for a cafe that closed before you were born." ]), "dim");
+        return false;
+      }
+    },
     "a lighter": {
       verb: "flick",
       fn() {
         log("You flick the lighter. You flick it again.", "dim");
         return false;
       }
-    }
+    },
+        "a ticket stub": {
+      verb: "read",
+      fn() {
+        log(bagPick([
+          "A movie ticket. 2018.",
+          "A gig ticket. You don't remember going.",
+          "A tram ticket from a time when tram tickets looked completely different.",
+          "A ticket to something called \"THE EXPERIENCE\"."
+        ]), "dim");
+        return false;
+      }
+    },
   };
   function renderPockets() {
     ensurePockets();
@@ -734,12 +859,22 @@
     }
     items.forEach((it, i) => {
       const u = USE_ACTIONS[it];
-      const tag = u ? '<span style="opacity:.55;float:right">' + u.verb + "</span>" : "";
-      html += '<div class="opt" data-use="' + i + '"><span class="box">▸</span>' + it + tag + "</div>";
+      const sellable = NOT_SELLABLE.indexOf(it) === -1;
+      let acts = "";
+      if (u) { acts += '<button class="pk-act" data-use="' + i + '">' + u.verb + '</button>'; }
+      if (sellable) { acts += '<button class="pk-act pk-sell" data-sell="' + i + '">sell</button>'; }
+      html += '<div class="opt pk-row' + (acts ? '' : ' pk-inert') + '">' +
+                '<span class="box">▸</span>' +
+                '<span class="pk-name">' + it + '</span>' +
+                '<span class="pk-acts">' + acts + '</span>' +
+              '</div>';
     });
     html += '<div class="opt" id="pocketDone"><span class="box">▸</span>done</div></div></div>';
     $("stage").innerHTML = html;
-    [ ...document.querySelectorAll("[data-use]") ].forEach(el => el.onclick = () => usePocketItem(items[+el.getAttribute("data-use")]));
+    [ ...document.querySelectorAll("[data-use]") ].forEach(el =>
+      el.onclick = () => usePocketItem(items[+el.getAttribute("data-use")]));
+    [ ...document.querySelectorAll("[data-sell]") ].forEach(el =>
+      el.onclick = () => sellPocketItem(items[+el.getAttribute("data-sell")]));
     $("pocketDone").onclick = () => {
       log("You put everything back.", "dim");
       renderActions();
@@ -762,33 +897,39 @@
     paint();
     renderPockets();
   }
-  function actGroup(key) {
-    const groups = {
-      around: {
-        title: "look around",
-        items: [ [ "observe", actObserve ], [ "look in pockets", actPockets ], [ "eavesdrop", actEavesdrop ] ]
-      },
-      leave: {
-        title: "go to the shop",
-        items: [ [ "go to the shop", actShop ], [ "make some money", actHustle ] ]
-      }
-    };
-    const g = groups[key];
-    let html = '<div class="actions"><div class="submenu-title">' + g.title + "</div>";
-    g.items.forEach((it, i) => html += '<button data-g="' + i + '">' + it[0] + "</button>");
-    html += '<button class="wide back" id="aBack">◂ back</button></div>';
-    $("stage").innerHTML = html;
-    [ ...document.querySelectorAll("[data-g]") ].forEach(el => el.onclick = () => g.items[+el.getAttribute("data-g")][1]());
-    $("aBack").onclick = renderActions;
+    function sellPocketItem(it) {
+    const i = S.pockets.indexOf(it);
+    if (i === -1) { renderPockets(); return; }
+    const toReseller = castPresent("reseller") && RESELLER_WANTS.indexOf(it) > -1;
+    const price = toReseller ? rnd(12, 40) : rnd(1, 5);
+    S.pockets.splice(i, 1);
+    earn(price);
+    if (toReseller) {
+      log("The vintage reseller's eyes light up. \"Wow, that's actually dope. Cheers bro.\" $" + price + ".00 for " + it + ".", "good");
+    } else {
+      log("A stranger gives you $" + price + ".00 for " + it + ".", "good");
+      log(bagPick([ "You do not ask why they want it.", "They seem pleased.", "Probably a fair price." ]), "dim");
+    }
+    paint();
+    renderPockets();
   }
   function renderActions() {
     const uber = S.patience <= 25 ? '<button class="wide danger" id="aUber">call an uber ???</button>' : "";
-    $("stage").innerHTML = `\n      <div class="actions">\n        <button id="aWait">just wait</button>\n        <button id="aPhone">check phone</button>\n        <button id="aAround">look around <span class="arrow">▸</span></button>\n        <button id="aStudy">study</button>\n        <button id="aLeave">leave the stop <span class="arrow">▸</span></button>\n        ${uber}\n        <button id="aGiveUp">give up &amp; walk</button>\n      </div>`;
+    $("stage").innerHTML =
+      '<div class="actions">' +
+        '<button id="aWait">just wait</button>' +
+        '<button id="aPhone">check phone</button>' +
+        '<button id="aPockets">pockets</button>' +
+        '<button id="aStudy">study</button>' +
+        '<button id="aShop">go to the shop</button>' +
+        '<button id="aGiveUp">give up &amp; walk</button>' +
+         uber +
+      '</div>';
     $("aWait").onclick = actWait;
     $("aPhone").onclick = actPhone;
+    $("aPockets").onclick = actPockets;
     $("aStudy").onclick = actStudy;
-    $("aAround").onclick = () => actGroup("around");
-    $("aLeave").onclick = () => actGroup("leave");
+    $("aShop").onclick = actShop;
     $("aGiveUp").onclick = endGiveUp;
     if (S.patience <= 25 && $("aUber")) {
       $("aUber").onclick = tryUber;
@@ -803,12 +944,12 @@
     const r = Math.random();
     if (r < .1) {
       S.etaText = "DUE";
-      if (chance(.45)) {
+      if (chance(.5)) {
         log("The board says DUE.", "dim");
       }
     } else if (r < .16) {
       S.etaText = "NOW";
-      if (chance(.4)) {
+      if (chance(.5)) {
         log("The board says NOW.", "dim");
       }
     } else if (r < .22) {
@@ -902,7 +1043,16 @@
   function howLongAsk() {
     log("Someone turns to you.", "sys");
     log('"How long have you been waiting?"', "amber");
-    $("stage").innerHTML = `\n      <div class="card">\n        <h2>you have to answer</h2>\n        <div class="opts">\n          <div class="opt" data-hl="Five minutes."><span class="box">▸</span>"Five minutes."</div>\n          <div class="opt" data-hl="Twenty minutes."><span class="box">▸</span>"Twenty minutes."</div>\n          <div class="opt" data-hl="An hour."><span class="box">▸</span>"An hour."</div>\n          <div class="opt" data-hl="Since Tuesday."><span class="box">▸</span>"Since Tuesday."</div>\n        </div>\n      </div>`;
+    $("stage").innerHTML = `
+      <div class="card">
+        <h2>you have to answer</h2>
+        <div class="opts">
+          <div class="opt" data-hl="Five minutes."><span class="box">▸</span>"Five minutes."</div>
+          <div class="opt" data-hl="Twenty minutes."><span class="box">▸</span>"Twenty minutes."</div>
+          <div class="opt" data-hl="An hour."><span class="box">▸</span>"An hour."</div>
+          <div class="opt" data-hl="Since Tuesday."><span class="box">▸</span>"Since Tuesday."</div>
+        </div>
+      </div>`;
     [ ...document.querySelectorAll("[data-hl]") ].forEach(el => {
       el.onclick = () => howLongAnswer(el.getAttribute("data-hl"));
     });
@@ -924,7 +1074,16 @@
     log("Someone turns to you.", "sys");
     log('"Does this tram go to Flinders?"', "amber");
     log("You now have to answer.", "dim");
-    $("stage").innerHTML = `\n      <div class="card">\n        <h2>you have to answer</h2>\n        <div class="opts">\n          <div class="opt" data-ans="Yes."><span class="box">▸</span>"Yes."</div>\n          <div class="opt" data-ans="No."><span class="box">▸</span>"No."</div>\n          <div class="opt" data-ans="I have no idea."><span class="box">▸</span>"I have no idea."</div>\n          <div class="opt" data-ans="Probably."><span class="box">▸</span>"Probably."</div>\n        </div>\n      </div>`;
+    $("stage").innerHTML = `
+      <div class="card">
+        <h2>you have to answer</h2>
+        <div class="opts">
+          <div class="opt" data-ans="Yes."><span class="box">▸</span>"Yes."</div>
+          <div class="opt" data-ans="No."><span class="box">▸</span>"No."</div>
+          <div class="opt" data-ans="I have no idea."><span class="box">▸</span>"I have no idea."</div>
+          <div class="opt" data-ans="Probably."><span class="box">▸</span>"Probably."</div>
+        </div>
+      </div>`;
     [ ...document.querySelectorAll("[data-ans]") ].forEach(el => {
       el.onclick = () => flindersAnswer(el.getAttribute("data-ans"));
     });
@@ -1130,19 +1289,29 @@
       event: false
     });
   }
-  function actWait() {
-    log(moodLine(VOID), "dim");
-    S.awareness = clamp(S.awareness + rnd(2, 6), 0, 100);
-    tick(rnd(45, 90), {
-      progress: 1
-    });
+   function actWait() {
+    const r = Math.random();
+    if (r < .55) {
+      log(moodLine(VOID), "dim");
+      S.awareness = clamp(S.awareness + rnd(2, 6), 0, 100);
+      tick(rnd(45, 90), { progress: 1 });
+    } else if (r < .8) {
+      actEavesdrop();
+    } else {
+      actObserve();
+    }
   }
-  const PHONE = [ 'PTV app: "Service update — minor delays on all routes."', "SYSTEM MESSAGE:  Your iPhone has detected an AirTag travelling with you.", "67 unread messages.", 'Commbank: "A transaction of $3.00 was declined."', 'Commbank: "A suspicious transaction from "FitzroySmoke&Gift" of $54.00 was declined."', "xXxShawarmaLoverxXx liked a photo of you from 2019.", 'BOM: "1000% Chance of rain."', "xXxShawarmaLoverxXx reacted :D to your tiktok repost.", "3 minutes ago: xXxShawarmaLoverxXx sent you a snapchat.", 'PTV app: "Service update — major delays on all routes."', 'Your housemate texts you: "did you take the bins out?". You did not.', "You refresh the tram tracker. It refreshes and nothing changes.", "A text from YahYahs tells you they have $5 entry tonight.", '"Are you still coming out tonight?" You forgot there were plans tonight.', 'Commbank: "$300 was withdrawn from an ATM on Gertrude Street".', "A text from your ex tells you they threw away your favourite hoodie and to please stop calling them.", 'Duolingo: "These reminders don\'t seem to be working."', 'A Facebook Marketplace seller replies "still available" four days after you asked.', 'Commbank: "You spent $67 on UberEats this month."', "Your phone asks if you want to enable Low Power Mode.", "Your phone asks if you want to enable Low Power Mode again.", "You open Instagram and immediately close Instagram.", 'You open TikTok "for a minute".', 'Someone sends you a message containing only "HAHAHAHA".' ];
-  const STUDY_GOOD = [ "You read one paragraph and understand it !!! Maybe you will pass this semester.", "You highlight something to feel more productive.", "You read three lines of notes. You will now probably graduate with distinction.", "You finally understand the concepts assigned this semester. The tram does not come any faster and neither does the end of your degree.", "You watch the lecture at regular speed." ];
-  const STUDY_BAD = [ "You reread the same sentence nine times.", "You open the court document. You close the court document.", "You convince yourself this reading can wait until next week.", "You open Canvas. That was enough studying for today.", "A pigeon walks past and it is more interesting than the assigned reading.", "You think about studying, which is not the same as studying.", "You realise the reading was optional and you panicked for nothing.", "You highlight the entire page. Now nothing is highlighted.", "You watch the lecture at 2x speed." ];
+  const PHONE = [ 'PTV app: "Service update — minor delays on all routes."', "SYSTEM MESSAGE:  Your iPhone has detected an AirTag travelling with you.", "67 unread messages.", 'Commbank: "A transaction of $3.00 was declined."', 'Commbank: "A suspicious transaction from "FitzroySmoke&Gift" of $54.00 was declined."', "xXxShawarmaLoverxXx liked a photo of you from 2019.", 'BOM: "1000% Chance of rain."', "xXxShawarmaLoverxXx reacted :D to your tiktok repost.", "3 minutes ago: xXxShawarmaLoverxXx sent you a snapchat.", 'PTV app: "Service update — major delays on all routes."', 'Your housemate texts you: "did you take the bins out?". You did not.', "You refresh the tram tracker. It refreshes and nothing changes.", "A text from YahYahs tells you they have $5 entry tonight.", '"Are you still coming out tonight?" You forgot there were plans tonight.', 'Commbank: "$300 was withdrawn from an ATM on Gertrude Street".', "A text from your ex tells you they threw away your favourite hoodie and to please stop calling them.", 'Duolingo: "These reminders don\'t seem to be working."', 'A Facebook Marketplace seller replies "still available" four days after you asked.', 'Commbank: "You spent $67 on UberEats this month."', "Your phone asks if you want to enable Low Power Mode.", "Your phone asks if you want to enable Low Power Mode again.", "You open Instagram and immediately close Instagram.", 'You open TikTok "for a minute".', 'Someone sends you a message containing only "HAHAHAHA".', 
+  'Someone types for a long time. Then sends "haha".',
+  'Someone sends you a voice message. It is 4 minutes and 37 seconds long.',
+  'Someone sends you "we need to talk".',
+  'Someone sends you "can I ask you something".',
+  'You Google "why is my tram not coming".', ];
+  const STUDY_GOOD = [ "You read one paragraph and understand it !!! Maybe you will pass this semester.", "You highlight something to feel more productive.", "You read three lines of notes. You will now probably graduate with distinction.", "You finally understand the concepts assigned this semester. The tram does not come any faster and neither does the end of your degree.", "You read an entire page without checking your phone.", "You write down a definition. It looks quite good.", "You remember something from last semester. Academic continuity!!!","You make a very organised list of things you need to study.", "You read the same sentence twice and this time it makes sense.", "You finally figure out what the lecturer was talking about.", "You do one practice question. You deserve a break.",  "You remember that you actually chose to study this degree.", "You understand the material for about thirty seconds.","You watch the lecture at regular speed."];
+  const STUDY_BAD = [ "You reread the same sentence nine times.", "You open the court document. You close the court document.", "You convince yourself this reading can wait until next week.", "You open Canvas. That was enough studying for today.", "You spell the lecturer's name correctly.", "You contribute one thought to the tutorial in your head.", "You think 'I should probably start the assignment' and consider that sufficient for today.","A pigeon walks past and it is more interesting than the assigned reading.", "You make a new document called FINAL_FINAL_REAL.docx.","You think about studying, which is not the same as studying.", "You realise the reading was optional and you panicked for nothing.", "You highlight the entire page. Now nothing is highlighted.", "You watch the lecture at 2x speed." ];
   const VOID = {
-    mid: [ "You consider your relationship to public transport, and the greater implications of public funding.", "Time passes. Someone hums 24K Magic by Bruno Mars.", "Time passes. Someone hums Be The One by Dua Lipa.", "Time passes. Someone hums Fame is A Gun by Addison Rae.", "Time passes. Someone hums and it really annoys you.", "Time passes. Someone hums a jingle from a betting ad.", "You wonder whether every tram driver secretly knows each other.", "You wonder how many hours of your life have been spent waiting.", "You wonder if the tram knows you are waiting.", "You wonder who the Premier of Victoria is at the moment.", "You wonder if the Southern Rail Loop will ever truely exist.", "You wonder if a train to the aiport was just a dream you had once." ],
-    low: [ "You probably could have walked by now.", "Time passes. Someone hums and it really annoys you.", "You no longer have faith in PTV.", "You lock eyes with a man holding a half-eaten kebab. He takes this as an invitation to tell you about his crypto portfolio." ],
+    mid: [ "You consider your relationship to public transport, and the greater implications of public funding.", "Time passes. Someone hums 24K Magic by Bruno Mars.", "Time passes. Someone hums Be The One by Dua Lipa.", "Time passes. Someone hums Fame is A Gun by Addison Rae.", "Time passes. Someone hums and it really annoys you.", "Time passes. Someone hums a jingle from a betting ad.", "You wonder whether every tram driver secretly knows each other.", "You wonder how many hours of your life have been spent waiting.", "You wonder if the tram knows you are waiting.", "You wonder who the Premier of Victoria is at the moment.", "You wonder if the Southern Rail Loop will ever truely exist.", "You wonder if a train to the aiport was just a dream you had once.", "You realise you have been standing in exactly the same spot for twelve minutes.", "You read the entire PTV sign despite having absolutely no reason to.", "You contemplate just walking home and becoming a different person.", "You hear another tram bell. Also not your tram.","You wonder if you could outrun the tram." ],
+    low: [ "You probably could have walked by now.", "Time passes. Someone hums and it really annoys you.", "You no longer have faith in PTV.", "You lock eyes with a man holding a half-eaten kebab. He takes this as an invitation to tell you about his crypto portfolio.", "You could have walked there twice.", "You could have walked there, had lunch, and walked back.", "You think about getting an Uber, and then you remember the price of an Uber." ],
     high: [ "You look at the sand on the tram tracks.", "The tram will come when it comes.", "Somewhere the tram is doing its best.", "You could be anywhere but here you are at the tram stop. Maybe you should invest in a bike." ]
   };
   const MISS_LINES = [ "You were looking at your phone. The tram came and went without you :(", "You blinked, the tram arrived, opened its doors, and left.", "You were deep in your notes. The tram came and did not wait for you.", "You glanced up a second too late. The tram has been and gone." ];
@@ -1349,7 +1518,7 @@
       bye: [ [ "The vintage reseller loads six IKEA bags onto a tram.", "sys" ], [ "He is gone. Fitzroy is quieter.", "dim" ] ],
       line(n) {
         if (n === 1) {
-          return [ [ "A man sits beside you with three enormous blue IKEA bags of leather jackets.", "sys" ] ];
+          return [ [ "A man (probably a vintage reseller) sits beside you with three enormous blue IKEA bags of leather jackets.", "sys" ] ];
         }
         if (n === 2) {
           return [ [ "The vintage reseller has acquired another IKEA bag.", "dim" ], [ 'He calls a single corduroy hat "special".', "amber" ] ];
@@ -1365,6 +1534,13 @@
     S.wait += (c.mins || 3) * 60;
     if (typeof c.pat === "number") {
       S.patience = clamp(S.patience + c.pat, 0, 100);
+    }
+    if (id === "knitter" && S.cast.knitter >= 3 && !S.gotScarf && chance(.6)) {
+      S.gotScarf = true;
+      ensurePockets();
+      if (S.pockets.indexOf("a scarf") === -1) S.pockets.push("a scarf");
+      log("The knitting lady holds out a finished scarf. \"For you, love. You've been here as long as me.\"", "good");
+      log("You now have a scarf.", "amber");
     }
     maybeRelate(id);
   }
@@ -1383,7 +1559,7 @@
   }, {
     a: "reseller",
     b: "boomGuy",
-    lines: [ [ "The vintage reseller glares at the UE Boom guy.", "sys" ], [ '"Mate. MATE. Turn it down."', "amber" ] ]
+    lines: [ [ "The vintage reseller glares at the UE Boom guy.", "sys" ], [ '"Bro. Turn it down."', "amber" ] ]
   }, {
     a: "knitter",
     b: "oldMan",
@@ -1469,10 +1645,6 @@
       log("A passenger studies the timetable.", "sys");
       log("They have been looking at it for " + m + " minutes.", "dim");
       log("Nothing happens.", "dim");
-    } else if (roll < .67) {
-      const m = rnd(4, 9);
-      log("A tram passes in the opposite direction.", "sys");
-      log("It is extremely loud!!!", "amber");
     } else if (roll < .63) {
       log("Someone presses the information button.", "sys");
       log('"For more information, visit ptv-dot-vic-dot-gov-dot-au."', "sys");
@@ -1480,6 +1652,9 @@
       log('"For more information, visit ptv-dot-vic-dot-gov-dot-au."', "amber");
       S.patience = clamp(S.patience - 3, 0, 100);
       S.complaints++;
+    } else if (roll < .67) {
+      log("A tram passes in the opposite direction.", "sys");
+      log("It is extremely loud!!!", "amber");
     } else if (roll < .69) {
       log("Someone presses something.", "sys");
       log('"It\'s not working," they announce, to no one.', "amber");
@@ -1524,7 +1699,14 @@
     log("...", "dim");
     log("Replacement buses.", "bad");
     log("Oh no !!!", "dim");
-    $("stage").innerHTML = `\n      <div class="card">\n        <h2>Would you like to continue?</h2>\n        <div class="opts">\n          <div class="opt" id="busYes"><span class="box">▸</span>Yes, fine, whatever</div>\n          <div class="opt" id="busNo"><span class="box">▸</span>No, I have standards !!!</div>\n        </div>\n      </div>`;
+    $("stage").innerHTML = `
+      <div class="card">
+        <h2>Would you like to continue?</h2>
+        <div class="opts">
+          <div class="opt" id="busYes"><span class="box">▸</span>Yes, fine, whatever</div>
+          <div class="opt" id="busNo"><span class="box">▸</span>No, I have standards !!!</div>
+        </div>
+      </div>`;
     $("busYes").onclick = () => {
       S.boardedBus = true;
       endBus();
@@ -1555,7 +1737,14 @@
     log("TRAM APPROACHING", "big good");
     log("It is absolutely packed.", "amber");
     log("Faces are pressed against the glass.", "dim");
-    $("stage").innerHTML = `\n      <div class="card">\n        <h2>the ${S.route.n} is packed</h2>\n        <div class="opts">\n          <div class="opt" id="cramOn"><span class="box">▸</span>cram on anyway</div>\n          <div class="opt" id="letGo"><span class="box">▸</span>let it go (wait for a less crowded one)</div>\n        </div>\n      </div>`;
+    $("stage").innerHTML = `
+      <div class="card">
+        <h2>the ${S.route.n} is packed</h2>
+        <div class="opts">
+          <div class="opt" id="cramOn"><span class="box">▸</span>cram on anyway</div>
+          <div class="opt" id="letGo"><span class="box">▸</span>let it go (wait for a less crowded one)</div>
+        </div>
+      </div>`;
     $("cramOn").onclick = boardCrowded;
     $("letGo").onclick = letItGo;
   }
@@ -1597,7 +1786,11 @@
     log("━━━━━━━━━━━━━━", "dim");
     log("TRAM APPROACHING", "big good");
     log("Doors: <b>OPEN</b>", "good");
-    $("stage").innerHTML = `\n      <div class="actions">\n        <button class="wide go" id="tapOn">▶ TAP ON &amp; BOARD</button>\n        <button class="wide" id="waitBoard">Hesitate</button>\n      </div>`;
+    $("stage").innerHTML = `
+      <div class="actions">
+        <button class="wide go" id="tapOn">▶ TAP ON &amp; BOARD</button>
+        <button class="wide" id="waitBoard">Hesitate</button>
+      </div>`;
     $("tapOn").onclick = tapOn;
     $("waitBoard").onclick = () => {
       log("You take one last hit of your vape before getting on.", "dim");
@@ -1656,8 +1849,17 @@
     return (S.money || 0) >= n;
   }
   const POCKET_BASE = [ "Myki", "iPhone", "keys", "wallet", "lip balm", "one receipt", "half a mint", "your airpods" ];
-  const POCKET_FINDS = [ "a button", "a hair tie", "an old receipt", "a bottle cap", "a JetStar boarding pass from 2019", "a mystery key", "old gum", "a ticket stub", "a receipt from a shop you have never visited", "a key that opens nothing", "a photo of a dog you do not recognise", "a business card for a business that does not exist", "a single earring, not yours" ];
-  const POCKET_LOSABLE = [ "lip balm", "one receipt", "half a mint", "a button", "a hair tie", "an old receipt", "a wrapped mint", "a bottle cap", "a ticket stub", "old gum", "a receipt from a shop you have never visited", "a key that opens nothing", "a photo of a dog you do not recognise", "a business card for a business that does not exist", "a single earring, not yours" ];
+  const NOT_SELLABLE = [ "Myki", "iPhone", "keys", "wallet" ];
+  const POCKET_FINDS = [ "a button", "a hair tie", "an old receipt", "a bottle cap", "a JetStar boarding pass from 2019", "a mystery key", "old gum", "a ticket stub", "a receipt from a shop you have never visited", "a key that opens nothing", "a photo of a dog you do not recognise", "a business card", "a single earring, not yours" ];
+  const POCKET_LOSABLE = [ "lip balm", "one receipt", "half a mint", "a button", "a hair tie", "an old receipt", "a wrapped mint", "a bottle cap", "a ticket stub", "old gum", "a receipt from a shop you have never visited", "a key that opens nothing", "a photo of a dog you do not recognise", "a business card", "a single earring, not yours" ];
+  const RESELLER_WANTS = [
+    "a single earring, not yours",
+    "a business card",
+    "a bottle cap",
+    "a JetStar boarding pass from 2019",
+    "a button",
+    "a ticket stub"
+  ];
   function ensurePockets() {
     if (!S.pockets) {
       S.pockets = POCKET_BASE.slice();
@@ -1711,7 +1913,26 @@
     }
     log("Everything is where it should be.", "dim");
   }
-  const EAVESDROP_LINES = [ 'Two people next to you are intensely debating whether Thornbury is officially "the new Northcote".', 'Someone whispers on speakerphone: "No, but like, he is cute when he has the hat on I swear!!"', 'A couple is arguing about whether a 20-minute walk to Lygon Street counts as "basically Carlton".', 'You overhear someone say: "I told my landlord that legally they can not ask me if I have a cat."' ];
+    function seatChance() {
+    let p = 0.60;
+    if (isTramNight()) p += 0.18;                          // night network is emptier
+    if (S.wxIdx === 2 || S.wxIdx === 4) p -= 0.12;         // rain packs every tram
+    p += (S.awareness / 100) * 0.15;                       // spot a seat
+    if (S.route && (S.route.n === "86" || S.route.n === "96")) p -= 0.10; //  busy lines
+    return clamp(p, 0.05, 0.80);
+  }
+  const EAVESDROP_LINES = [ 'Two people next to you are intensely debating whether Thornbury is officially "the new Northcote".', 'Someone whispers on speakerphone: "No, but like, he is cute when he has the hat on I swear!!"', 'A couple is arguing about whether a 20-minute walk to Lygon Street counts as "basically Carlton".', 'You overhear someone say: "I told my landlord that legally they can not ask me if I have a cat."',
+  'Someone says: "I literally cannot move to Brunswick. It is too expensive now."',
+  'A man is explaining why his sharehouse is "actually not that bad" despite there being six people and one bathroom.',  'Two people are discussing whether Preston is still cheap.','Someone says: "I could never live south of the river."',
+  'Someone says: "I could never live north of the river."',  'Someone is describing a restaurant entirely in terms of its lighting.',
+  'A woman says: "It is not really a bar, it is more of a wine bar."','Someone says: "I thought he was from Melbourne." Their friend replies: "He is from Geelong."',
+  'Someone is explaining that they always get off one stop early.',
+  'A woman says: "We found mould behind the wardrobe."',
+  'Someone says: "The inspection was so invasive."',
+  'A person is explaining that their bond still has not been returned.','You were not meant to hear this, but apparently the cafe on the corner has changed owners.',
+'You have learned something you cannot possibly use.',
+'You now know the relationship status of two complete strangers.',
+'You heard the words "legal advice" and immediately started listening harder.' ];
   function actEavesdrop() {
     log("You subtly tilt your head to listen to the people near you...", "dim");
     log('' + bagPick(EAVESDROP_LINES) + '', "amber");
@@ -1721,10 +1942,14 @@
   function actPockets() {
     ensurePockets();
     log("You go through your pockets.", "dim");
+    if (castPresent("reseller")) {
+      log("The vintage reseller is eyeing your pockets with interest.", "dim");
+    }
     S.wait += rnd(20, 45);
     if (chance(.55)) {
       pocketEvent();
     }
+    paint();
     renderPockets();
   }
   const THIRST_LINES = [ "You are feeling tired. A coffee would fix this.", "There is a cafe on the corner. You think about getting a coffee.", "You think about a coffee." ];
@@ -1768,48 +1993,6 @@
     };
   }
   const PAYDAY_SINKS = [ "Your rent money just came out.", "Afterpay lets you know it has taken its cut.", "Also every subscription you have renews at once.", "You owe your housemate for the internet.", "A direct debit you completely forgot about." ];
-  function actHustle() {
-    ensurePockets();
-    const NOT_SELLABLE = [ "Myki", "iPhone", "keys", "wallet" ];
-    const junk = S.pockets.filter(x => NOT_SELLABLE.indexOf(x) === -1);
-    if (!junk.length) {
-      log("You go through your pockets for something to sell.", "dim");
-      log("There is nothing here anyone would want xx", "dim");
-      renderActions();
-      return;
-    }
-    sellMenu(junk);
-  }
-  function sellMenu(junk) {
-    let opts = junk.map((it, i) => '<div class="opt" data-sell="' + i + '"><span class="box">▸</span>' + it + "</div>").join("");
-    opts += `<div class="opt" id="sNone"><span class="box">▸</span>keep everything.</div>`;
-    $("stage").innerHTML = `<div class="card"><h2>sell what ?</h2><div class="opts">${opts}</div></div>`;
-    [ ...document.querySelectorAll("[data-sell]") ].forEach(el => {
-      el.onclick = () => sellJunk(junk[+el.getAttribute("data-sell")]);
-    });
-    $("sNone").onclick = () => {
-      log("You keep your stuff.", "dim");
-      renderActions();
-    };
-  }
-  function sellJunk(item) {
-    if (S.pockets.indexOf(item) === -1) {
-      renderActions();
-      return;
-    }
-    const price = rnd(1, 5);
-    S.pockets.splice(S.pockets.indexOf(item), 1);
-    earn(price);
-    log("A stranger gives you $" + price + ".00 for " + item + ".", "good");
-    log(bagPick([ "You do not ask why they want it.", "They seem pleased.", "Probably a fair price."]), "dim");
-    const NOT_SELLABLE = [ "Myki", "iPhone", "keys", "wallet" ];
-    const left = S.pockets.filter(x => NOT_SELLABLE.indexOf(x) === -1);
-    if (left.length) {
-      sellMenu(left);
-    } else {
-      renderActions();
-    }
-  }
   function maybePayday() {
     if (S.paydayDone || !chance(.02)) {
       return;
@@ -1827,7 +2010,14 @@
   }
   function tryUber() {
     const fare = rnd(28, 55);
-    $("stage").innerHTML = `\n      <div class="card">\n        <h2>call an uber?</h2>\n        <div class="opts">\n          <div class="opt" id="uYes"><span class="box">▸</span>surge price $${fare}</div>\n          <div class="opt" id="uNo"><span class="box">▸</span>no. keep waiting.</div>\n        </div>\n      </div>`;
+    $("stage").innerHTML = `
+      <div class="card">
+        <h2>call an uber?</h2>
+        <div class="opts">
+          <div class="opt" id="uYes"><span class="box">▸</span>surge price $${fare}</div>
+          <div class="opt" id="uNo"><span class="box">▸</span>no. keep waiting.</div>
+        </div>
+      </div>`;
     $("uYes").onclick = () => {
       if (!canAfford(fare)) {
         log("You open the app. Your card declines.", "bad");
@@ -1876,15 +2066,23 @@
     if (note) {
       html += '<p style="font-size:12px;opacity:.75;margin-top:8px">' + note + "</p>";
     }
-    html += '</div><div id="lbArea"></div>';
-    html += '<button class="wide go" id="again" style="margin-top:12px">wait again ... ?</button>';
+    html += '</div>';
+    html += '<div class="actions" style="margin-top:12px">' +
+              '<button class="wide go" id="hiscores">★ see the high scores ★</button>' +
+              '<button class="wide" id="again">wait again ... ?</button>' +
+            '</div>';
     $("stage").innerHTML = html;
+    if (!S.lbSubmitted && S.wait >= RECORD_FLOOR) {
+      S.lbSubmitted = true;
+      submitScore(S.playerName || "anonymous loser");
+    }
     $("again").onclick = renderSetup;
-    renderLeaderboard();
+    $("hiscores").onclick = () => { window.location.href = "../tram/tramhighscores.html"; };
   }
   function endMadeIt() {
     const km = (rnd(21, 58) / 10).toFixed(1);
-    const seat = chance(.35);
+    const seat = chance(seatChance());
+    S.gotSeat = seat; 
     log("━━━━━━━━━━━━━━", "dim");
     log("YOU MADE IT", "big good");
     endScreen('<h2 style="color:var(--tram-green-dk)">You made it</h2>', [ [ "tram route", S.route.n ], [ "minutes waited", fmt(S.wait) ], [ "seat available?", seat ? "yes (!)" : "no :(" ], [ "have to stand", seat ? "no" : "yes !!!" ], [ "windows", pick([ "dirty", "filthy", "foggy" ]) ], [ "distance", km + " km" ], [ "study productivity", String(S.productivity) ], [ "internal complaints", String(S.complaints) ], [ "Melbourne rating", '<span class="stars">' + stars(seat ? 5 : 4) + "</span>" ] ]);
@@ -1933,9 +2131,6 @@
     }
     return loadLocal().slice().sort((a, b) => b.s - a.s).slice(0, 5);
   }
-  function qualifies(sec, list) {
-    return list.length < 5 || sec > list[list.length - 1].s;
-  }
   function isYou(e) {
     return FS.ready && FS.myId && e.id === FS.myId || !FS.ready && localMyKey && e.name + "|" + e.s === localMyKey;
   }
@@ -1945,8 +2140,6 @@
       return;
     }
     const list = currentTop();
-    const canSubmit = S.wait > 0 && !S.lbSubmitted && qualifies(S.wait, list);
-    const draft = (document.getElementById("lbName") || {}).value || "";
     const live = FS.ready ? " ·" : "";
     let html = '<div class="lb"><h3>Longest Tram Wait' + live + "</h3><ol>";
     if (list.length === 0) {
@@ -1957,52 +2150,41 @@
       html += "<li" + (isYou(e) ? ' class="you"' : "") + ">" + '<span class="nm">' + esc(e.name) + sub + "</span>" + '<span class="tm">' + fmt(e.s) + "</span></li>";
     });
     html += "</ol>";
-    if (canSubmit) {
-      html += '<p style="font-size:12px;opacity:.8;margin:6px 0 0">You waited ' + fmt(S.wait) + " for the " + esc(S.route.n) + " to " + esc(S.dest) + ":</p>" + '<div class="nameform"><input id="lbName" maxlength="16" placeholder="your name ??? " value="' + esc(draft) + '"><button id="lbSave">SAVE</button></div>';
-    } else if (S.lbSubmitted && FS.ready && !FS.myId) {
-      html += '<p style="font-size:12px;opacity:.7;margin:6px 0 0">Saving…</p>';
-    }
-    html += "</div>";
-    area.innerHTML = html;
-    if (canSubmit) {
-      $("lbSave").onclick = () => {
-        const nm = ($("lbName").value.trim() || "Anonymous Loser").slice(0, 16);
-        S.lbSubmitted = true;
-        submitScore(nm);
-        renderLeaderboard();
-      };
-    }
+  if (S.lbSubmitted && FS.ready && !FS.myId) {
+    html += '<p style="font-size:12px;opacity:.7;margin:6px 0 0">Saving…</p>';
   }
-  function submitScore(name) {
-    const rt = S.mode || S.route.n;
-    const entry = {
-      name: name,
-      s: S.wait,
-      route: rt,
-      dest: S.dest
-    };
-    if (FS.ready) {
-      FS.db.collection(COLL).add({
-        name: name,
-        s: S.wait,
-        route: rt,
-        dest: S.dest,
-        ts: firebase.firestore.FieldValue.serverTimestamp()
-      }).then(ref => {
-        FS.myId = ref.id;
-        if ($("lbArea")) {
-          renderLeaderboard();
-        }
-      }).catch(e => {
-        saveLocalEntry(entry);
-        if ($("lbArea")) {
-          renderLeaderboard();
-        }
-      });
-    } else {
+  html += "</div>";
+  area.innerHTML = html;
+}
+function submitScore(name) {
+  const run = {
+    name: name,
+    s: S.wait,
+    route: S.route ? S.route.n : null,
+    dest: S.dest,
+    mode: S.mode || null,
+    seat: !!S.gotSeat,
+    money: Math.round((S.money || 0) * 100) / 100,
+    productivity: S.productivity || 0
+  };
+  if (S.mode === "uber" && typeof S.uberFare === "number") {
+    run.fare = S.uberFare;
+  }
+  const entry = { name: name, s: S.wait, route: run.route, dest: S.dest };
+  if (FS.ready) {
+    FS.db.collection(COLL).add(Object.assign({}, run, {
+      ts: firebase.firestore.FieldValue.serverTimestamp()
+    })).then(ref => {
+      FS.myId = ref.id;
+      if ($("lbArea")) { renderLeaderboard(); }
+    }).catch(e => {
       saveLocalEntry(entry);
-    }
+      if ($("lbArea")) { renderLeaderboard(); }
+    });
+  } else {
+    saveLocalEntry(entry);
   }
+}
   function esc(s) {
     return String(s).replace(/[&<>"]/g, c => ({
       "&": "&amp;",
