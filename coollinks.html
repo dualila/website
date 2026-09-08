@@ -6,6 +6,107 @@
   <title>cool links !!!</title>
   <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
   <link rel="stylesheet" href="css/site.css">
+  <style>
+    /* favicon isn't there if missing */
+    .link-favicon { width: 16px; height: 16px; vertical-align: middle; margin-left: 6px; }
+
+    /* suggest box */
+    .suggest-box input[type="text"] {
+      width: 100%; background: #000; color: #0f0; border: 2px inset #00ff00;
+      font-family: "Courier New", monospace; font-size: 16px; padding: 7px;
+      margin-bottom: 8px;
+    }
+    .suggest-box button {
+      background: linear-gradient(to bottom, #ff00ff, #9900cc);
+      color: #fff; border: 2px outset #ff00ff;
+      font-family: "Comic Sans MS", cursive; font-weight: bold;
+      padding: 8px 16px; cursor: pointer;
+    }
+    .suggest-box button:hover { filter: brightness(1.15); }
+    .suggest-box button:active { border-style: inset; }
+    .suggest-box button:disabled { cursor: wait; filter: grayscale(.3) brightness(.9); }
+    .sg-note {
+      font-family: "Courier New", monospace; font-size: 12px;
+      color: #ff5c8a; letter-spacing: 1px; min-height: 16px; margin-top: 8px;
+    }
+    .sg-hp { position: absolute; left: -9999px; }  /* honeypot */
+    /* ✦ today's link  */
+.todays-link {
+  position: relative;
+  overflow: hidden;
+  max-width: 380px;
+  margin: 0 auto 18px;
+  padding: 12px 16px 14px;
+  border: 2px dashed #00ffff;
+  background: #10002e;
+  text-align: center;
+}
+.todays-link::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(rgba(255,0,255,.18) 1px, transparent 1px),
+    radial-gradient(rgba(0,255,255,.18) 1px, transparent 1px);
+  background-size: 14px 14px;
+  background-position: 0 0, 7px 7px;
+}
+.todays-link > * { position: relative; z-index: 1; }
+
+.todays-link h2 {
+  font-family: "Courier New", "Arial Black", sans-serif;
+  letter-spacing: 1px;
+  background: linear-gradient(90deg,#ff0000,#ff9900,#ffee00,#33ff00,#00ffee,#3300ff,#ff00ee);
+  background-size: 200% auto;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 0 5px rgba(255,255,255,.35));
+}
+.todays-link p {
+  font-family: "Courier New", monospace;
+  font-size: 14px;
+  color: #d917d9;
+  margin-top: 6px;
+}
+.todays-link a {
+  color: #66d6f2;
+  text-decoration: underline;
+  transition: color .2s, text-shadow .2s;
+  text-shadow: 0 0 8px #d1f9fb, 0 0 14px #00ffff;
+}
+.todays-link a:hover {
+  color: #ff00ff;
+  text-shadow: 0 0 8px #ff00ff, 0 0 14px #00ffff;
+}
+
+@keyframes tlRainbow { to { background-position: 200% center; } }
+@keyframes tlDots    { to { background-position: 14px 14px, 21px 21px; } }
+@keyframes tlFloat   { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+@keyframes tlGlow    { 0%,100% { box-shadow: 0 0 12px #ff00ff; } 50% { box-shadow: 0 0 20px #00ffff; } }
+
+@media (prefers-reduced-motion: no-preference) {
+  .todays-link        { animation: tlFloat 5s ease-in-out infinite, tlGlow 4s ease-in-out infinite; }
+  .todays-link::before { animation: tlDots 6s linear infinite; }
+  .todays-link h2     { animation: tlRainbow 6s linear infinite; }
+}
+
+    /* ── butt */
+    @keyframes clFadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes clFloat  { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+    @keyframes clGlow   { 0%,100% { box-shadow: 0 0 12px #ff00ff; } 50% { box-shadow: 0 0 20px #00ffff; } }
+  @keyframes clBob    { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-3px) scale(3.15); } }
+
+    .link-list a { transition: text-shadow .2s, color .2s; }
+    .link-list a:hover { color: #fff; text-shadow: 0 0 8px #ff00ff, 0 0 14px #00ffff; }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .link-list li { opacity: 50; animation: clFadeIn .5s ease-out forwards; }
+      .link-list li:hover { animation: clWiggle .45s ease-in-out; }
+      .link-list li:hover .link-favicon { animation: clBob .5s ease; }
+      .todays-link { animation: clFloat 5s ease-in-out infinite, clGlow 4s ease-in-out infinite; }
+    }
+  </style>
 </head>
 <body>
 
@@ -17,84 +118,30 @@
     <div class="frame">
 
       <div class="hero">
-        <h1>✧ coolest links ✧</h1>
+       <h1>✧ coolest links ✧</h1>
         <div class="subtitle">on the line</div>
       </div>
-
       <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
+
+      <div class="todays-link">
+        <h2>★ today's link ☆</h2>
+        <div id="todays-link-content">loading...</div>
+      </div>
 
       <div class="content">
         <h2>use these links to go to other websites that aren't this one</h2>
-        <ul class="link-list">
-          <li>
-            <a href="https://indodic.com" target="_blank" rel="noopener noreferrer">indodic.com</a>
-            <p class="link-blurb">my favourite indonesian to inggris translation service</p>
-          </li>
-          <li>
-            <a href="https://danielboek.com" target="_blank" rel="noopener noreferrer">danielboek.com</a>
-            <p class="link-blurb">all resemblance to other Daniel Boeks, living or dead, is purely coincidental.</p>
-          </li>
-           <li>
-            <a href="https://www.belindavillanisculptures.com/Welcome.html" target="_blank" rel="noopener noreferrer">belindavillanisculptures.com</a>
-            <p class="link-blurb">Belinda Villani is a Sydney based sculptor. I hope you find her commercial work as impressive and intriguing as I do</p>
-          </li>
-          <li>
-            <a href="https://www.liveatc.net/search/?icao=mel" target="_blank" rel="noopener noreferrer">liveatc.net</a>
-            <p class="link-blurb">a streaming audio network consisting of local receivers tuned to aircraft communications around the world</p>
-          </li>
-           <li>
-            <a href="https://htmlforpeople.com" target="_blank" rel="noopener noreferrer">htmlforpeople.com</a>
-            <p class="link-blurb">the best html tutorial to make your own www.lilywakefield.com.au
-          </li>
-           <li>
-            <a href="https://radio.garden" target="_blank" rel="noopener noreferrer">radio.garden</a>
-            <p class="link-blurb">spend longer then you would expect listening to any radio station anywhere</p>
-          </li>
-           <li>
-            <a href="https://wttr.in" target="_blank" rel="noopener noreferrer">wttr.in</a>
-            <p class="link-blurb">Weather report: 
-          </li>
-             <li>
-            <a href="https://www.sitemaps.org/protocol.html" target="_blank" rel="noopener noreferrer">sitemaps.org</a>
-            <p class="link-blurb">Sitemaps are an easy way for webmasters to inform search engines about pages on their sites that are available for crawling. 
-          </li>
-          <li>
-            <a href="https://superbad.com" target="_blank" rel="noopener noreferrer">superbad.com</a>
-            <p class="link-blurb">super good</p>
-          </li>
-          <li>
-            <a href="https://timetableapi.ptv.vic.gov.au/swagger/ui/index" target="_blank" rel="noopener noreferrer">timetableapi.ptv.vic.gov.au</a>
-            <p class="link-blurb">The PTV Timetable API provides direct access to Public Transport Victoria's public transport timetable data.</p>
-          </li>
-          <li>
-            <a href="http://pointerpointer.com" target="_blank" rel="noopener noreferrer">pointerpointer.com</a>
-            <p class="link-blurb">👆👆👆</p>
-          </li>
-          <li>
-            <a href="https://www.decisionproblem.com/paperclips/index2.html" target="_blank" rel="noopener noreferrer">decisionproblem.com</a>
-            <p class="link-blurb">paperclip sales</p>
-          </li>
-          <li>
-            <a href="https://asciimoji.com" target="_blank" rel="noopener noreferrer">asciimoji.com</a>
-            <p class="link-blurb">	( ͡° ͜ʖ ͡°)_/¯</p>
-          </li>
-          <li>
-            <a href="https://ellesho.me" target="_blank" rel="noopener noreferrer">ellesho.me</a>
-            <p class="link-blurb">elle's website is a lot cooler than mine and her blog posts are very thought provoking.</p>
-          </li>
-          <li>
-            <a href="https://rotatingsandwiches.com" target="_blank" rel="noopener noreferrer">rotatingsandwiches.com</a>
-            <p class="link-blurb">link is as expected</p>
-          </li>
-          <li>
-           <a href="http://endless.horse" target="_blank" rel="noopener noreferrer">endless.horse</a>
-            <p class="link-blurb">hooooooooooooooooooooooooorse</p>
-            </li>
-            <li>
-            <a href="https://eelslap.com" target="_blank" rel="noopener noreferrer">eelslap.com</a>
-            <p class="link-blurb">slap a man with an eel</p>
-          </li>
-        </ul>
+        <ul class="link-list" id="linkList"></ul>
+        
+      </div>
+<div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
+      <div class="content suggest-box">
+        <h2>send me a cooler link!</h2>
+        <input type="text" id="sgUrl" placeholder="www.lilywakefield.com.au for example" autocomplete="off">
+        <input type="text" id="sgWhy" placeholder="tell me about it" autocomplete="off" maxlength="200">
+        <!-- honeypot-->
+        <input type="text" id="sgBot" class="sg-hp" tabindex="-1" autocomplete="off">
+        <button id="sgBtn" type="button">☆ ° ★ suggest it ☆ ° ★</button>
+        <div class="sg-note" id="sgNote"></div>
       </div>
 
       <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
@@ -109,9 +156,152 @@
   </div>
 
   <script src="js/nav.js"></script>
-<script src="js/settings.js"></script>
   <script src="js/effects.js"></script>
   <script src="js/vibeclock.js"></script>
+
+  <script>
+    // ── the list
+    const coolLinks = [
+      { url: "https://indodic.com", name: "indodic.com", description: "my favourite indonesian to inggris translation service" },
+      { url: "https://danielboek.com", name: "danielboek.com", description: "all resemblance to other Daniel Boeks, living or dead, is purely coincidental." },
+      { url: "https://www.belindavillanisculptures.com/Welcome.html", name: "belindavillanisculptures.com", description: "Belinda Villani is a Sydney based sculptor. I hope you find her commercial work as impressive and intriguing as I do." },
+      { url: "https://www.liveatc.net/search/?icao=mel", name: "liveatc.net", description: "a streaming audio network of local receivers tuned to aircraft communications around the world" },
+      { url: "https://htmlforpeople.com", name: "htmlforpeople.com", description: "the best html tutorial to make your own www.lilywakefield.com.au" },
+      { url: "https://radio.garden", name: "radio.garden", description: "spend longer then you would expect listening to any radio station anywhere" },
+      { url: "https://wttr.in", name: "wttr.in", description: "weather" },
+      { url: "https://www.sitemaps.org/protocol.html", name: "sitemaps.org", description: "an easy way for webmasters to inform search engines about pages available for crawling" },
+      { url: "https://superbad.com", name: "superbad.com", description: "super good" },
+      { url: "https://timetableapi.ptv.vic.gov.au/swagger/ui/index", name: "timetableapi.ptv.vic.gov.au", description: "direct access to Public Transport Victoria's timetable data" },
+      { url: "http://pointerpointer.com", name: "pointerpointer.com", description: "\uD83D\uDC46\uD83D\uDC46\uD83D\uDC46" },
+      { url: "https://www.decisionproblem.com/paperclips/index2.html", name: "decisionproblem.com", description: "paperclip sales" },
+      { url: "https://asciimoji.com", name: "asciimoji.com", description: "( \u0361\u00b0 \u035c\u0296 \u0361\u00b0)_/\u00af" },
+      { url: "https://ellesho.me", name: "ellesho.me", description: "elle's website is a lot cooler than mine and her blog posts are very thought provoking." },
+      { url: "https://rotatingsandwiches.com", name: "rotatingsandwiches.com", description: "link is as expected" },
+      { url: "http://endless.horse", name: "endless.horse", description: "hooooooooooooooooooooooooorse" },
+      { url: "https://eelslap.com", name: "eelslap.com", description: "slap a man with an eel" }
+    ];
+
+    // ── favicons ─────────────────────────────────────────
+    function domainOf(url) {
+      try { return new URL(url).hostname; } catch (e) { return ""; }
+    }
+    function faviconImg(url) {
+      const d = domainOf(url);
+      if (!d) return null;
+      const img = document.createElement("img");
+      img.className = "link-favicon";
+      img.alt = "";
+      img.width = 16; img.height = 16;
+      img.loading = "lazy";
+      img.style.visibility = "hidden";
+      img.addEventListener("load", function () {
+        if (img.naturalWidth > 0) img.style.visibility = "visible";
+        else img.remove();
+      });
+      img.addEventListener("error", function () { img.remove(); });
+      img.src = "https://" + d + "/favicon.ico";
+      return img;
+    }
+
+    function linkNodes(parent, link) {
+      const a = document.createElement("a");
+      a.href = link.url;
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+      a.textContent = link.name;
+      parent.appendChild(a);
+
+      const fav = faviconImg(link.url);
+      if (fav) parent.appendChild(fav);
+
+      const p = document.createElement("p");
+      p.className = "link-blurb";
+      p.textContent = link.description;
+      parent.appendChild(p);
+    }
+
+    const listEl = document.getElementById("linkList");
+    coolLinks.forEach(function (link, i) {
+      const li = document.createElement("li");
+      li.style.animationDelay = (i * 0.05) + "s";  
+      linkNodes(li, link);
+      listEl.appendChild(li);
+    });
+
+    // ── today's link 
+    function getTodaysLink() {
+      const now = new Date();
+      const parts = new Intl.DateTimeFormat("en-AU", {
+        timeZone: "Australia/Melbourne",
+        year: "numeric", month: "2-digit", day: "2-digit"
+      }).formatToParts(now);
+      const year = parts.find(p => p.type === "year").value;
+      const month = parts.find(p => p.type === "month").value;
+      const day = parts.find(p => p.type === "day").value;
+      const dateString = `${year}-${month}-${day}`;
+
+      let seed = 0;
+      for (let i = 0; i < dateString.length; i++) {
+        seed = ((seed << 5) - seed) + dateString.charCodeAt(i);
+        seed |= 0;
+      }
+      seed = Math.abs(seed);
+      return coolLinks[seed % coolLinks.length];
+    }
+
+    const todaysWrap = document.getElementById("todays-link-content");
+    todaysWrap.innerHTML = "";
+    linkNodes(todaysWrap, getTodaysLink());
+
+    // ── suggest a link -> Web3Forms 
+    const WEB3FORMS_KEY = "80892af4-33ff-41d9-910d-e73f75f440c0";
+    const sgBtn  = document.getElementById("sgBtn");
+    const sgUrl  = document.getElementById("sgUrl");
+    const sgWhy  = document.getElementById("sgWhy");
+    const sgBot  = document.getElementById("sgBot");
+    const sgNote = document.getElementById("sgNote");
+
+    async function suggestLink() {
+      const url = sgUrl.value.trim();
+      if (!url) { sgNote.textContent = "paste a link first !!"; return; }
+      const why = sgWhy.value.trim();
+
+      sgBtn.disabled = true;
+      sgNote.textContent = "sending...";
+
+      try {
+        const res = await fetch("https://api.web3forms.com/submit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Accept": "application/json" },
+          body: JSON.stringify({
+            access_key: WEB3FORMS_KEY,
+            subject: "cool link suggestion from the site",
+            from_name: "cool links",
+            link: url,
+            why: why || "(none given)",
+            botcheck: sgBot.value ? true : false   // honeypot
+          })
+        });
+        const data = await res.json();
+        if (data.success) {
+          sgNote.textContent = "sent! thank you xx";
+          sgUrl.value = "";
+          sgWhy.value = "";
+        } else {
+          sgNote.textContent = "tell lily it didnt work";
+        }
+      } catch (err) {
+        console.error("suggest link failed:", err);
+        sgNote.textContent = "try again or tell lily it didnt work";
+      } finally {
+        sgBtn.disabled = false;
+      }
+    }
+
+    sgBtn.addEventListener("click", suggestLink);
+    sgUrl.addEventListener("keydown", (e) => { if (e.key === "Enter") sgWhy.focus(); });
+    sgWhy.addEventListener("keydown", (e) => { if (e.key === "Enter") suggestLink(); });
+  </script>
 
 </body>
 </html>
