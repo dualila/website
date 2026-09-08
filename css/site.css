@@ -1201,7 +1201,7 @@ a.track-name:hover {
     color: #00ffff;
     text-shadow: 0 0 6px rgba(0, 255, 255, 0.5);
     text-align: center;
-    max-width: 380px;
+    max-width: 480px;
     margin: 0 auto 24px;
     line-height: 1.6;
   }
@@ -1209,7 +1209,7 @@ a.track-name:hover {
   .archive-page .archive-list {
     display: grid;
     gap: 16px;
-    width: min(420px, 92%);
+    width: min(620px, 92%);
     margin: 0 auto;
   }
 
@@ -1252,7 +1252,7 @@ a.track-name:hover {
   }
   .archive-page .archive-current {
     display: inline-block;
-    font-family: "Courier New", monospace;
+    font-family: "Courier New", bold, monospace;
     font-size: 0.62rem;
     color: #a6ff00;
     text-shadow: 0 0 4px rgba(166, 255, 0, 0.6);
