@@ -156,7 +156,25 @@
       console.error('Firebase guestbook error:', err);
       entriesEl.textContent = 'chatroom disconnected from standard tracking.';
     }
+    
   </script>
+    <script>
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var n = params.get("name");
+      var m = params.get("msg");
+      var nameEl = document.getElementById("gbName");
+      var msgEl  = document.getElementById("gbMsg");
+      if (n && nameEl) nameEl.value = n.slice(0, 40);
+      if (m && msgEl) {
+        msgEl.value = m.slice(0, 300);
+        msgEl.focus();
+        var submit = document.getElementById("gbSubmit");
+        if (submit) submit.scrollIntoView({ block: "center" });
+      }
+    })();
+  </script>
+ 
 
 </body>
 </html>
