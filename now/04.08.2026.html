@@ -7,6 +7,22 @@
   <script>window.NOW_PAGE_MONTH = "2026-08";</script>
   <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
   <link rel="stylesheet" href="../css/site.css">
+  <style>.blog-post a {
+  color: var(--accent, #ff4fa3);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--accent, #ff4fa3);
+  transition: border-bottom-color 0.15s, background-color 0.15s;
+}
+.blog-post a:hover {
+  border-bottom: 1px solid var(--accent, #ff4fa3);
+  background: color-mix(in srgb, var(--accent, #ff4fa3) 15%, transparent);
+}
+.blog-post a[href^="http"]::after {
+  content: " ➮";
+  font-size: 0.8em;
+  opacity: 0.7;
+}
+</style>
 </head>
 <body>
 
@@ -68,7 +84,7 @@ i'll have to pick up that free coffee next time i'm in the cbd. i hope they're s
  
 <nav class="now-nav" aria-label="past now entries">
 <a href="/now/15.07.2026.html" rel="prev">← previous entry · july 2026 </a>
-<span class="nav-latest">☆✦☆ you're reading the latest ☆✦☆</span>
+<a href="/now/now.html" rel="next">next entry · september 2026 →</a>
 </nav>
  
 
@@ -89,6 +105,7 @@ i'll have to pick up that free coffee next time i'm in the cbd. i hope they're s
     </div>
   </div>
 <script src="../js/nav.js"></script>
+<script src="../js/settings.js"></script>
 <script src="../js/effects.js"></script>
 <script>window.NOW_PAGE_MONTH = "2026-08";</script>
 <script src="../js/toptracks.js"></script>

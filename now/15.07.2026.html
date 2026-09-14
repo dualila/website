@@ -6,6 +6,23 @@
   <title>if not now??? when???</title>
   <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
   <link rel="stylesheet" href="../css/site.css">
+  <style>
+  .blog-post a {
+  color: var(--accent, #ff4fa3);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--accent, #ff4fa3);
+  transition: border-bottom-color 0.15s, background-color 0.15s;
+}
+.blog-post a:hover {
+  border-bottom: 1px solid var(--accent, #ff4fa3);
+  background: color-mix(in srgb, var(--accent, #ff4fa3) 15%, transparent);
+}
+.blog-post a[href^="http"]::after {
+  content: " ➮";
+  font-size: 0.8em;
+  opacity: 0.7;
+}
+  </style>
 </head>
 <body>
 
@@ -60,7 +77,7 @@
 
 <nav class="now-nav" aria-label="past now entries">
 <span class="nav-latest">☆✦☆ you're reading the oldest one !!! </span>
-<a href="/now/now.html" rel="next">next entry · august 2026 →</a>
+<a href="/now/04.08.2026.html" rel="next">next entry · august 2026 →</a>
 </nav>
 
         <p class="now-footnote">
@@ -81,6 +98,7 @@
   </div>
 
   <script src="../js/nav.js"></script>
+<script src="../js/settings.js"></script>
   <script src="../js/effects.js"></script>
   <script>window.NOW_PAGE_MONTH = "2026-07";</script>
   <script src="../js/toptracks.js"></script>
