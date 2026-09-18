@@ -475,7 +475,7 @@ body::before {
 /* ==========================================
    BUTTONS STYLING
    ========================================== */
-.vibe-btn, .nav-button, .guestbook button {
+.vibe-btn, .nav-button, .guestbook button, .surprise-btn {
   background: linear-gradient(to bottom, #ff00ff, #9900cc);
   color: #fff;
   border: 2px outset #ff00ff;
@@ -497,7 +497,24 @@ body::before {
   75% { transform: scale(1.04,.97); }
   100% { transform: scale(1); }
 }
+  .surprise-row {
+  text-align: center;
+  margin: 0.75rem 0 1rem;
+}
+.surprise-btn:hover {
+  background: #ff0090;
+}
 
+.surprise-btn:active {
+  border-style: inset;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .surprise-btn:hover { animation: wiggle 0.4s ease-in-out infinite; }
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(-1.5deg); }
+    50%      { transform: rotate(1.5deg); }
+  }
+}
 /* ==========================================
    GUESTBOOK 
    ========================================== */

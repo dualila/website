@@ -6,9 +6,6 @@
   <title>photo directory</title>
   <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
   <link rel="stylesheet" href="../css/site.css">
-  <style>
-  
-  </style>
 </head>
 <body>
 
@@ -32,27 +29,25 @@
         <div class="update-box">
           ✦ 2 Mega Pixels    ✅✅✅✅✅✅✅✅✅✅  ✦   
         </div>
-        
-
         <div class="binder-container">
           <div class="binder-tabs">
-            <button class="binder-tab active" onclick="switchRoll('roll1', this)">✦ ✦ ✦</button>
-            <button class="binder-tab" onclick="switchRoll('roll2', this)">✦ 🚲 ✦</button>
-            <button class="binder-tab" onclick="switchRoll('roll3', this)">✅</button>
+            <button class="binder-tab active" data-roll="roll1" onclick="switchRoll('roll1', this)">✦ ✦ ✦</button>
+            <button class="binder-tab" data-roll="roll2" onclick="switchRoll('roll2', this)">✦ 🚲 ✦</button>
+            <button class="binder-tab" data-roll="roll3" onclick="switchRoll('roll3', this)">✅</button>
           </div>
 
           <div class="binder-page active" id="roll1">
-            <div class="binder-note">✦ preston and northcote and collingwood ✦</div>
+            <div class="binder-note">✦ ✅✅ ✦</div>
             <div class="contact-sheet">
 
               <div class="contact-photo" data-full="photoslol/other/PICT0057.jpg" onclick="openLightbox('photoslol/other/PICT0057.jpg', this)">
-                <img src="photoslol/other/PICT0057.jpg" alt="vic park" loading="lazy">
+                <img src="photoslol/other/PICT0057.jpg" alt="lulie st" loading="lazy">
                 <div class="contact-caption">collingwood</div>
                 <div class="contact-meta">lulie st</div>
               </div>
               
               <div class="contact-photo" data-full="photoslol/other/PICT0055.jpg" onclick="openLightbox('photoslol/other/PICT0055.jpg', this)">
-                <img src="photoslol/other/PICT0055.jpg" alt="86 tram door" loading="lazy">
+                <img src="photoslol/other/PICT0055.jpg" alt="victoria park football ground" loading="lazy">
                 <div class="contact-caption">collingwood</div>
                 <div class="contact-meta">victoria park football ground</div>
               </div>
@@ -82,15 +77,27 @@
               </div>
 
               <div class="contact-photo" data-full="photoslol/other/PICT0077.jpg" onclick="openLightbox('photoslol/other/PICT0077.jpg', this)">
-                <img src="photoslol/other/PICT0077.jpg" alt="high st looking towards city over timmins st" loading="lazy">
+                <img src="photoslol/other/PICT0077.jpg" alt="mr steel tyre service" loading="lazy">
                 <div class="contact-caption">mr steel tyre service</div>
                 <div class="contact-meta">Stop & Fix - Mon to Sunday </div>
               </div>
 
               <div class="contact-photo" data-full="photoslol/other/PICT0088.jpg" onclick="openLightbox('photoslol/other/PICT0088.jpg', this)">
-                <img src="photoslol/other/PICT0088.jpg" alt="high st looking towards city over timmins st" loading="lazy">
+                <img src="photoslol/other/PICT0088.jpg" alt="508 hubert street" loading="lazy">
                 <div class="contact-caption">preston</div>
                 <div class="contact-meta">508 hubert street </div>
+              </div>
+
+               <div class="contact-photo" data-full="photoslol/other/PICT0161.jpg" onclick="openLightbox('photoslol/other/PICT0161.jpg', this)">
+                <img src="photoslol/other/PICT0161.jpg" alt="lavendar in abbotsford" loading="lazy">
+                <div class="contact-caption">abbotsford</div>
+                <div class="contact-meta">brearley reserve </div>
+              </div>
+
+               <div class="contact-photo" data-full="photoslol/other/PICT0171.jpg" onclick="openLightbox('photoslol/other/PICT0171.jpg', this)">
+                <img src="photoslol/other/PICT0171.jpg" alt="adults on board sticker" loading="lazy">
+                <div class="contact-caption">adults on board</div>
+                <div class="contact-meta">WE WANT TO LIVE TOO </div>
               </div>
 
             </div>
@@ -109,7 +116,7 @@
               </div>
 
                 <div class="contact-photo" data-full="photoslol/other/PICT0052.jpg" onclick="openLightbox('photoslol/other/PICT0052.jpg', this)">
-                <img src="photoslol/other/PICT0052.jpg" alt="lily's red bike" loading="lazy">
+                <img src="photoslol/other/PICT0052.jpg" alt="regent station" loading="lazy">
                 <div class="contact-caption">regent station</div>
                 <div class="contact-meta">i liked the bike seat cover</div>
               </div>
@@ -127,7 +134,7 @@
               </div>
 
                 <div class="contact-photo" data-full="photoslol/other/PICT0125.jpg" onclick="openLightbox('photoslol/other/PICT0125.jpg', this)">
-                <img src="photoslol/other/PICT0125.jpg" alt="expensive bike" loading="lazy">
+                <img src="photoslol/other/PICT0125.jpg" alt="abandoned bike" loading="lazy">
                 <div class="contact-caption">an abandoned bike</div>
                 <div class="contact-meta">i couldn't see anything wrong with it.</div>
               </div>
@@ -150,6 +157,36 @@
                 <div class="contact-meta">not my usual type but it had just a fresh wash and looked nice and shiny </div>
               </div>
 
+               <div class="contact-photo" data-full="photoslol/other/PICT0151.jpg" onclick="openLightbox('photoslol/other/PICT0151.jpg', this)">
+                <img src="photoslol/other/PICT0151.jpg" alt="a scooter and a pushbike" loading="lazy">
+                <div class="contact-caption">a scooter and a pushbike</div>
+                <div class="contact-meta">in year 12 art i might have named this one 'juxtaposition'. </div>
+              </div>
+
+               <div class="contact-photo" data-full="photoslol/other/PICT0153.jpg" onclick="openLightbox('photoslol/other/PICT0153.jpg', this)">
+                <img src="photoslol/other/PICT0153.jpg" alt="hungry panda" loading="lazy">
+                <div class="contact-caption">hungry panda</div>
+                <div class="contact-meta">hard to capture, usually on the move </div>
+              </div>
+
+                <div class="contact-photo" data-full="photoslol/other/PICT0157.jpg" onclick="openLightbox('photoslol/other/PICT0157.jpg', this)">
+                <img src="photoslol/other/PICT0157.jpg" alt="foldable bike" loading="lazy">
+                <div class="contact-caption">foldable</div>
+                <div class="contact-meta">with room for friends </div>
+              </div>
+
+                <div class="contact-photo" data-full="photoslol/other/PICT0158.jpg" onclick="openLightbox('photoslol/other/PICT0158.jpg', this)">
+                <img src="photoslol/other/PICT0158.jpg" alt="second foldable bike" loading="lazy">
+                <div class="contact-caption">foldable</div>
+                <div class="contact-meta">for the whole family </div>
+              </div>
+
+                <div class="contact-photo" data-full="photoslol/other/PICT0166.jpg" onclick="openLightbox('photoslol/other/PICT0166.jpg', this)">
+                <img src="photoslol/other/PICT0166.jpg" alt="black commuter" loading="lazy">
+                <div class="contact-caption">black commuter</div>
+                <div class="contact-meta">i like the side saddle bag but i always worry about the user balance experience </div>
+              </div>
+
             </div>
           </div>
 
@@ -158,36 +195,50 @@
             <div class="binder-note">✦ </div>
             <div class="contact-sheet">
 
- <div class="contact-photo" data-full="photoslol/other/PICT0026.jpg" onclick="openLightbox('photoslol/other/PICT0026.jpg', this)">
-                <img src="photoslol/other/PICT0026.jpg" alt="PICT0026.jpg" loading="lazy">
-                <div class="contact-caption">PICT0026.jpg </div>
+              <div class="contact-photo" data-full="photoslol/other/PICT0026.jpg" onclick="openLightbox('photoslol/other/PICT0026.jpg', this)">
+                <img src="photoslol/other/PICT0026.jpg" alt="close-up of an empty pint glass" loading="lazy">
+                <div class="contact-caption">PICT0026.jpg</div>
                 <div class="contact-meta">a closeup of an invisible pint</div>
               </div>
- <div class="contact-photo" data-full="photoslol/other/PICT0018.jpg" onclick="openLightbox('photoslol/other/PICT0018.jpg', this)">
+
+              <div class="contact-photo" data-full="photoslol/other/PICT0018.jpg" onclick="openLightbox('photoslol/other/PICT0018.jpg', this)">
                 <img src="photoslol/other/PICT0018.jpg" alt="PICT0018.jpg" loading="lazy">
-                <div class="contact-caption">PICT0018.jpg </div>
-                <div class="contact-meta"> </div>
-              </div>
-              <div class="contact-photo" data-full="photoslol/other/PICT0076.jpg" onclick="openLightbox('photoslol/other/PICT0076.jpg', this)">
-                <img src="photoslol/other/PICT0076.jpg" alt="PICT0076.jpg" loading="lazy">
-                <div class="contact-caption">PICT0076.jpg </div>
-                <div class="contact-meta">sloth tiger = sliger </div>
-             </div>
-             <div class="contact-photo" data-full="photoslol/other/PICT0117.jpg" onclick="openLightbox('photoslol/other/PICT0117.jpg', this)">
-                <img src="photoslol/other/PICT0117.jpg" alt="PICT0117.jpg" loading="lazy">
-                <div class="contact-caption">PICT0117.jpg </div>
-                <div class="contact-meta"> poffertjes w/ lemon curd</div>
-              </div>
-              <div class="contact-photo" data-full="photoslol/other/PICT0118.jpg" onclick="openLightbox('photoslol/other/PICT0118.jpg', this)">
-                <img src="photoslol/other/PICT0118.jpg" alt="PICT0118.jpg" loading="lazy">
-                <div class="contact-caption">PICT0118.jpg </div>
+                <div class="contact-caption">PICT0018.jpg</div>
                 <div class="contact-meta"></div>
               </div>
-          </div>
+
+              <div class="contact-photo" data-full="photoslol/other/PICT0076.jpg" onclick="openLightbox('photoslol/other/PICT0076.jpg', this)">
+                <img src="photoslol/other/PICT0076.jpg" alt="a sloth-tiger hybrid" loading="lazy">
+                <div class="contact-caption">PICT0076.jpg</div>
+                <div class="contact-meta">sloth tiger = sliger</div>
+              </div>
+
+              <div class="contact-photo" data-full="photoslol/other/PICT0117.jpg" onclick="openLightbox('photoslol/other/PICT0117.jpg', this)">
+                <img src="photoslol/other/PICT0117.jpg" alt="poffertjes with lemon curd" loading="lazy">
+                <div class="contact-caption">PICT0117.jpg</div>
+                <div class="contact-meta">poffertjes w/ lemon curd</div>
+              </div>
+
+              <div class="contact-photo" data-full="photoslol/other/PICT0118.jpg" onclick="openLightbox('photoslol/other/PICT0118.jpg', this)">
+                <img src="photoslol/other/PICT0118.jpg" alt="PICT0118.jpg" loading="lazy">
+                <div class="contact-caption">PICT0118.jpg</div>
+                <div class="contact-meta"></div>
+              </div>
+
+              <div class="contact-photo" data-full="photoslol/other/PICT0169.jpg" onclick="openLightbox('photoslol/other/PICT0169.jpg', this)">
+                <img src="photoslol/other/PICT0169.jpg" alt="PICT0169.jpg" loading="lazy">
+                <div class="contact-caption">PICT0169.jpg</div>
+                <div class="contact-meta"></div>
+              </div>
+
+            </div><!-- contact-sheet -->
+          </div><!-- roll3 -->
+        </div><!-- binder-container -->
+        <div class="surprise-row">
+          <button class="surprise-btn" id="surprise-btn">✦ surprise me ✦</button>
         </div>
-
-      </div>
-
+      </div><!-- content -->
+      
       <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
 
       <footer>
@@ -236,13 +287,8 @@
     </div>
   </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import {
-      getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp
-    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-    
+  <script>
+    // ── firebase (loaded in the background, doesn't block the gallery) ──
     const firebaseConfig = {
       apiKey: "AIzaSyA25PaWUE39RuX-huMHoziQVUPy_pNFXUE",
       authDomain: "dot-com-44502.firebaseapp.com",
@@ -251,20 +297,29 @@
       messagingSenderId: "124684406308",
       appId: "1:124684406308:web:146706a03bb4bd451552b1",
       measurementId: "G-HPF4E6G5YW"
-         };
+    };
 
     let db = null;
+    let fb = null;              // firestore fns, once imported
     let commentsEnabled = false;
-    if (!firebaseConfig.apiKey.startsWith("PASTE")) {
+
+    const firebaseReady = (async () => {
       try {
-        db = getFirestore(initializeApp(firebaseConfig));
+        const [{ initializeApp }, store] = await Promise.all([
+          import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"),
+          import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js")
+        ]);
+        fb = store;
+        db = store.getFirestore(initializeApp(firebaseConfig));
         commentsEnabled = true;
+        // if a photo is already open, fill in its comments now
+        if (activeCommentSrc) loadComments(activeCommentSrc);
       } catch (err) {
         console.error("firebase init failed:", err);
       }
-    }
+    })();
 
-    // ── gallery  ─────────────────────────────────
+    // ── gallery ────────────────────────────────────────────
     let currentGallery = [];
     let currentIndex = 0;
     let activeCommentSrc = null;
@@ -309,10 +364,13 @@
 
     function updateLightboxDisplay() {
       const item = currentGallery[currentIndex];
-      document.getElementById('lb-img').src = item.src;
+      const img = document.getElementById('lb-img');
+      img.src = item.src;
+      img.alt = item.title + (item.meta ? ' — ' + item.meta : '');
       document.getElementById('lb-title').innerText = item.title;
       document.getElementById('lb-meta').innerText = item.meta;
-      document.getElementById('lb-title-bar').innerText = `photo viewer !!!     [${currentIndex + 1}/${currentGallery.length}]`;
+      document.getElementById('lb-title-bar').innerText =
+        `photo viewer !!!     [${currentIndex + 1}/${currentGallery.length}]`;
       document.getElementById('lb-comment-status').innerText = '';
       loadComments(item.src);
     }
@@ -325,47 +383,70 @@
     function closeLightbox() {
       document.getElementById('lightbox').classList.remove('active');
       document.body.style.overflow = '';
+      activeCommentSrc = null;
     }
 
     function closeLightboxOnBg(event) {
       if (event.target.id === 'lightbox') closeLightbox();
     }
 
-    // ── comments ──────────────────────────────────────
+    // ── surprise me ────────────────────────────────────────
+    function surpriseMe() {
+      const photos = Array.from(document.querySelectorAll('.contact-photo'));
+      if (!photos.length) return;
+
+      // don't land on the one that's already open
+      const pool = activeCommentSrc
+        ? photos.filter(p => p.dataset.full !== activeCommentSrc)
+        : photos;
+      const pick = pool[Math.floor(Math.random() * pool.length)] || photos[0];
+
+      // switch to whichever roll it lives on
+      const page = pick.closest('.binder-page');
+      if (!page.classList.contains('active')) {
+        const tab = document.querySelector(`.binder-tab[data-roll="${page.id}"]`);
+        if (tab) switchRoll(page.id, tab);
+      }
+
+      openLightbox(pick.dataset.full, pick);
+    }
+
+    document.getElementById('surprise-btn').addEventListener('click', surpriseMe);
+
+    // ── comments ───────────────────────────────────────────
+    function setEmpty(list, msg) {
+      list.innerHTML = '';
+      const p = document.createElement('div');
+      p.className = 'lb-comment-empty';
+      p.innerText = msg;
+      list.appendChild(p);
+    }
+
     async function loadComments(src) {
       const list = document.getElementById('lb-comments-list');
       const heading = document.getElementById('lb-comments-heading');
       activeCommentSrc = src;
 
+      heading.innerText = 'comments';
+      setEmpty(list, 'loading…');
+
+      await firebaseReady;
+      if (activeCommentSrc !== src) return;   // navigated away / closed mid-load
+
       if (!commentsEnabled) {
-        heading.innerText = 'comments';
-        list.innerHTML = '';
-        const p = document.createElement('div');
-        p.className = 'lb-comment-empty';
-        p.innerText = 'comments offline !!!';
-        list.appendChild(p);
+        setEmpty(list, 'comments offline !!!');
         return;
       }
 
-      list.innerHTML = '';
-      const loading = document.createElement('div');
-      loading.className = 'lb-comment-empty';
-      loading.innerText = 'loading…';
-      list.appendChild(loading);
-
       try {
-        const ref = collection(db, 'photo_comments', photoKey(src), 'entries');
-        const snap = await getDocs(query(ref, orderBy('created', 'asc')));
-        if (activeCommentSrc !== src) return; //  navigated away mid-fetch
+        const ref = fb.collection(db, 'photo_comments', photoKey(src), 'entries');
+        const snap = await fb.getDocs(fb.query(ref, fb.orderBy('created', 'asc')));
+        if (activeCommentSrc !== src) return;
         renderComments(snap, heading, list);
       } catch (err) {
         console.error(err);
         if (activeCommentSrc !== src) return;
-        list.innerHTML = '';
-        const e = document.createElement('div');
-        e.className = 'lb-comment-empty';
-        e.innerText = 'could not load comments';
-        list.appendChild(e);
+        setEmpty(list, 'could not load comments');
       }
     }
 
@@ -374,10 +455,7 @@
       heading.innerText = `✎ comments (${snap.size})`;
 
       if (snap.empty) {
-        const p = document.createElement('div');
-        p.className = 'lb-comment-empty';
-        p.innerText = 'no comments yet ✦';
-        list.appendChild(p);
+        setEmpty(list, 'no comments yet ✦');
         return;
       }
 
@@ -409,12 +487,15 @@
     }
 
     async function postComment() {
-      if (!commentsEnabled) return;
+      const status = document.getElementById('lb-comment-status');
+      if (!commentsEnabled) {
+        status.innerText = 'comments offline !!!';
+        return;
+      }
       const src = activeCommentSrc;
       const nameEl = document.getElementById('lb-comment-name');
       const textEl = document.getElementById('lb-comment-text-input');
       const btn = document.getElementById('lb-comment-post');
-      const status = document.getElementById('lb-comment-status');
 
       const name = (nameEl.value.trim() || 'anonymous loser').slice(0, 40);
       const text = textEl.value.trim().slice(0, 500);
@@ -424,16 +505,16 @@
       btn.innerText = 'posting…';
       status.innerText = '';
       try {
-        const ref = collection(db, 'photo_comments', photoKey(src), 'entries');
-        await addDoc(ref, { name, text, created: serverTimestamp() });
+        const ref = fb.collection(db, 'photo_comments', photoKey(src), 'entries');
+        await fb.addDoc(ref, { name, text, created: fb.serverTimestamp() });
         textEl.value = '';
         await loadComments(src);
       } catch (err) {
         console.error(err);
-        status.innerText = 'didn’t post — try again';
+        status.innerText = 'didn\u2019t post — try again';
       } finally {
         btn.disabled = false;
-        btn.innerText = 'post ';
+        btn.innerText = 'post';
       }
     }
 
@@ -453,13 +534,6 @@
         if (e.key === 'ArrowRight') navigateGallery(1);
       }
     });
-
-    // expose handlers used by inline onclick=""
-    window.switchRoll = switchRoll;
-    window.openLightbox = openLightbox;
-    window.navigateGallery = navigateGallery;
-    window.closeLightbox = closeLightbox;
-    window.closeLightboxOnBg = closeLightboxOnBg;
   </script>
   <script src="../js/nav.js"></script>
   <script src="../js/effects.js"></script>
