@@ -30,7 +30,7 @@ fetch("https://api.github.com/repos/dualila/website/commits/main")
   })
   .catch(error => {
     console.error("Failed to fetch last updated date:", error);
-    lastUpdated.textContent = "Unavailable";
+    lastUpdated.textContent = "in the last hour just wait a sec xx";
   });
 
 // ── Melbourne weather · precise conditions ────────────────────

@@ -570,6 +570,18 @@
         if (e.key === 'ArrowRight') navigateGallery(1);
       }
     });
+        // open a photo straight away if the url names one (from the homepage widget)
+    (function openFromHash() {
+      const key = decodeURIComponent(location.hash.slice(1));
+      if (!key) return;
+      const pick = Array.from(document.querySelectorAll('.contact-photo'))
+        .find(p => photoKey(p.dataset.full) === key);
+      if (!pick) return;
+      const page = pick.closest('.binder-page');
+      const tab = document.querySelector(`.binder-tab[data-roll="${page.id}"]`);
+      if (tab) switchRoll(page.id, tab);
+      openLightbox(pick.dataset.full, pick);
+    })();
   </script>
   <script src="../js/nav.js"></script>
   <script src="../js/effects.js"></script>

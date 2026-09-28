@@ -8,151 +8,412 @@
   <meta property="og:site_name" content="lilywakefield.com.au">
   <meta property="og:description" content="☆ ° ☆ ° ☆ °. ° ☆ ° ☆ ° ☆ ° ☆ i welcome you with open arms. best experienced on desktop. ☆ ° ☆ ° ☆ °. ° ☆ ° ☆ ° ☆ ° ☆">
   <meta name="description" content="☆ ° ☆ ° ☆ °. ° ☆ ° ☆ ° ☆ ° ☆ i welcome you with open arms. best experienced on desktop. ☆ ° ☆ ° ☆ °. ° ☆ ° ☆ ° ☆ ° ☆">
-  <meta property="og:image" content="https://lilywakefield.com.au/images/lilywakefield.gif" />
+  <meta property="og:image" content="https://lilywakefield.com.au/images/lilywakefield.gif">
   <title>lily wakefield presents ... lilywakefield.com.au</title>
   <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
   <link rel="stylesheet" href="css/site.css">
-</head>
+  <style> :root {
+  	--hp-hot: #ff00ff;
+  	--hp-dim: #cccccc;
+  }
+  .hp-more {
+  	display: block;
+  	margin-top: 8px;
+  	font-size: 11px;
+  }
+  /* orb stat bars */
+
+  .hp-stat {
+  	display: grid;
+  	grid-template-columns: 5.5em 1fr;
+  	gap: 6px;
+  	align-items: center;
+  	font-size: 11px;
+  	margin: 4px 0;
+  	text-align: left;
+  }
+  .hp-bar {
+  	height: 8px;
+  	border: 1px solid var(--hp-hot);
+  	background: rgba(0, 0, 0, .35);
+  }
+  .hp-bar span {
+  	display: block;
+  	height: 100%;
+  	background: var(--hp-hot);
+  	box-shadow: 0 0 6px var(--hp-hot);
+  }
+  .hp-orbnews {
+  	margin-top: 8px;
+  	font-size: 11px;
+  	font-style: italic;
+  	color: var(--hp-dim);
+  }
+  /* fridge poem */
+
+  .hp-poem {
+  	display: flex;
+  	flex-direction: column;
+  	gap: 5px;
+  	align-items: center;
+  }
+  .hp-poem-line {
+  	background: #fff;
+  	color: #111;
+  	font-family: "Times New Roman", Times, serif;
+  	font-size: 13px;
+  	padding: .05em .35em;
+  	box-shadow: 1px 2px 0 rgba(0, 0, 0, .45);
+  }
+  .hp-poem-line:nth-child(odd) {
+  	transform: rotate(-1deg);
+  }
+  .hp-poem-line:nth-child(even) {
+  	transform: rotate(.8deg);
+  }
+  .hp-tramstats {
+  	font-size: 11px;
+  	font-style: normal;
+  	margin-top: 6px;
+  	color: var(--hp-dim);
+  }
+  /* lists (tram, events) */
+
+  .hp-list {
+  	list-style: none;
+  	margin: 0;
+  	padding: 0;
+  	font-size: 12px;
+  	text-align: left;
+  }
+  .hp-list li {
+  	padding: 4px 0;
+  	border-bottom: 1px dotted rgba(255, 255, 255, .25);
+  }
+  .hp-list li:last-child {
+  	border-bottom: none;
+  }
+  .hp-sub {
+  	display: block;
+  	font-size: 10px;
+  	color: var(--hp-dim);
+  }
+  .hp-quote {
+  	font-style: italic;
+  	transition: opacity .6s;
+  }
+  .hp-quote.hp-fade {
+  	opacity: 0;
+  }
+  .hp-quote-by {
+  	font-size: 11px;
+  	color: var(--hp-dim);
+  	margin-top: 4px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+  	.hp-quote {
+  		transition: none;
+  	}
+  }
+  /* ── widgets: three on top of three ── */
+
+  .widgets-row {
+  	display: grid;
+  	grid-template-columns: repeat(3, 1fr);
+  	gap: 12px;
+  }
+  .widgets-row .widget-box {
+  	width: auto;
+  	min-width: 0;
+  	/* stops a long word stretching its column */
+  	margin: 0;
+  }
+  .hp-wall {
+  	display: block;
+  	width: 100%;
+  	max-width: 150px;
+  	aspect-ratio: 1;
+  	margin: 4px auto;
+  	border: 2px ridge #00ffff;
+  	background: #12103a;
+  	image-rendering: pixelated;
+  	image-rendering: crisp-edges;
+  }
+  .hp-big {
+  	font-size: 2.4em;
+  	line-height: 1;
+  	margin: 8px 0 4px;
+  }
+  .hp-photo {
+  	display: flex;
+  	flex-direction: column;
+  	align-items: center;
+  	gap: 6px;
+  }
+  .hp-photo a {
+  	display: block;
+  	width: 100%;
+  	max-width: 150px;
+  }
+  .hp-photo img {
+  	display: block;
+  	width: 100%;
+  	aspect-ratio: 1;
+  	object-fit: cover;
+  	border: 2px ridge #00ffff;
+  	background: #12103a;
+  }
+  .hp-photo-cap {
+  	font-style: italic;
+  	color: var(--hp-dim);
+  	overflow-wrap: anywhere;
+  }
+  .hp-photo-talk {
+  	font-size: 11px;
+  	text-align: left;
+  	margin-top: 6px;
+  	overflow-wrap: anywhere;
+  }
+  .hp-photo-talk .hp-list li {
+  	font-size: 11px;
+  }
+  /* 2 across on tablets, 1 across on phones */
+
+  @media (max-width: 760px) {
+  	.widgets-row {
+  		grid-template-columns: repeat(2, 1fr);
+  	}
+  }
+  @media (max-width: 480px) {
+  	.widgets-row {
+  		grid-template-columns: 1fr;
+  	}
+  }
+  </style>
 <body>
+	<div class="ticker">
+		<span>✦ thank you for visiting and i welcome you with open arms ✦</span>
+	</div>
 
-  <div class="ticker"><span>✦ thank you for visiting and i welcome you with open arms ✦</span></div>
 
-  <div class="layout">
-    <div class="sidebar" id="sidebar"></div>
+	<div class="layout">
+		<div class="sidebar" id="sidebar">
+		</div>
 
-    <div class="frame">
 
-      <div class="hero">
-        <h1>✧ lily wakefield ✧</h1>
-        <div class="subtitle">dot com dot au</div>
-        <div class="status-line" id="statusLine"></div>
-         <div class="subtitle">best experienced on desktop</div>
+		<div class="frame">
+			<div class="hero">
+				<h1>✧ lily wakefield ✧</h1>
+
+
+				<div class="subtitle">
+					dot com dot au
+				</div>
+
+
+				<div class="status-line" id="statusLine">
+				</div>
+
+
+				<div class="subtitle">
+					best experienced on desktop
+				</div>
+			</div>
+
+
+			<div class="divider">
+				★ ° ☆ ° ★ ° ☆ ° ★
+			</div>
+
+
+			<div class="counter-wrap">
+				<div class="counter" id="counter">
+					001217
+				</div>
+				<span class="counter-label">^^^ you are visitor number ^^^</span>
+			</div>
+
+
+			<div class="divider">
+				★ ° ☆ ° ★ ° ☆ ° ★
+			</div>
+			<div class="widgets-row">
+				<div class="widget-box">
+					<div class="widget-label">
+						site status
+					</div>
+					<div class="widget-value small">
+						<br>
+						🫪<br>
+						last updated:<br>
+						<br>
+						<span id="lastUpdated">loading...</span>
+					</div>
+				</div>
+				<div class="widget-box">
+					<div class="widget-label">
+						weather where i am
+					</div>
+					<div class="widget-value" id="weatherValue">
+						loading...
+					</div>
+				</div>
+				<div class="widget-box">
+					<div class="widget-label">
+						coming up
+					</div>
+					<div class="widget-value small" id="eventsBox">
+						flipping the calendar…
+					</div>
+				</div>
+				<div class="widget-box chatroom-widget">
+					<div class="widget-label">
+						live chatroom
+					</div>
+					<br>
+					<div class="widget-value small hp-quote" id="overheardText">
+						listening in…
+					</div>
+					<div class="hp-quote-by" id="overheardBy">
+					</div>
+					<a class="vibe-btn" href="/chatroom.html" style="display: inline-block; text-decoration: none; margin-top: 8px;">enter</a>
+				</div>
+				<div class="widget-box">
+					<div class="widget-label">
+						the orb
+					</div>
+					<div class="widget-value small" id="orbBox">
+						checking on the orb…
+					</div>
+					<a class="vibe-btn" href="/orb/orb.html" style="display: inline-block; text-decoration: none; margin-top: 8px;">touch the orb</a>
+				</div>
+				<div class="widget-box">
+					<div class="widget-label">
+						recent tram journeys
+					</div>
+					<div class="widget-value small">
+						<div class="hp-quote" id="tramBox">
+							checking the timetable…
+						</div>
+						<div class="hp-tramstats hp-quote" id="tramStats">
+						</div>
+						<div class="hp-quote-by" id="tramWhen">
+						</div>
+					</div>
+					<a class="vibe-btn" href="/tram/tram.html" style="display: inline-block; text-decoration: none; margin-top: 8px;">wait for a tram</a>
+				</div>
+				<div class="widget-box">
+					<div class="widget-label">
+						photo of the day
+					</div>
+					<div class="widget-value small" id="photoBox">
+						developing the film…
+					</div>
+					<div class="hp-photo-talk" id="photoTalk">
+					</div>
+				<a class="vibe-btn" id="photoLink" href="/photo%20directory/directory.html" style="display: inline-block; text-decoration: none; margin-top: 8px;">open the binder</a>
       </div>
-
-      <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
-
-      <div class="counter-wrap">
-        <div class="counter" id="counter">000217</div>
-        <span class="counter-label">^^^ you are visitor number ^^^</span>
-      </div>
-
-      <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
-
-      <div class="widgets-row">
-        <div class="widget-box">
-  <div class="widget-label">site status</div>
-  <div class="widget-value small">
-    <br>
-    🫪 <br>
-    last updated:<br>
-    <br>
-    <span id="lastUpdated">loading...</span>
-  </div>
-</div>
-
-        <div class="widget-box">
-          <div class="widget-label">weather where i am</div>
-          <div class="widget-value" id="weatherValue">loading...</div>
-        </div>
-
-        <div class="widget-box chatroom-widget">
-  <div class="widget-label">live chatroom</div>
-  <br>
-  <div class="widget-value small" id="vibeText">come say hi !!!</div>
-  <br>
-  <a href="chatroom.html" class="vibe-btn" style="display: inline-block; text-decoration: none; margin-top: 8px;">enter</a>
-</div>
-      </div>
-
-      <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
-
+      			<div class="widget-box">
+					<div class="widget-label">
+						on the fridge right now
+					</div>
+					<div class="widget-value small" id="fridgeBox">
+						reading the fridge…
+					</div>
+					<a class="vibe-btn" href="fridge.html" style="display: inline-block; text-decoration: none; margin-top: 8px;">add some words</a>
+				</div>
+				<div class="widget-box">
+					<div class="widget-label">
+						the wall
+					</div>
+					<div class="widget-value small">
+						<a aria-label="go to the wall" href="wall.html">
+						<canvas class="hp-wall" height="50" id="wallThumb" width="50">
+						</canvas></a>
+						<div class="hp-sub" id="wallCount">
+						</div>
+					</div>
+					<a class="vibe-btn" href="wall.html" style="display: inline-block; text-decoration: none; margin-top: 8px;">place a pixel</a>
+				</div>
+			</div>
+			<div class="divider">
+				★ ° ☆ ° ★ ° ☆ ° ★
+			</div>
       <footer>
         ★ ° ☆ ° ★ ° ☆ ° ★ 2026 lily wakefield ★ ° ☆ ° ★ ° ☆ ° ★<br>
         <img src="/images/favicon.ico" alt="site icon" width="24" height="24">
         best experienced with an open heart
       </footer>
 
-    </div> </div> <script src="js/nav.js"></script>
+    </div>
+  </div>
+
+  <script src="js/nav.js"></script>
   <script src="js/effects.js"></script>
   <script src="js/daynight.js"></script>
   <script src="js/vibeclock.js"></script>
   <script src="js/home.js"></script>
-
   <script>
     const STATUS_MESSAGES = [
-      'last played: 24k MAGIC - BRUNO MARS',
+      "last played: 24k MAGIC - BRUNO MARS",
       "if you're seeing this email me",
-      'make sure to visit the chatroom'
+      "make sure to visit the chatroom"
     ];
 
-    // ── live last.fm scrobble ──────────────────────────────
     const NP_LASTFM_USER = "lily-wkfld";
     const NP_LASTFM_KEY = "320c29920c2820467b0ac8daae64cb76";
 
     async function refreshNowPlaying() {
       try {
-        const url = `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks` +
-                    `&user=${NP_LASTFM_USER}` +
-                    `&api_key=${NP_LASTFM_KEY}` +
-                    `&format=json&limit=1`;
+        const url = "https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks" +
+                    `&user=${NP_LASTFM_USER}&api_key=${NP_LASTFM_KEY}&format=json&limit=1`;
         const res = await fetch(url);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
-        const track = data?.recenttracks?.track?.[0];
-        if (!track) return;
-
-        const nowPlaying = track["@attr"] && track["@attr"].nowplaying === "true";
-        const name = (track.name || "");
-        const artist = (track.artist && track.artist["#text"] || "");
+        const track = (await res.json())?.recenttracks?.track?.[0];
+        const name = track?.name || "";
+        const artist = track?.artist?.["#text"] || "";
         if (!name || !artist) return;
-
-        const label = nowPlaying ? "is currently listening to" : "last played";
-        // 
+        const label = track["@attr"]?.nowplaying === "true" ? "is currently listening to" : "last played";
         STATUS_MESSAGES[0] = `${label}: ${name} - ${artist}`;
       } catch (err) {
         console.error("now playing fetch failed:", err);
-        // 
       }
     }
-
     refreshNowPlaying();
-    setInterval(refreshNowPlaying, 30000); // poll every 30s
-    // ───────────────────────────────────────────────────────
+    setInterval(refreshNowPlaying, 30000);
 
-    const statusEl = document.getElementById('statusLine');
-    let msgIndex = 0;
-    let charIndex = 0;
-    let typing = true;
+    const statusEl = document.getElementById("statusLine");
+    let msgIndex = 0, charIndex = 0, typing = true;
 
     function typeStatus() {
       const current = STATUS_MESSAGES[msgIndex];
-      if (typing) {
-        charIndex++;
-        statusEl.innerHTML = current.slice(0, charIndex) + '<span class="cursor">&nbsp;</span>';
-        if (charIndex === current.length) {
-          typing = false;
-          setTimeout(typeStatus, 1800);
-          return;
-        }
-      } else {
-        charIndex--;
-        statusEl.innerHTML = current.slice(0, charIndex) + '<span class="cursor">&nbsp;</span>';
-        if (charIndex === 0) {
-          typing = true;
-          msgIndex = (msgIndex + 1) % STATUS_MESSAGES.length;
-        }
+      charIndex += typing ? 1 : -1;
+      statusEl.textContent = current.slice(0, charIndex);
+      const cursor = document.createElement("span");
+      cursor.className = "cursor";
+      cursor.innerHTML = "&nbsp;";
+      statusEl.appendChild(cursor);
+
+      if (typing && charIndex === current.length) {
+        typing = false;
+        return setTimeout(typeStatus, 1800);
+      }
+      if (!typing && charIndex === 0) {
+        typing = true;
+        msgIndex = (msgIndex + 1) % STATUS_MESSAGES.length;
       }
       setTimeout(typeStatus, typing ? 55 : 30);
     }
     typeStatus();
   </script>
-
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
     import {
-      getFirestore, doc, setDoc, increment, onSnapshot
+      getFirestore, collection, doc, setDoc, increment, onSnapshot,
+      query, where, orderBy, limit, getDocs
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { WORDS, STICKY, wordIds } from "./js/fridge-words.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyA25PaWUE39RuX-huMHoziQVUPy_pNFXUE",
@@ -165,29 +426,331 @@
     };
 
     const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
+    getAnalytics(app);
     const db = getFirestore(app);
 
-    const counterEl = document.getElementById('counter');
+    const $ = (id) => document.getElementById(id);
+    function el(tag, className, text) {
+      const e = document.createElement(tag);
+      if (className) e.className = className;
+      if (text != null) e.textContent = text;
+      return e;
+    }
+    const fill = (box, ...children) => box.replaceChildren(...children);
+    function oops(box, msg, err) {
+      console.error(msg, err);
+      if (box) fill(box, el("span", "", msg));
+    }
 
+    // ── visitor counter ──
+    const counterRef = doc(db, "counters", "visitors");
+    setDoc(counterRef, { count: increment(1) }, { merge: true })
+      .catch((err) => console.error("counter increment failed:", err));
+    onSnapshot(counterRef, (snap) => {
+      const count = snap.exists() ? (snap.data().count || 0) : 0;
+      $("counter").textContent = String(count).padStart(6, "0");
+    }, (err) => console.error("counter listener failed:", err));
+
+
+    // ── the orb
+    const orbBox = $("orbBox");
+    if (orbBox) {
+      const statRow = (label, value) => {
+        const row = el("div", "hp-stat");
+        const bar = el("div", "hp-bar");
+        const fillBar = el("span");
+        fillBar.style.width = Math.max(0, Math.min(100, Number(value) || 0)) + "%";
+        bar.appendChild(fillBar);
+        row.append(el("span", "", label), bar);
+        return row;
+      };
+      const orbNews = el("div", "hp-orbnews");
+
+      onSnapshot(query(collection(db, "pets"), where("alive", "==", true), limit(1)), (snap) => {
+        if (snap.empty) {
+          fill(orbBox, el("div", "", "the orb has passed on. go and bring it back ☆"));
+          return;
+        }
+        const orb = snap.docs[0].data();
+        fill(orbBox,
+          el("div", "", `orb generation ${orb.generation ?? "?"} is alive ✦`),
+          statRow("hunger", orb.hunger),
+          statRow("happiness", orb.happiness),
+          statRow("pets", orb.pets),
+          orbNews
+        );
+      }, (err) => oops(orbBox, "couldn't find the orb", err));
+
+      getDocs(query(collection(db, "petLog"), orderBy("createdAt", "desc"), limit(1)))
+        .then((snap) => { if (!snap.empty) orbNews.textContent = `latest: ${snap.docs[0].data().text}`; })
+        .catch((err) => console.error("orb news failed:", err));
+    }
+
+    const fridgeBox = $("fridgeBox");
+    if (fridgeBox) {
+      const idToWord = new Map(wordIds().map((id, i) => [id, WORDS[i]]));
+
+      getDocs(collection(db, "fridge")).then((snap) => {
+        const placed = [];
+        snap.forEach((d) => {
+          const word = idToWord.get(d.id);
+          const { x, y } = d.data();
+          if (word && y < 48) placed.push({ word, x, y });
+        });
+        placed.sort((a, b) => a.y - b.y);
+
+        const lines = [];
+        for (const p of placed) {
+          const line = lines[lines.length - 1];
+          if (line && p.y - line.y < 2.5) line.items.push(p);
+          else lines.push({ y: p.y, items: [p] });
+        }
+
+        if (!lines.length) {
+          fill(fridgeBox, el("div", "", "the fridge is blank ☆"));
+          return;
+        }
+        const poem = el("div", "hp-poem");
+        lines.slice(0, 7).forEach((line) => {
+          const text = line.items
+            .sort((a, b) => a.x - b.x)
+            .reduce((s, p) => (STICKY.has(p.word) || !s ? s + p.word : s + " " + p.word), "");
+          poem.appendChild(el("div", "hp-poem-line", text));
+        });
+        fill(fridgeBox, poem);
+      }).catch((err) => oops(fridgeBox, "couldn't open the fridge", err));
+    }
+
+    // ── upcoming events
+    const eventsBox = $("eventsBox");
+    if (eventsBox) {
+      const today = new Date().toLocaleDateString("en-CA", { timeZone: "Australia/Melbourne" }); // yyyy-mm-dd
+      const niceDate = (s) => {
+        const [y, m, d] = s.split("-").map(Number);
+        return new Date(y, m - 1, d).toLocaleDateString("en-AU", { weekday: "short", day: "numeric", month: "short" }).toLowerCase();
+      };
+
+      getDocs(query(collection(db, "events"), where("date", ">=", today), orderBy("date"), limit(25))).then((snap) => {
+        const upcoming = snap.docs.map((d) => d.data()).filter((e) => e.status === "approved").slice(0, 2);
+        if (!upcoming.length) { fill(eventsBox, el("div", "", " add something !!!")); return; }
+        const list = el("ul", "hp-list");
+        upcoming.forEach((e) => {
+          const li = el("li", "", e.title);
+          li.appendChild(el("span", "hp-sub", e.date === today ? "today !!!" : niceDate(e.date)));
+          list.appendChild(li);
+        });
+        fill(eventsBox, list);
+      }).catch((err) => oops(eventsBox, "couldn't flip the calendar", err));
+    }
+
+    // ── overheard in the chatroom
+    const textEl = $("overheardText");
+    if (textEl) {
+      const byEl = $("overheardBy");
+
+      getDocs(query(collection(db, "guestbook"), limit(100))).then((snap) => {
+        const msgs = snap.docs.map((d) => d.data()).filter((m) => m.message && m.message.length <= 140);
+        if (!msgs.length) { textEl.textContent = "it's quiet in there. go say hi !!!"; return; }
+
+        for (let i = msgs.length - 1; i > 0; i--) {          // shuffle
+          const j = Math.floor(Math.random() * (i + 1));
+          [msgs[i], msgs[j]] = [msgs[j], msgs[i]];
+        }
+
+        let i = 0;
+        const show = () => {
+          const m = msgs[i++ % msgs.length];
+          textEl.textContent = `“${m.message}”`;
+          if (byEl) byEl.textContent = `— ${m.name || "anonymous"}`;
+          textEl.classList.remove("hp-fade");
+        };
+        show();
+        if (msgs.length > 1) {
+          setInterval(() => { textEl.classList.add("hp-fade"); setTimeout(show, 600); }, 7000);
+        }
+      }).catch((err) => { console.error("chatroom failed:", err); textEl.textContent = "couldn't hear the chatroom right now"; });
+    }
+
+    // ── the wall thumbnail
+const wallThumb = $("wallThumb");
+if (wallThumb) {
+  // keep this pls
+  const WALL_PALETTE = [
+    "#ffffff", "#000000", "#ff00ff", "#ff5c8a",
+    "#ff2f2f", "#ff9c00", "#ffe600", "#aaff00",
+    "#00ff88", "#00ffcc", "#00ffff", "#3aa8ff",
+    "#2b4bff", "#9900cc", "#c77dff", "#8a5a2b"
+  ];
+  const GRID = 50;
+  const ctx = wallThumb.getContext("2d");
+  const countEl = $("wallCount");
+
+  onSnapshot(doc(db, "place", "board"), (snap) => {
+    const data = snap.exists() ? snap.data() : {};
+    ctx.fillStyle = "#12103a";
+    ctx.fillRect(0, 0, GRID, GRID);
+    for (const [key, colour] of Object.entries(data.pixels || {})) {
+      const [x, y] = key.split("_").map(Number);
+      if (!WALL_PALETTE[colour]) continue;
+      ctx.fillStyle = WALL_PALETTE[colour];
+      ctx.fillRect(x, y, 1, 1);
+    }
+    if (countEl) countEl.textContent = `${(data.count || 0).toLocaleString()} pixels placed`;
+  }, (err) => oops(countEl, "the wall is offline", err));
+}
+/// ── recent tram journeys
+const tramBox = $("tramBox");
+if (tramBox) {
+  const statsEl = $("tramStats");
+  const whenEl = $("tramWhen");
+  const money = (n) => "$" + Number(n).toFixed(2);
+
+  const duration = (s) => {
+    const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), sec = s % 60;
+    return h ? `${h}h ${String(m).padStart(2, "0")}m` : `${m}m ${String(sec).padStart(2, "0")}s`;
+  };
+  const ago = (ts) => {
+    if (!ts?.toMillis) return "";
+    const mins = Math.round((Date.now() - ts.toMillis()) / 60000);
+    if (mins < 60) return mins <= 1 ? "just now" : `${mins} minutes ago`;
+    const hrs = Math.round(mins / 60);
+    if (hrs < 24) return hrs === 1 ? "an hour ago" : `${hrs} hours ago`;
+    const days = Math.round(hrs / 24);
+    return days === 1 ? "yesterday" : `${days} days ago`;
+  };
+
+  // the story, depending on how ended
+  const sentence = (r) => {
+    const start = `${r.name} waited ${duration(r.s)} for the ${r.route}`;
+    const to = r.dest ? ` to ${r.dest}` : "";
+    if (r.mode === "bus") return `${start}, gave up and caught the replacement bus${to}`;
+    if (r.mode === "uber") return `${start}, cracked iit and ubered${to}` + (r.fare > 0 ? ` for ${money(r.fare)}` : "");
+    if (r.mode) return `${start}, then gave up and went by ${r.mode}${to}`;
+    return `${start}${to}` + (r.seat ? " and got a seat ✦" : " and stood the whole way");
+  };
+
+  // the little stats row
+  const stats = (r) => {
+    const bits = [];
+    if (typeof r.money === "number") bits.push(`💰 ${money(r.money)} left`);
+    if (typeof r.productivity === "number") {
+      bits.push(r.productivity > 0 ? `🤓☝️ ${Math.round(r.productivity)} productivity` : "🤓☝️ got nothing done");
+    }
+    return bits.join(" · ");
+  };
+
+  getDocs(query(collection(db, "tramLeaderboard"), orderBy("ts", "desc"), limit(40))).then((snap) => {
+    const trips = snap.docs.map((d) => d.data());
+    if (!trips.length) { tramBox.textContent = "nobody has waited yet. be the first"; return; }
+
+    for (let i = trips.length - 1; i > 0; i--) {          // shuffle
+      const j = Math.floor(Math.random() * (i + 1));
+      [trips[i], trips[j]] = [trips[j], trips[i]];
+    }
+
+    const fading = [tramBox, statsEl].filter(Boolean);
+    let i = 0;
+    const show = () => {
+      const r = trips[i++ % trips.length];
+      tramBox.textContent = sentence(r);
+      if (statsEl) statsEl.textContent = stats(r);
+      if (whenEl) whenEl.textContent = ago(r.ts);
+      fading.forEach((e) => e.classList.remove("hp-fade"));
+    };
+    show();
+    if (trips.length > 1) {
+      // offset from the chatroom so they don't both change at the same moment
+      setTimeout(() => {
+        setInterval(() => {
+          fading.forEach((e) => e.classList.add("hp-fade"));
+          setTimeout(show, 600);
+        }, 7000);
+      }, 2500);
+    }
+  }).catch((err) => { console.error("tram journeys failed:", err); tramBox.textContent = "the tram board is down"; });
+}// ── photo of the day + its comments ──
+const photoBox = $("photoBox");
+if (photoBox) {
+  const PHOTO_PAGE = new URL("/photo%20directory/directory.html", location.origin);
+  const talkEl = $("photoTalk");
+  const btnEl = $("photoLink");
+
+  // same as photoKey() on the photo page, so the comment threads line up
+  const photoKey = (src) => src.replace(/[^a-zA-Z0-9]/g, "_");
+  const isFilename = (s) => /^PICT\d+\.jpe?g$/i.test(s);
+
+  (async () => {
     try {
-      const counterRef = doc(db, "counters", "visitors");
+      const res = await fetch(PHOTO_PAGE);
+      if (!res.ok) throw new Error(`HTTP ${res.status} for ${PHOTO_PAGE.href}`);
+      const base = new URL(res.url || PHOTO_PAGE.href);   // where the page really lives
+      const page = new DOMParser().parseFromString(await res.text(), "text/html");
 
-      setDoc(counterRef, { count: increment(1) }, { merge: true }).catch((err) => {
-        console.error('counter increment failed:', err);
+      const seen = new Set();
+      const photos = [];
+      page.querySelectorAll(".contact-photo[data-full]").forEach((card) => {
+        const src = card.dataset.full;
+        if (!src || seen.has(src)) return;
+        seen.add(src);
+        const caption = card.querySelector(".contact-caption")?.textContent.trim() || "";
+        const meta = card.querySelector(".contact-meta")?.textContent.trim() || "";
+        const alt = card.querySelector("img")?.getAttribute("alt")?.trim() || "";
+        // roll 3 captions are just filenames, so use the next best thing
+        const title = !isFilename(caption) ? caption : (meta || (!isFilename(alt) ? alt : ""));
+        photos.push({ src, title, meta: title === meta ? "" : meta, alt });
       });
 
-      onSnapshot(counterRef, (snap) => {
-        const count = snap.exists() ? (snap.data().count || 0) : 0;
-        counterEl.textContent = String(count).padStart(6, '0');
-      }, (err) => {
-        console.error('counter listener failed:', err);
+      if (!photos.length) { fill(photoBox, el("span", "", "if you can see this lily is slacking")); return; }
+
+      // same photo for everyone all day, melbourne time
+      const today = new Date().toLocaleDateString("en-CA", { timeZone: "Australia/Melbourne" });
+      const day = Math.floor(Date.parse(today) / 86400000);
+      const photo = photos[(day * 7919) % photos.length];
+
+      const pageLink = `${base.pathname}#${photoKey(photo.src)}`;
+      if (btnEl) btnEl.href = pageLink;
+
+      const wrap = el("div", "hp-photo");
+      const link = el("a");
+      link.href = pageLink;
+      const img = el("img");
+      img.src = new URL(photo.src, base).href;
+      img.alt = photo.alt || photo.title || "photo of the day";
+      img.onerror = () => console.error("photo of the day didn't load:", img.src);
+      link.appendChild(img);
+      wrap.appendChild(link);
+      if (photo.title) wrap.appendChild(el("div", "hp-photo-cap", photo.title));
+      if (photo.meta) wrap.appendChild(el("div", "hp-sub", photo.meta));
+      fill(photoBox, wrap);
+
+      // comments on today's photo, newest first
+      if (!talkEl) return;
+      const snap = await getDocs(query(
+        collection(db, "photo_comments", photoKey(photo.src), "entries"),
+        orderBy("created", "desc"),
+        limit(50)
+      ));
+      const comments = snap.docs.map((d) => d.data())
+        .filter((c) => typeof c.text === "string" && c.text.trim());
+
+      if (!comments.length) { fill(talkEl, el("div", "hp-sub", "no comments yet !!! ☆")); return; }
+
+      const list = el("ul", "hp-list");
+      comments.slice(0, 0).forEach((c) => {
+        const text = c.text.length > 90 ? c.text.slice(0, 87) + "…" : c.text;
+        const li = el("li", "", `“${text}”`);
+        li.appendChild(el("span", "hp-sub", `— ${c.name || "anonymous loser"}`));
+        list.appendChild(li);
       });
     } catch (err) {
-      console.error('Firebase counter error:', err);
+      oops(photoBox, "if you can see this lily is slacking", err);
     }
+  })();
+}
   </script>
-  <script data-goatcounter="https://dualila.goatcounter.com/count"
-        async src="//gc.zgo.at/count.js"></script>
+<script>
+
+</script>
+  <script data-goatcounter="https://dualila.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
