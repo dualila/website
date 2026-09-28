@@ -34,6 +34,7 @@ const NAV_TREE = [
                 { label: "the wall", href: "/wall.html" },
                 { label: "the wheel", href: "/wheel.html" },
                 { label: "love tester", href: "/lovetester.html" },
+                { label: "fridge", href: "/fridge.html" },
         ]
       },
 ];

@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>fridge page !!!</title>
+<link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+<link rel="stylesheet" href="css/site.css">
+<style>
+
+  :root { --fr-rows: 16; }
+  .fr-board {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    max-width: 640px;
+    margin: 12px auto 0;
+    background-color: #2e1a52;
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent calc(100% / var(--fr-rows) - 1px),
+      rgba(210, 170, 255, .18) calc(100% / var(--fr-rows) - 1px),
+      rgba(210, 170, 255, .18) calc(100% / var(--fr-rows))
+    );
+    border: 3px ridge #ff00ff;
+    box-shadow: 0 0 15px #ff00ff, inset 0 0 30px rgba(10, 0, 51, .5);
+    overflow: hidden;
+    touch-action: none;                      /* no page scrolling while dragging */
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  /* ── the magnets ── */
+  .fr-mag {
+    position: absolute;
+    z-index: 1;
+    padding: .1em .4em;
+    background: #fff;
+    color: #111;
+    box-shadow: 1px 2px 0 rgba(0, 0, 0, .45);
+    font-family: "Times New Roman", Times, serif;
+    font-size: clamp(12px, 2.2vw, 16px);
+    line-height: 1.25;
+    white-space: nowrap;
+    cursor: grab;
+    transform: rotate(var(--tilt, 0deg));
+  }
+  .fr-mag.fr-sparkle { color: #d4007a; }
+  .fr-mag.fr-dragging {
+    cursor: grabbing;
+    transform: rotate(0deg) scale(1.1);
+    box-shadow: 3px 6px 8px rgba(0, 0, 0, .5);
+  }
+  .fr-mag:focus-visible { outline: 2px dashed #ffff00; outline-offset: 3px; }
+
+  .fr-help {
+    text-align: center;
+    font-family: "Courier New", monospace;
+    font-size: 12px;
+    color: #cccccc;
+  }
+</style>
+</head>
+<body>
+
+<div class="ticker"><span>✦ thank you for visiting i hope we remembered to buy milk ✦</span></div>
+
+<div class="layout">
+  <div class="sidebar" id="sidebar"></div>
+
+  <div class="frame">
+
+    <div class="hero">
+      <h1>✧ fridge poetry page !!! ✧</h1>
+      <p class="blink">☆ like those magnets on the fridge ☆</p>
+    </div>
+
+    <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
+
+    <div class="content">
+      <h2>come up with some delightful prose for me</h2>
+      <div class="fr-board" id="fr-board" aria-label="shared board of poetry words"></div>
+      <div class="status-line" id="fr-status" aria-live="polite">gathering the words…</div>
+
+      <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
+      <p class="fr-help">arrow keys to move words on desktop too !</p>
+    </div>
+
+    <div class="divider">★ ° ☆ ° ★ ° ☆ ° ★</div>
+
+    <footer>
+      ★ ° ☆ ° ★ ° ☆ ° ★ 2026 lily wakefield ★ ° ☆ ° ★ ° ☆ ° ★<br>
+      <img src="/images/favicon.ico" alt="site icon" width="24" height="24">
+      best experienced with an open heart
+    </footer>
+
+  </div>
+</div>
+
+<script src="js/nav.js"></script>
+<script src="js/effects.js"></script>
+<script src="js/vibeclock.js"></script>
+
+<script type="module">
+  const firebaseConfig = {
+    apiKey: "AIzaSyA25PaWUE39RuX-huMHoziQVUPy_pNFXUE",
+    authDomain: "dot-com-44502.firebaseapp.com",
+    projectId: "dot-com-44502",
+    storageBucket: "dot-com-44502.firebasestorage.app",
+    messagingSenderId: "124684406308",
+    appId: "1:124684406308:web:146706a03bb4bd451552b1",
+    measurementId: "G-HPF4E6G5YW"
+  };
+
+  const WORDS = [
+    // little words
+    "the", "the", "a", "a", "i", "i", "you", "you", "we", "me", "my", "your", "our",
+    "is", "is", "are", "was", "were", "am", "be",
+    "and", "and", "but", "or", "not", "of", "in", "on", "at", "to", "to", "for", "with", "like", "so", "if",
+    "too", "very", "all", "always", "never", "again", "maybe", "just", "still", "almost",
+    "here", "there", "now", "then", "when", "where", "how", "why",
+
+    // suffixes
+    "s", "s", "ing", "ed", "ly", "er", "'s",
+
+    // melb
+    "naarm", "tram", "86", "myki", "flinders st station", "laneway", "yarra", "merri creek",
+    "brunswick", "smith st", "long black", "magpie", "possum", "bag of beans",
+    "op shop", "dim sim", "vape", "cherry pomegranate", "footy", "bombers", "ticket inspector",
+
+    //  (shake your bumpa)
+    "wait", "miss", "want", "need", "hold", "stay", "leave", "ride", "dance", "sing", "cry",
+    "kiss", "dream", "glow", "forget", "remember", "run", "fall",
+
+    // feelings
+    "soft", "loud", "late", "lonely", "lucky", "brave", "tired", "sweet", "strange", "electric", "tender",
+
+    // bleh
+    "heart", "love", "girl", "boy", "friend", "enemy",
+
+    // colour
+    "pink", "blue", "gold", "silver", "chrome", "glitter",
+
+    // law school
+    "objection", "evidence", "hearsay", "verdict", "guilty", "precedent", "sustained", "your honour",
+
+    // optics
+    "lens", "frames", "blurry", "sunglasses", "glasses", "contact lenses",
+
+    // lilywakefield.com.au
+    "the orb", "orb", "pixel", "online", "offline", "brb", "xoxo", "lol", "omg", "emoji",
+
+    // sky & time
+    "sun", "moon", "star", "morning", "night", "tonight", "forever",
+
+    // sparkle & punctuation
+    "✦", "✦", "☆", "!!", "?", ",", "<3",
+    "💜", "💖", "💛", "💚", "💙", "🖤", "💔",
+
+    // me me me
+    "lily", "wakefield", "lily wakefield", "lilywakefield.com.au", "lily wakefield dot com dot au"
+  ];
+  const SPARKLY = new Set(["✦", "☆", "!!", "<3"]);
+  const COLLECTION = "fridge";
+
+  const board = document.getElementById("fr-board");
+  const statusEl = document.getElementById("fr-status");
+
+  // ── helpers ──
+  const rand = (n) => { const x = Math.sin(n * 9301 + 49297) * 233280; return x - Math.floor(x); };
+  const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
+  const maxX = (el) => 100 - (el.offsetWidth / board.clientWidth) * 100;
+  const maxY = (el) => 100 - (el.offsetHeight / board.clientHeight) * 100;
+
+  function place(m) {
+    m.x = clamp(m.x, 0, maxX(m.el));
+    m.y = clamp(m.y, 0, maxY(m.el));
+    m.el.style.left = m.x + "%";
+    m.el.style.top = m.y + "%";
+  }
+
+  const seen = {};
+  function idFor(word) {
+    seen[word] = (seen[word] || 0) + 1;
+    return "w_" + encodeURIComponent(word) + (seen[word] > 1 ? "-" + seen[word] : "");
+  }
+
+  const words = new Map();   // id -> { el, x, y }
+  let dragging = null;
+  let zTop = 1;
+  let save = () => {};       // 
+
+  // ── 1. 
+  WORDS.forEach((word, i) => {
+    const id = idFor(word);
+    const el = document.createElement("div");
+    el.className = "fr-mag" + (SPARKLY.has(word) ? " fr-sparkle" : "");
+    el.textContent = word;
+    el.tabIndex = 0;
+    el.setAttribute("role", "button");
+    el.setAttribute("aria-label", `word: ${word}`);
+    el.style.setProperty("--tilt", ((rand(i + 7) - .5) * 6).toFixed(1) + "deg");
+    board.appendChild(el);
+
+    // starting pile in the bottom half
+    const m = { el, x: 2 + rand(i) * 84, y: 48 + rand(i + 100) * 46 };
+    words.set(id, m);
+    place(m);
+    wireDrag(id, m);
+    wireKeys(id, m);
+  });
+
+  // ── 2. 
+  function wireDrag(id, m) {
+    let offX = 0, offY = 0, moved = false;
+
+    m.el.addEventListener("pointerdown", (e) => {
+      if (e.button !== 0) return;              // left click / touch only
+      const r = m.el.getBoundingClientRect();
+      offX = e.clientX - r.left;
+      offY = e.clientY - r.top;
+      moved = false;
+      dragging = id;
+      m.el.setPointerCapture(e.pointerId);
+      m.el.classList.add("fr-dragging");
+      m.el.style.zIndex = ++zTop;
+    });
+
+    m.el.addEventListener("pointermove", (e) => {
+      if (dragging !== id) return;
+      const b = board.getBoundingClientRect();
+      m.x = ((e.clientX - b.left - offX) / b.width) * 100;
+      m.y = ((e.clientY - b.top - offY) / b.height) * 100;
+      moved = true;
+      place(m);
+    });
+
+    const drop = () => {
+      if (dragging !== id) return;
+      dragging = null;
+      m.el.classList.remove("fr-dragging");
+      if (moved) save(id, m);                  // no click
+    };
+    m.el.addEventListener("pointerup", drop);
+    m.el.addEventListener("pointercancel", drop);
+  }
+
+  // ── 3. arrow keys type sshit
+  function wireKeys(id, m) {
+    let timer;
+    m.el.addEventListener("keydown", (e) => {
+      const step = e.shiftKey ? 5 : 1;
+      const moves = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step] };
+      if (!moves[e.key]) return;
+      e.preventDefault();
+      m.x += moves[e.key][0];
+      m.y += moves[e.key][1];
+      place(m);
+      m.el.style.zIndex = ++zTop;
+      clearTimeout(timer);
+      timer = setTimeout(() => save(id, m), 400);   // save once they stop tapping
+    });
+  }
+
+  // ── 4. 
+  (async () => {
+    if (!firebaseConfig.projectId) {
+      statusEl.textContent = "offline mode!!! moves won't save right now !!! tell lily to fix it";
+      return;
+    }
+    try {
+      const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js");
+      const { getFirestore, collection, doc, setDoc, onSnapshot, serverTimestamp } =
+        await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+
+      const db = getFirestore(initializeApp(firebaseConfig, "fridge"));
+      const col = collection(db, COLLECTION);
+
+      save = (id, m) => {
+        setDoc(doc(col, id), { x: m.x, y: m.y, movedAt: serverTimestamp() })
+          .then(() => { statusEl.textContent = ""; })
+          .catch(() => { statusEl.textContent = "that move didn't save. refresh and try again or text lily !!!"; });
+      };
+
+      // live sync
+      onSnapshot(col, (snap) => {
+        const docs = [];
+        snap.forEach((d) => { if (words.has(d.id)) docs.push(d); });
+        const movedAt = (d) => d.data({ serverTimestamps: "estimate" }).movedAt?.toMillis() ?? 0;
+        docs.sort((a, b) => movedAt(a) - movedAt(b));
+
+        docs.forEach((d) => {
+          const m = words.get(d.id);
+          m.el.style.zIndex = ++zTop;
+          if (dragging === d.id) return;       // don't yank a word out of someone's hand
+          const { x, y } = d.data();
+          m.x = x;
+          m.y = y;
+          place(m);
+        });
+        statusEl.textContent = "";
+      }, () => {
+        statusEl.textContent = "message lily it's broken";
+      });
+    } catch (err) {
+      console.error("fridge:", err);
+      statusEl.textContent = "tell lily it's broken sad face";
+    }
+  })();
+</script>
+<script data-goatcounter="https://dualila.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
