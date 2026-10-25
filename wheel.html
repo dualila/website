@@ -226,6 +226,28 @@
     let angle = 0;       
     let spinning = false;
 
+       const MAX_W = R - 72;   // stop text before the SPIN button
+    function setFont(size) { ctx.font = "bold " + size + "px 'Comic Sans MS', cursive"; }
+    function widest(lines) { return Math.max(...lines.map(l => ctx.measureText(l).width)); }
+    function fitLabel(text) {
+      let size = 16;
+      setFont(size);
+      let lines = [text];
+      if (ctx.measureText(text).width > MAX_W) {
+        const words = text.split(" ");
+        if (words.length > 1) {
+          let best = null;
+          for (let i = 1; i < words.length; i++) {
+            const pair = [words.slice(0, i).join(" "), words.slice(i).join(" ")];
+            if (!best || widest(pair) < widest(best)) best = pair;
+          }
+          lines = best;
+        }
+      }
+      while (widest(lines) > MAX_W && size > 10) { size--; setFont(size); }
+      return { lines, size };
+    }
+
     function draw() {
       ctx.clearRect(0,0,canvas.width,canvas.height);
       const n = options.length;
@@ -247,9 +269,10 @@
         ctx.rotate(start + slice / 2);
         ctx.textAlign = "right";
         ctx.fillStyle = "#0d0733";
-        ctx.font = "bold 16px 'Comic Sans MS', cursive";
-        const label = options[i].length > 16 ? options[i].slice(0,15) + "…" : options[i];
-        ctx.fillText(label, R - 18, 6);
+        const { lines, size } = fitLabel(options[i] || "");
+        lines.forEach((line, j) => {
+          ctx.fillText(line, R - 18, 6 + (j - (lines.length - 1) / 2) * (size + 2));
+        });
         ctx.restore();
       }
 
@@ -346,7 +369,16 @@
       if (options.length >= 12) return;      // keep it readable
       options.push("new option"); renderOpts(); draw();
     });
-
+    // load a wheel from the link, e.g. wheel.html?title=...&opts=a|b|c
+    const params = new URLSearchParams(location.search);
+    if (params.get("opts")) {
+      const fromLink = params.get("opts").split("|").map(s => s.trim()).filter(Boolean)
+                             .slice(0, 12).map(s => s.slice(0, 30));
+      if (fromLink.length >= 2) {
+        options = fromLink;
+        verdictEl.textContent = "★ loaded: " + (params.get("title") || "a mystery wheel") + " ★";
+      }
+    }
     renderOpts();
     draw();
   </script>

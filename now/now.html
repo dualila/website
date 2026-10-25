@@ -22,6 +22,66 @@
   font-size: 0.8em;
   opacity: 0.7;
 }
+.photo-pair { display: flex; gap: 14px; justify-content: center; margin: 16px 0; }
+.photo-pair figure { margin: 0; flex: 1; max-width: 220px; }
+.photo-pair img {
+  width: 100%; aspect-ratio: 3 / 4; object-fit: cover; display: block;
+  border: 2px ridge var(--accent, #ff4fa3); background: #060022;
+  position: relative; z-index: 1; cursor: zoom-in;
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+.photo-pair figure:first-child img { transform-origin: left center; }
+.photo-pair figure:last-child img  { transform-origin: right center; }
+.photo-pair img:hover,
+.photo-pair img:focus {
+  transform: scale(1.6); z-index: 10;
+  box-shadow: 0 0 18px var(--accent, #ff4fa3); outline: none;
+}
+.photo-pair figcaption { font-size: .85em; text-align: center; margin-top: 6px; }
+.photo-pair a { border: 0; background: none; }
+.photo-single figure { max-width: 160px; }
+.photo-single figure img { aspect-ratio: auto; transform-origin: center; }
+.photo-single figure img:hover,
+.photo-single figure img:focus { transform: scale(1.25); }
+/* phones: smaller zoom so it stays on screen */
+@media (max-width: 500px) {
+  .photo-pair img:hover,
+  .photo-pair img:focus { transform: scale(1.3); }
+  .photo-single figure img:hover,
+  .photo-single figure img:focus { transform: scale(1.05); }
+}
+.ascii-art {
+  font-family: "Segoe UI Symbol", "DejaVu Sans Mono", monospace;
+  line-height: 1.05; font-size: 14px;
+  text-align: center; white-space: pre;
+  background: none; border: 0; margin: 18px 0; overflow-x: auto;
+}
+.now-wheel { text-align: center; margin: 18px 0; }
+.now-wheel-stage { position: relative; width: min(320px, 80vw); margin: 0 auto 10px; }
+.now-wheel-stage canvas {
+  width: 100%; height: auto; display: block; border-radius: 50%;
+  box-shadow: 0 0 22px rgba(255,0,255,.5), 0 0 40px rgba(0,255,255,.3);
+  background: #060022; cursor: pointer;
+}
+.now-wheel-ptr {
+  position: absolute; top: -6px; left: 50%; transform: translateX(-50%);
+  border-left: 14px solid transparent; border-right: 14px solid transparent;
+  border-top: 24px solid #ffe600; filter: drop-shadow(0 0 5px #ffe600); z-index: 3;
+}
+.now-wheel-hub {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  width: 62px; height: 62px; border-radius: 50%;
+  background: linear-gradient(#ff00ff,#9900cc); border: 3px outset #ff00ff;
+  color: #fff; font-family: "Comic Sans MS", cursive; font-weight: bold; font-size: 13px;
+  cursor: pointer; z-index: 2; box-shadow: 0 0 12px #ff00ff;
+}
+.now-wheel-hub:disabled { opacity: .7; cursor: wait; }
+.now-wheel-verdict {
+  font-family: "Comic Sans MS", cursive; font-size: 19px; font-weight: bold;
+  min-height: 28px; color: #fff; text-shadow: 2px 2px 0 #ff00ff, -1px -1px 0 #00ffff;
+}
+.now-wheel-verdict.pop { animation: nwpop .5s ease; }
+@keyframes nwpop { 0%{transform:scale(.4);opacity:0} 60%{transform:scale(1.15)} 100%{transform:scale(1)} }
   </style>
 </head>
 <body>
@@ -43,65 +103,59 @@
 
       <div class="content now-page">
 
-        <div class="update-box">✦ last updated: september 2026 · from melbourne, australia</div>
+        <div class="update-box">✦ last updated: october 2026 · from melbourne, australia</div>
 
         <main>
           <article class="blog-post">
 <p class="entry-label">focusing on:</p>
-<p class="entry-date"><time datetime="2026-09-14T23:12">23.12pm &middot; september 14, 2026</time></p>
+<p class="entry-date"><time datetime="2026-10-25T23:12">22.06pm &middot; october 25, 2026</time></p>
 
-<p>
-i recently had a small procedure done under my right eye. the gp introduced himself as "a bit of a cowboy", which i took as a joke until he began moving a needle toward my pupil with the confidence of a man who had just described himself as a cowboy.
-</p>
+<p> this month i made a small feature in an australian financial review article about <a href="http://archive.today/GFu1Z" target="_blank" rel="noopener noreferrer">working from home from the cricket.</a> there were only 35 tickets available for what was an otherwise quiet second day of the sheffield shield, and from all appearances the other attendees did seem to get some work done. more distracting then the slow game of cricket that occurred below me as i drank the coffee that came with my ticket were the journalists of all mastheads who descended on the place from all angles. </p>
+<p> the rmit students who organised the program with cricket victoria told me they were shocked by how much media attention their group project got (there was also tea and biscuits, which weren’t mentioned in any article i could find). and from what I heard later, the journalist and photographer from the AFR were unable to enjoy their working from home from the cricket experience, reportedly being asked to leave since they hadn't purchased a ticket. </p>
+<div class="photo-pair">
+<figure>
+<a href="/images/wftc1.png" target="_blank"><img src="/images/wftc1.png" alt="a camera man filming at junction oval" tabindex="0"></a>
+<figcaption>an ABC cameraman capturing the important moments</figcaption>
+</figure>
+<figure>
+<a href="/images/wftc2.png" target="_blank"><img src="/images/wftc2.png" alt="batballstump wifi password" tabindex="0"></a>
+<figcaption>batballstump</figcaption>
+</figure>
+</div>
+<p>back in august i promised to tend to the parts of the backyard i hadn’t visited yet. i am pleased to report that the lawn has been mown. it was an extremely hot day, and i was deeply involved in the process, in that i watched dom do it and then swept the enormous amount of grass into the green bin, which i think is equally as hard and just as tedious task. </p>
+<p> i have enrolled in my (hopefully) last subjects for my degree/s and i now understand the pressure of the what will i do next ???? too overwhelming, so let's just spin the wheel instead to decide !!!</p>
+<div class="now-wheel">
+  <div class="now-wheel-stage">
+    <div class="now-wheel-ptr"></div>
+    <canvas id="nowWheel" width="440" height="440"></canvas>
+    <button class="now-wheel-hub" id="nowWheelBtn" type="button">SPIN</button>
+  </div>
+  <div class="now-wheel-verdict" id="nowWheelVerdict">☆ decide my fate ☆</div>
+</div>
+<p>let me know if those career options sound good for me, or even if you'd be interested in one of them yourself. if you have your own life decisions to outsource, the full wheel of indecision is <a id="fullWheelLink" href="https://lilywakefield.com.au/wheel.html">available twenty four seven here.</a></p>
+<p> kalo kamu bisa baca ini tanpa google translate, aku sayang kamu ya !!! kalo nggak bisa, kita tetap bisa berteman. aku perlu berlatih bahasa indo karena aku sudah tua sekarang dan aku nggak mau lupa...  </p>
+<pre class="ascii-art" aria-hidden="true">⠀⠀⠀⠀⢀⣤⠤⣄⠀⠀⠀⠀⣠⠤⣄⠀⠀⠀
+⠀⠀⠀⢠⠞⠀⠀⠈⢷⠀⠀⡜⠃⠀⠈⢳⠀⠀
+⠀⠀⠀⣾⠀⠀⠀⠀⠘⡇⢰⠅⠀⠀⠀⠸⡇⠀
+⠀⠀⠀⣿⠀⠀⠀⠀⠀⡇⣾⠀⠀⠀⠀⢸⠃⠀
+⠀⠀⠀⢹⡀⠀⠀⠀⠀⡇⣿⠀⠀⠀⠀⡾⠀⠀
+⠀⠀⠀⠸⡇⠀⠀⠀⠀⠷⠿⠀⠀⠀⢰⠇⠀⠀
+⠀⢀⡴⠛⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⢶⡀⠀
+⢰⠟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⡄
+⣿⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣷
+⢹⠀⠀⠀⢰⡆⠀⠀⠀⠀⠀⠀⢀⣄⠀⠀⠀⡟
+⠈⢧⡀⠀⠀⠀⠀⠀⢄⡀⣀⠀⠀⠁⠀⠀⣸⠃
+⠀⠈⠻⢦⣀⠀⠀⠀⠚⠙⠂⠀⠀⠀⣀⡴⠋⠀
+⠀⠀⠀⠀⠈⠉⠓⠒⠲⠶⠶⠒⠒⠋⠁⠀⠀⠀</pre>
+<p> if you’re reading this at work, or work from home or work from home from the cricket or work from home from wherever, i’m not telling your boss but i am wondering.</p>
+<div class="photo-pair photo-single">
+<figure>
+<a href="/images/wftc3.jpg" target="_blank"><img src="/images/wftc3.jpg" alt="lily on channel seven" tabindex="0"></a>
+<figcaption>click for bonus lily pic</figcaption>
+</figure>
+</div>
 
-<p>
-how's everyone's screen time going? i am so addicted to my phone that it isn't funny. sometimes i miss when i was a kid and didn't have a phone. if i wanted to use the computer, i'd have to sit at the family desktop downstairs and get really embarrassed if anyone tried to see what i was doing, which was probably just reading something weird. if i wasn't reading on the computer, it would have been a book; my former addiction, before that little backlit bug caught me alongside everyone else.
-</p>
-
-<p>
-i would hide books under my pillowcase, i would read in the dark, i would read in the bath, i would read in the car, i would steal books from the library to read more, and then take more books before i finshed the books i'd already taken. i would read my book hidden inside the assigned book in the classroom just to get a bit more. 
-
-<p>
-i would read so much, and anything that i could get my hands on, appropriateness of the content be damned. i've been thinking about the content-heavy books i read as a kid recently, and i would like to recommend a few to you now.
-</p>
-<ol>
-<li>
-  <em><a href="https://www.goodreads.com/book/show/11045709-when-she-woke"
-         target="_blank" rel="noopener">When She Woke</a></em> by Hillary Jordan. this book was my introduction to the dystopian genre, and also the existence of pregnancy termination. in a world where your skin tone is changed to match your crime, the protagonist is a young woman who has her skin turned red for committing the act of murder. i'm pretty sure it's supposed to be a retelling of <em> The Scarlet Letter</em> but set in a probably now not so distant future. it's pretty good but i think it dips off towards the end. 
-</li>
-<p></p>
-<li>
-  <em><a href="https://www.goodreads.com/book/show/242241.Chart_Throb"
-         target="_blank" rel="noopener">Chart Throb</a></em> by Ben Elton. i recently found an entire collection of his works at the uniting church and allowed myself to purchase two, curbing my own excitement. having already read the out-of-print copies, it only seems fair to share the joy with other readers. elton's sardonic humour is even funnier than i remember, and with the benefit of google and a little life experience i can now properly acquaint myself with the cultural references and innuendo that flew over my head when i was younger.</li>
-</ol>
-
-<p>
-anyway, all of this thinking about phone addiction and books has made me think about "fixing my attention span". having previously only watched <em>The Sopranos</em> in ninety-second increments, out of order, dubbed over by an ai voice bot, i have started watching it properly (and by properly i mean illegally downloaded with polish subtitles). it turns out it is a show about Tony, a man who had some ducks in his pool. Tony loved the ducks, but then the ducks leave and he has panic attacks and collapses a bunch of times.
-</p>
-
-<p>
-his psychiatrist makes a comparison between the feeling Tony has about the ducks leaving and the fear he has about losing his family. i like Tony. i've been pondering perception and agency bevause of my Italian Fascism class, and i wonder what decsions i would make if i was a middle aged mafioso pretending to be a waste management consultant. there was no mention of the ducks in the ai edited tiktoks. tiktok did show me the guns and crystal meth dealing, but left out the part where Tony feeds the ducks in his dressing gown.  
-</p>
-<p>
-i am also watching <em>Gilmore Girls</em> for the first time, which is the exact same show as <em>The Sopranos</em> with less violence and the amount of talking is doubled. and so far there is less ducks and the same amount of infidelity, but also to be honest i haven't progressed past watching it in the before mentioned ninety second format.
-</p>
-<p>
-generation 15 of the orb has been alive for ten days, which is the record by a country mile. i'll be doomscrolling away, and my stomach will drop. my heart will sink. !!! omg the orb is probably dead !!! i rush to log on, convinced i will be met by the sight of a corpse, just to find that someone else has kept him going. it's so heartwarming, i made a leaderboard at the suggestion of a friend and now we can all see who loves the orb the most.
-<p>
-( ｡◕ ‿‿ ◕｡ )
-</p>
-<p>
-for those cowboys who saw the proto-lilywakefield.com.au many years ago, i have reinstated the love tester, which is a 100% accurate, scientific piece of ancient technology used to measure the love between two people. i will add that i am not personally liable from anything that occurs as a result of you using the tool and finding out that you lack compatibiilty with your partner, but again i reinforce the guarantee that the results are incredibly accurate and extremely scientifically valid.
-</p>
-  <blockquote>
-    <img src="/images/tony-soprano-ducks.gif" alt="Tony Soprano feeding ducks in his dressing gown"
-style="display:block; max-width:100%; height:auto; margin:12px auto;" loading="lazy">
-  <p>
-    ❤︎ tony + the ducks = 100% ❤︎ — tested at
-    <a href="/lovetester.html"> lilywakefield.com.au/lovetester.html</a>
-  </p>
-            </blockquote>
-    <section class="top-tracks-box">
+<section class="top-tracks-box">
               <div class="top-tracks-header">
                 ★ top tracks this month ★
               </div>
@@ -114,7 +168,7 @@ style="display:block; max-width:100%; height:auto; margin:12px auto;" loading="l
         </main>
  
 <nav class="now-nav" aria-label="past now entries">
-<a href="/now/04.08.2026.html" rel="prev">← previous entry · august 2026 </a>
+<a href="/now/14.09.2026.html" rel="prev">← previous entry · september 2026 </a>
 <span class="nav-latest">☆✦☆ you're reading the latest ☆✦☆</span>
 </nav>
  
@@ -137,15 +191,19 @@ style="display:block; max-width:100%; height:auto; margin:12px auto;" loading="l
   </div>
 <script src="../js/nav.js"></script>
 <script src="../js/effects.js"></script>
-<script>window.NOW_PAGE_MONTH = "2026-09";</script>
+<script>window.NOW_PAGE_MONTH = "2026-10";</script>
 <script src="../js/toptracks.js"></script>
 
   <script>
     // edit STATUS_MESSAGES to change what it says
     const STATUS_MESSAGES = [
+      'currently working from the cricket',
       'probably listening to dua lipa',
+      'currently working from the cricket',
       'actually maybe i should ask what are YOU doing now?',
+      'currently working from the cricket',
       "and how are you? it's been a while",
+      'currently working from the cricket',
       "67",
     ];
     const statusEl = document.getElementById('statusLine');
@@ -175,8 +233,99 @@ style="display:block; max-width:100%; height:auto; margin:12px auto;" loading="l
     }
     typeStatus();
   </script>
-  <script data-goatcounter="https://dualila.goatcounter.com/count"
-        async src="//gc.zgo.at/count.js"></script>
+  <script>
+(function () {
+const OPTIONS = ["do law", "do more law", "do a masters of optometry", "become a bali influencer",
+                   "be an afr journalist", "do law again", "utilise her arts degree (????)", "be dua lipa's backup dancer", "be a pro tram simulationist", "spin again"];
+  const COLORS = ["#ff5c8a","#ff9c00","#ffe600","#aaff00","#00ff88","#00ffcc","#7df9ff", "#3aa8ff","#4762fc", "#c77dff"];
+  document.getElementById("fullWheelLink").href =
+  "https://lilywakefield.com.au/wheel.html?title=" + encodeURIComponent("lily's future") +
+    "&opts=" + encodeURIComponent(OPTIONS.join("|"));
 
+  const canvas = document.getElementById("nowWheel");
+  const ctx = canvas.getContext("2d");
+  const btn = document.getElementById("nowWheelBtn");
+  const verdict = document.getElementById("nowWheelVerdict");
+  const R = canvas.width / 2;
+  const MAX_W = R - 72;   // stop the text before it reaches the SPIN button
+  let angle = 0, spinning = false;
+
+  function setFont(size) { ctx.font = "bold " + size + "px 'Comic Sans MS', cursive"; }
+  function widest(lines) { return Math.max(...lines.map(l => ctx.measureText(l).width)); }
+  function fitLabel(text) {
+    let size = 18;
+    setFont(size);
+    let lines = [text];
+    if (ctx.measureText(text).width > MAX_W) {
+      const words = text.split(" ");
+      if (words.length > 1) {
+        let best = null;
+        for (let i = 1; i < words.length; i++) {
+          const pair = [words.slice(0, i).join(" "), words.slice(i).join(" ")];
+          if (!best || widest(pair) < widest(best)) best = pair;
+        }
+        lines = best;
+      }
+    }
+    while (widest(lines) > MAX_W && size > 10) { size--; setFont(size); }
+    return { lines, size };
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const slice = (Math.PI * 2) / OPTIONS.length;
+    OPTIONS.forEach((opt, i) => {
+      const start = angle + i * slice;
+      ctx.beginPath(); ctx.moveTo(R, R);
+      ctx.arc(R, R, R - 4, start, start + slice); ctx.closePath();
+      ctx.fillStyle = COLORS[i % COLORS.length]; ctx.fill();
+      ctx.lineWidth = 2; ctx.strokeStyle = "#060022"; ctx.stroke();
+      ctx.save(); ctx.translate(R, R); ctx.rotate(start + slice / 2);
+      ctx.textAlign = "right"; ctx.fillStyle = "#0d0733";
+      const { lines, size } = fitLabel(opt);
+      lines.forEach((line, j) => {
+        const y = 6 + (j - (lines.length - 1) / 2) * (size + 2);
+        ctx.fillText(line, R - 18, y);
+      });
+      ctx.restore();
+    });
+    ctx.beginPath(); ctx.arc(R, R, R - 4, 0, Math.PI * 2);
+    ctx.lineWidth = 6; ctx.strokeStyle = "#ff00ff"; ctx.stroke();
+  }
+
+  function spin() {
+    if (spinning) return;
+    spinning = true; btn.disabled = true; verdict.textContent = "☆ deciding… ☆";
+    const startA = angle;
+    const target = angle + (5 + Math.random() * 4) * Math.PI * 2 + Math.random() * Math.PI * 2;
+    const dur = 4200 + Math.random() * 800, t0 = performance.now();
+    function frame(now) {
+      const p = Math.min(1, (now - t0) / dur);
+      angle = startA + (target - startA) * (1 - Math.pow(1 - p, 3));
+      draw();
+      if (p < 1) return requestAnimationFrame(frame);
+      spinning = false; btn.disabled = false; announce();
+    }
+    requestAnimationFrame(frame);
+  }
+
+  function announce() {
+    const n = OPTIONS.length, slice = (Math.PI * 2) / n;
+    const norm = ((angle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+    const pointer = (-Math.PI / 2 - norm + Math.PI * 4) % (Math.PI * 2);
+    const pick = OPTIONS[Math.floor(pointer / slice) % n];
+    verdict.textContent = pick === "spin again"
+      ? "★ even the wheel doesn't know ★"
+      : "★ lily must: " + pick + " ★";
+    verdict.classList.remove("pop"); void verdict.offsetWidth; verdict.classList.add("pop");
+  }
+
+  btn.addEventListener("click", spin);
+  canvas.addEventListener("click", spin);
+  draw();
+})();
+</script>
+<script data-goatcounter="https://dualila.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
