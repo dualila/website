@@ -626,7 +626,7 @@ if (tramBox) {
     const start = `${r.name} waited ${duration(r.s)} for the ${r.route}`;
     const to = r.dest ? ` to ${r.dest}` : "";
     if (r.mode === "bus") return `${start}, gave up and caught the replacement bus${to}`;
-    if (r.mode === "uber") return `${start}, cracked iit and ubered${to}` + (r.fare > 0 ? ` for ${money(r.fare)}` : "");
+    if (r.mode === "uber") return `${start}, cracked it and ubered${to}` + (r.fare > 0 ? ` for ${money(r.fare)}` : "");
     if (r.mode) return `${start}, then gave up and went by ${r.mode}${to}`;
     return `${start}${to}` + (r.seat ? " and got a seat ✦" : " and stood the whole way");
   };
